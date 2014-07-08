@@ -1,0 +1,10 @@
+string $TS = `window -t "Time Slider Assist" -widthHeight 150 150` ;
+
+columnLayout  ;
+    button -label "Copy Key" -command "timeSliderCopyKey" ;
+    button -label  "Paste Key" -command "timeSliderPasteKey false" ;
+    button -label  "Delete Key" -command "timeSliderClearKey" ;
+    button -label  "All Channel Key" -command "timeControl -e -showKeys active $gPlayBackSlider" ;
+    button -label  "Active Channel Key" -command "timeControl -e -showKeys $gChannelBoxName $gPlayBackSlider" ;
+    
+showWindow $TS ;

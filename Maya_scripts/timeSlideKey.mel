@@ -1,0 +1,12 @@
+timeSliderPasteKey false;
+
+string $winVar = `window -t "Time Sider Keys"  -widthHeight 200 100`;
+
+columnLayout  ;
+
+    button -label "Copy Keys" -command "timeSliderCopyKey";
+    button -label "Paste Keys" -command "timeSliderPasteKey false;";
+    button -label "Delete Keys" -command "timeSliderClearKey";
+
+showWindow $winVar;
+    

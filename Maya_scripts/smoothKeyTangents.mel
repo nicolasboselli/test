@@ -1,0 +1,190 @@
+
+//This script smoothes animation key tangents.
+//Copyright Nathan Tungseth.
+
+//  Declare procedures:
+
+proc float shallower(float $value1, float $value2)
+{return ( abs($value1) < abs($value2) ) ? ($value1) : ($value2);}
+
+proc float steeper(float $value1, float $value2)
+{return ( abs($value1) > abs($value2) ) ? ($value1) : ($value2);}
+
+global proc trdprty_tungsethTangent()
+{
+//  Declare variables:
+int $numberofcurves; int $c; string $curve; int $I;
+int $selectedindexes; int $totalindexes;
+int $start; int $end;
+string $tanType; string $step; int $locked;
+int $i[5]; float $x[5]; float $y[5]; float $m[4];
+//string $before; string $keynode; string $after;
+int $sign[4]; int $node;
+float $ix; float $ox;
+float $inSmooth; float $outSmooth; float $inlimit; float $outlimit;
+float $inSlope; float $outSlope; float $inAngle; float $outAngle;
+int $locked; int $weighted; int $weightlock; float $inweight; float
+$outweight;
+float $smooth; float $limit;
+float $slope; float $angle;
+
+waitCursor -state on;  // make a nice wait cursor icon while it works...-comet
+
+//  Outer loop goes through selected curves, one at a time.
+string $curves[] = `keyframe -q -sl -name`;
+$numberofcurves = `size ($curves)`;
+for ($c = 0; $c < $numberofcurves; $c = $c + 1)
+{
+
+//  Inner loop goes through selected keys, one at a time.
+$curve = $curves[$c];
+int $selectedindexes[] = `keyframe -query -sl -iv $curve`;
+$totalindexes = `keyframe -q -kc $curve`;
+$numberofselectedindexes = `size ($selectedindexes)`;
+for ($I = 0; $I < $numberofselectedindexes; $I = $I + 1)
+{
+
+//  Determine index value of current key (2) and four neighbors (0,1,3,4).
+$i[2] = $selectedindexes[$I];
+$i = {$i[2] - 2, $i[2] - 1, $i[2], $i[2] + 1, $i[2] + 2};
+
+//if tangency type is not "step", do the following.
+string $tanTypes[] = `keyTangent -in $i[2] -q -ott $curve`; $tanType =
+$tanTypes[0];
+$step = "step";
+if ($tanType != $step)
+  {
+
+  // Loop to determine x and y positions of five keys (time and value of each).
+  $start = (`max 0 (2 - $i[2])`);
+  $end = (`min 5 (2 + $totalindexes - $i[2])`);
+  for ($p = $start; $p < $end; $p = $p + 1)
+    {
+    float $X[] = `keyframe -in $i[$p] -query -tc $curve`; $x[$p] = $X[0];
+    float $Y[] = `keyframe -in $i[$p] -query -vc $curve`; $y[$p] = $Y[0];
+    }
+
+  //  Calculate four slopes between the keys (0,1,2,3).
+  for ($p = 0; $p < 4; $p = $p + 1)
+    {
+    if ($p < $start || $p > ($end - 2))
+        {$m[$p] = 0.0;}
+    else {$m[$p] = ($y[($p + 1)] - $y[$p])/($x[($p + 1)] - $x[$p]);}
+    }
+
+  //  Are there nodes? Check sign (+,0,-) for the 3 slope changes.
+
+    $sign[0] = ($m[1] - $m[0] == 0.0) ? ($sign[0] = 0) : (($m[1] -
+$m[0])/(abs($m[1] - $m[0])));
+    $sign[1] = ($m[2] - $m[0] == 0.0) ? ($sign[1] = 0) : (($m[2] -
+$m[0])/(abs($m[2] - $m[0])));
+    $sign[2] = ($m[3] - $m[1] == 0.0) ? ($sign[2] = 0) : (($m[3] -
+$m[1])/(abs($m[3] - $m[1])));
+    $sign[3] = ($m[3] - $m[2] == 0.0) ? ($sign[3] = 0) : (($m[3] -
+$m[2])/(abs($m[3] - $m[2])));
+
+if (($sign[0] * $sign[1] >= 0) &&
+  ($sign[2] * $sign[3] >= 0) &&
+  ($sign[0] * $sign[3] <= 0))
+
+      {$node = true;
+      $inSmooth = ( $m[1] + ( ($m[1] - $m[0]) / 2.0 ) );
+      $outSmooth = ( $m[2] + ( ($m[2] - $m[3]) / 2.0 ) );}
+
+else    {$node = false;
+      $inSmooth = $m[1];
+      $outSmooth = $m[2];}
+
+  //as long as tangent is locked (handles move together), combine the two slope values into one.
+  //Exception: if weights are free and also broken, treat angle as unified.
+
+  int $Weighted[] = `keyTangent -q -wt $curve`; $weighted = $Weighted[0];
+  if ($weighted == true)
+     {
+     float $oldIx[] = `keyTangent  -in $i[2] -query -ix $curve`; $ix =
+($oldIx[0] * 10.0);
+     float $oldOx[]  = `keyTangent -in $i[2] -query -ox $curve`; $ox =
+($oldOx[0] * 10.0);
+     }
+  int $Weightlock[] = `keyTangent -in $i[2] -q -weightLock $curve`;
+$weightlock = $Weightlock[0];
+  int $Locked[] = `keyTangent -in $i[2] -q -lock $curve`; $locked =
+$Locked[0];
+  if (($locked == true) || ($weightlock == false))
+     {
+     $smooth = (($inSmooth + $outSmooth)/2.0);
+     $smooth = ($node == true) ?
+(shallower($smooth,(shallower((2.0*$inSmooth),(2.0*$outSmooth))))) :
+($smooth);
+     $inlimit  = ( ( $smooth * $m[1] ) < 0 ) ? ( 0 ) : ( 3.0 * $m[1] );
+     $outlimit = ( ( $smooth * $m[2] ) < 0 ) ? ( 0 ) : ( 3.0 * $m[2] );
+     $limit = ( shallower( $inlimit, $outlimit ) );
+     $slope = ( shallower( $smooth, $limit ) );
+
+     //Correct overshoot for weighted curves.
+      if ($weighted == true)
+        {$slope =
+shallower($slope,(shallower((($y[2]-$y[1])/$ix),(($y[3]-$y[2])/$ox))));}
+      else {$slope = $slope;}
+
+     $inSlope  = $slope;
+     $outSlope = $slope;
+     if ($locked == true)
+       {
+       keyTangent -in $i[2] -lock false $curve; // Temporarily unlock tangent.
+       }
+     }
+  else
+     {
+     $inlimit  = ( ( $inSmooth  * $m[1] ) < 0 ) ? ( 0 ) : ( 3 * $m[1] );
+     $outlimit = ( ( $outSmooth * $m[2] ) < 0 ) ? ( 0 ) : ( 3 * $m[2] );
+     $inSlope  = ( shallower( $inSmooth, $inlimit  ) );
+     $outSlope = ( shallower( $outSmooth, $outlimit ) );
+     }
+
+  $inAngle = atand ($inSlope);
+  $outAngle = atand ($outSlope);
+
+  // If curve is weighted, calculate weight for key.
+  if ($weighted == true)
+    {
+    $inweight  = ( ( $x[2] - $x[1] ) / ( 3 * ( cosd ( $inAngle  ) ) ) );
+    $outweight = ( ( $x[3] - $x[2] ) / ( 3 * ( cosd ( $outAngle ) ) ) );
+    // If it's the first key, set $inweight = $outweight.  Reverse for last key.
+    if ($i[2] == 0) {$inweight = $outweight;}
+    if ($i[2] == $totalindexes - 1) {$outweight = $inweight;}
+    }
+  else
+    {
+    $inweight  = 1;
+    $outweight = 1;
+    }
+
+  // Apply angle value to tangent of current key.
+    // If weights are free or nonweighted, leave weights alone.
+    if ((($weighted == true) && ($weightlock == false)) || ($weighted == false))
+      {
+      keyTangent -in $i[2] -ia $inAngle $curve;
+      keyTangent -in $i[2] -oa $outAngle $curve;
+      }
+    else
+      {
+      //...but for locked weighted keys, space weights evenly.
+      keyTangent -in $i[2] -ia $inAngle -iw $inweight $curve;
+      keyTangent -in $i[2] -oa $outAngle -ow $outweight $curve;
+      }
+
+  // Relock tangents.
+  if ($locked == true) {keyTangent -in $i[2] -lock true $curve;}
+
+  // end condition that tangency type must not be "step".
+  }
+//  Go to next key.
+}
+//  Go to next curve.
+}
+waitCursor -state off;  // put mouse cursor back to normal. -comet
+// end procedure.
+}
+trdprty_tungsethTangent;
+

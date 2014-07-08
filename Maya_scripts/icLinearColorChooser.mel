@@ -1,0 +1,142 @@
+//----------------------------------------------------------------------------------------------
+//
+//	icLinearColorChooser
+//
+//	SCRIPT:			icLinearColorChooser.mel
+//
+//	AUTHOR:			Ingo Clemens
+//					www.braverabbit.de
+//	DATE:			Jul 31, 2012
+//					created: Jul 30, 2012
+//
+//----------------------------------------------------------------------------------------------
+
+//----------------------------------------------------------------------------------------------
+//
+//	USE AND MODIFY AT YOUR OWN RISK!!
+//
+//----------------------------------------------------------------------------------------------
+
+
+global proc icLCCApplyColor( string $attr, string $slider )
+{
+	float $color[] = `colorSliderGrp -q -rgb $slider`;
+	float $cR = `pow $color[0] 2.2`;
+	float $cG = `pow $color[1] 2.2`;
+	float $cB = `pow $color[2] 2.2`;
+	setAttr $attr $cR $cG $cB;
+}
+
+global proc icLCCConvertColors()
+{
+	int $linear = `checkBoxGrp -q -v1 icLCCLinearCheck`;
+	float $gamma = 2.2;
+	if ($linear == 1)
+		$gamma = 0.45454545454545454;
+			
+	string $sliders[] = `columnLayout -q -ca icLCCPickerColumn`;
+	stringArrayRemoveAtIndex(0, $sliders);
+	stringArrayRemoveAtIndex(0, $sliders);
+	
+	for ($s in $sliders)
+	{
+		float $color[] = `colorSliderGrp -q -rgb $s`;
+		float $cR = `pow $color[0] $gamma`;
+		float $cG = `pow $color[1] $gamma`;
+		float $cB = `pow $color[2] $gamma`;
+		colorSliderGrp -e -rgb $cR $cG $cB $s;
+	}
+	
+	optionVar -iv "linearColorChooserLinearCheck" $linear;
+}
+
+global proc icLCCRefreshUI( string $win )
+{
+	if (!`window -exists $win`) return;
+	
+	icLCCUI $win;
+}
+
+global proc icLCCPopulateWindow( string $win )
+{
+	string $sel[] = `ls -sl`;
+	if (size($sel) == 0) return;
+	
+	setParent icLCCPickerColumn;
+	
+	textFieldGrp -l "Selection" -tx $sel[0] -co2 0 5 -ct2 "right" "both";
+	separator -style "none" -h 5;
+	
+	int $linear = `checkBoxGrp -q -v1 icLCCLinearCheck`;
+
+	string $attr[] = `listAttr $sel[0]`;
+	string $colorList[];
+	for ($a in $attr)
+	{
+		if (!`gmatch $a "*.*"` && !`gmatch $a "out*"` && `attributeQuery -n $sel[0] -uac $a`)
+		{
+			$colorList[size($colorList)] = $a;
+		}
+	}
+	for ($a in $colorList)
+	{
+		float $values[] = `getAttr ($sel[0] + "." + $a)`;
+		if (`checkBoxGrp -q -v1 icLCCLinearCheck`)
+		{
+			$values[0] = `pow $values[0] 0.45454545454545454`;
+			$values[1] = `pow $values[1] 0.45454545454545454`;
+			$values[2] = `pow $values[2] 0.45454545454545454`;
+		}
+		
+		colorSliderGrp 
+			-l $a 
+			-rgb $values[0] $values[1] $values[2] 
+			-co3 0 5 0 
+			-ct3 "right" "both" "left" 
+			-cc ("icLCCApplyColor " + $sel[0] + "." + $a + " " + $a + "Slider") ($a + "Slider");
+	}
+}
+
+global proc icLCCUI( string $win )
+{
+	int $linear = 0;
+	if (`optionVar -ex "linearColorChooserLinearCheck"`)
+		$linear = `optionVar -q "linearColorChooserLinearCheck"`;
+
+	if (`window -exists $win`)
+		deleteUI $win;
+
+	window -t "Linear Color Chooser" -s 1 -w 414 -h 176 $win;
+	if (`windowPref -exists $win`)
+		windowPref -e -wh 414 176 $win;
+	
+	columnLayout -adj 1;
+		separator -style "none" -h 10;
+		checkBoxGrp -l "Selection has linear colors" -cw2 152 20 -ct2 "right" "left" -co2 0 5 
+			-v1 $linear -cc icLCCConvertColors icLCCLinearCheck;
+		separator -style "none" -h 15;
+			columnLayout -adj 1 -co "both" 10 -rs 5 icLCCPickerColumn;
+			setParent ..;
+		separator -style "none" -h 10;
+
+	icLCCPopulateWindow $win;
+
+	showWindow $win;
+}
+
+global proc icLinearColorChooser()
+{
+	string $win = "icLinearColorChooser";
+
+	if (`optionVar -ex "linearColorChooserScriptJob"`)
+	{
+		int $jobNum = `optionVar -q "linearColorChooserScriptJob"`;
+		if (`scriptJob -ex $jobNum`)
+			scriptJob -kill $jobNum;
+	}
+	
+	int $jobNum = `scriptJob -e "SelectionChanged" ("icLCCRefreshUI " + $win)`;
+	optionVar -iv "linearColorChooserScriptJob" $jobNum;
+
+	icLCCUI $win;
+}

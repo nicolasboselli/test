@@ -1,0 +1,55 @@
+// showKeyTicks.mel  v1.0  (18 Feb 2000)
+//
+// MEL script for Maya
+//
+//    Bryan Ewert
+//    http://www.ewertb.com
+
+global proc eg_performShowKeyTicks( int $mode )
+{
+  // Name of Time Slider
+  global string $gPlayBackSlider;
+
+  // Name of Channel Box (for Channel Box mode)
+  global string $gChannelBoxName;
+
+  switch ( $mode )
+  {
+    case 0:
+      // No Key Ticks
+      timeControl -e -showKeys none $gPlayBackSlider;
+      break;
+
+    case 1:
+      // Active Key Ticks
+      timeControl -e -showKeys active $gPlayBackSlider;
+      break;
+
+    case 2:
+      // Key Ticks from Channel Box
+      timeControl -e -showKeys $gChannelBoxName $gPlayBackSlider;
+      break;
+
+  }
+}
+
+global proc showKeyTicks()
+{
+  if ( `window -exists eg_showKeyTicks` )
+    deleteUI -window eg_showKeyTicks;
+
+  window -title "Show Key Ticks" eg_showKeyTicks;
+  columnLayout;
+
+    radioCollection;
+    radioButton -label "No Ticks"
+      -onc "eg_performShowKeyTicks(0)";
+    radioButton -label "Active Ticks"
+      -onc "eg_performShowKeyTicks(1)";
+    radioButton -label "Channel Box Ticks"
+      -onc "eg_performShowKeyTicks(2)";
+
+  showWindow;
+}
+
+showKeyTicks()

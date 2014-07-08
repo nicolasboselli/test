@@ -1,0 +1,15 @@
+global proc lookThrought () {
+    string $sel2 [] ;
+    $sel2 = `ls -sl` ;
+    print $sel2 ;
+    
+    int $selCount = size( $sel2) ;
+    
+    if  ($selCount == 1){   
+        lookThroughModelPanelClipped  $sel2[0] modelPanel4 0.001 1000;
+    }
+    else {
+        print "selectionnez une caméra";
+    }
+
+}

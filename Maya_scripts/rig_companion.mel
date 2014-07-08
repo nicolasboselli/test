@@ -1,0 +1,152 @@
+
+// function pour placer le controller
+
+    global string $listJoints[] ; 
+    global string $oneGroup2  ;
+    global string $oneCircle[] ;
+    
+    
+proc createCtrlOne() 
+{
+    global string $listJoints[];
+    global string $oneGroup2 ;  
+    global string $oneCircle[] ;
+         
+    $listJoints = `ls -sl`;
+    $oneGroup2 = `group -em -name "ctrl_zero#"` ;
+    $oneCircle = `circle -ch on -o on -nr 1 0 0 -r 2 -n "ctrl#"`;
+    
+    parent -r $oneCircle[0] $oneGroup2;
+    parent -r $oneGroup2 $listJoints[0] ;
+    
+    parent -w $oneGroup2 ;
+}
+
+proc createLocOne(float $radius)
+{
+    global string $listJoints[];
+    //global string $oneGroup2 ;  
+    string $oneLoc[] ;
+         
+    $listJoints = `ls -sl`;
+   
+    $oneLoc = `spaceLocator -a -n "loc#"`;
+    
+    setAttr ($oneLoc[0] + ".localScaleX") $radius;
+    setAttr ($oneLoc[0] + ".localScaleY") $radius;
+    setAttr ($oneLoc[0] + ".localScaleZ") $radius;
+    
+    //parent -r $oneCircle[0] $oneGroup2;
+    parent -r $oneLoc[0] $listJoints[0] ;
+    
+    parent -w $oneLoc[0] ;  
+}
+
+proc createZero() {
+    global string $listJoints[];
+    global string $oneGroup2 ;  
+    //global string $oneCircle[] ;
+         
+    $listJoints = `ls -sl`;
+    $oneGroup2 = `group -em -name "ctrl_zero#"` ;
+    //$oneCircle = `circle -ch on -o on -nr 1 0 0 -r 15 -n "ctrl#"`;
+    
+    //parent -r $oneCircle[0] $oneGroup2;
+    parent -r $oneGroup2 $listJoints[0] ;
+    
+    parent -w $oneGroup2 ;
+    
+    parent -a  $listJoints[0] $oneGroup2 ;
+}
+
+
+global proc creatDist ()
+{
+    
+    string $sel[] = `ls -sl` ;
+
+    if (size($sel) == 2)
+    {
+        /*
+        float $posX1 = `getAttr ($sel[0] + ".translateX")` ;
+        float $posY1 = `getAttr ($sel[0] + ".translateY")` ;
+        float $posZ1 = `getAttr ($sel[0] + ".translateZ")` ;
+        
+        float $posX2 = `getAttr ($sel[1] + ".translateX")` ;
+        float $posY2 = `getAttr ($sel[1] + ".translateY")` ;
+        float $posZ2 = `getAttr ($sel[1] + ".translateZ")` ;
+        */
+        
+        string $distance = `distanceDimension -sp 0 0 0 -ep 0 0 0`;
+        
+        string $locs[] = `listConnections -s true $distance` ;
+        
+        pointConstraint -w 1 $sel[0] $locs[0] ;
+        pointConstraint -w 1 $sel[1] $locs[1] ;
+    
+        //connectAttr -f  $sel[1].worldPosition[0] $distance.startPoint;
+        //rename locator37 "ploufeploufe"
+    }
+    else
+    {
+        print "faites une selection correcte";
+    }
+
+}
+
+proc plus90x() {
+    global string $listJoints[];
+    global string $oneGroup2 ;  
+    global string $oneCircle[] ;
+    
+    parent -a $oneGroup2 $listJoints[0] ;
+    rotate -a 90 0 0 $oneGroup2  ;
+    parent -w $oneGroup2 ;
+}
+
+
+proc plus90y() {
+    global string $listJoints[];
+    global string $oneGroup2 ;  
+    global string $oneCircle[] ;
+    
+    parent -a $oneGroup2 $listJoints[0] ;
+    rotate -a 0 90 0 $oneGroup2  ;
+    parent -w $oneGroup2 ;
+}
+
+proc plus90z() {
+    global string $listJoints[];
+    global string $oneGroup2 ;  
+    global string $oneCircle[] ;
+    
+    parent -a $oneGroup2 $listJoints[0] ;
+    rotate -a 0 0 90 $oneGroup2  ;
+    parent -w $oneGroup2 ;
+}
+
+
+// create a window
+	window -wh 200 200 -t "rig companion" ;
+
+		// define the layout of controls added 
+		// to the window.
+		columnLayout;
+
+			// create a button
+			button -label "create circle!" -command "createCtrlOne";
+			button -label "create locator 1!" -command "createLocOne(1)";
+			button -label "create locator 0.5 !" -command "createLocOne(0.5)";
+			button -label "create locator 0.2 !" -command "createLocOne(0.2)";
+			button -label "create zero !" -command "createZero";
+			button -label "create dimension !" -command "creatDist";
+			
+			//button -label "check!" -command "check ";
+			//button -label "Go! Go! control!" -command "placeCtrl";
+            //button -label "x + 90" -command "plus90x";
+            //button -label "y + 90" -command "plus90y";
+            //button -label "z + 90" -command "plus90z";
+	// show the window we last created
+	showWindow;
+
+

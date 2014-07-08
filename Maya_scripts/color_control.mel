@@ -1,0 +1,31 @@
+proc colorRed (int $colID) 
+{
+
+    string $sel[]= `ls -sl` ;
+    print $sel ;
+    string $selSh2[] = `listRelatives -s $sel`  ;
+    int $count = `size($selSh2)`;
+    
+    
+    for ( $i=0 ; $i < `size($selSh2)` ; ++$i)
+    {
+        print ("youhou " + $i )  ;
+        print ($selSh2[$i])  ;
+        setAttr ($selSh2[$i] + ".overrideEnabled") 1 ;
+        setAttr ($selSh2[$i] + ".overrideColor") $colID ;
+    }
+   
+}
+
+
+
+	window -wh 200 200 -t "color control" ;
+			columnLayout;
+
+			// create a button
+			button -label "RED" -command "colorRed(13)";
+			button -label "BLUE" -command "colorRed(6)";
+			button -label "YELLOW" -command "colorRed(17)";
+
+	// show the window we last created
+	showWindow;

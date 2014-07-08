@@ -1,0 +1,64 @@
+// JOINT COMPANION
+// fonction pour afficher les channel du joint orienbt
+global proc displayJointOrient() 
+{
+    string $Sel[] = `ls -sl` ;
+    int $count = `size($Sel)` ;
+    
+    for ($i = 0; $i < $count ; $i++)
+    {        
+        setAttr -k on ($Sel[$i] + ".jointOrientX") ;
+        setAttr -k on ($Sel[$i] + ".jointOrientY");
+        setAttr -k on ($Sel[$i] + ".jointOrientZ");  
+        
+    }
+}
+
+// fonction pour reset la rotation des joints
+global proc freezeJoint() 
+{
+    string $jointSel[] = `ls -sl` ;
+    int $count = `size $jointSel` ;
+    for($i = 0 ; $i < $count ; $i++ )
+    {
+        makeIdentity -apply true -t 0 -r 1 -s 0 -n 0 -pn 1 $jointSel[$i];
+    }
+}
+
+// fonction pour afficher ou cacher les axes locaux des joints
+global proc displayLocalAxis(int $State )
+{
+    string $jointSel[] = `ls -sl` ;
+    int $count = `size $jointSel` ;
+    for($i = 0 ; $i < $count ; $i++ )
+    {
+        setAttr  ($jointSel[ $i] + ".displayLocalAxis") $State ;
+    }
+}
+
+//UI
+global proc showPanel()
+{
+    string $jointPanel = `window -t "joint companion"`;
+    
+        columnLayout ;
+    
+            button -l "show joints orient" -c "displayJointOrient()" ;
+            button -l "freeze joints orient" -c "freezeJoint()" ;
+            button -l "show joints axis" -c "displayLocalAxis(1)" ;
+            button -l "hide joints axis" -c "displayLocalAxis(0)" ;
+            
+    showWindow $jointPanel ;
+}
+
+showPanel() ;
+
+//source "SmartRig/jointCompanion.mel"
+/*
+freezeJoint() 
+
+displayJointOrient() ;
+
+displayLocalAxis(1)
+displayLocalAxis(0)
+*/

@@ -1,0 +1,1543 @@
+/**************************************************\
+    Copyright (C) 2012 Justin Jenkins
+
+    JJJ Gamma Tools is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    JJJ Gamma Tools is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    
+\**************************************************/
+
+
+/**************************************************\
+	JJJ Gamma Tools v2.1.2 - VRAY Edition
+
+	Written by:   Justin Jenkins
+	Date Created: 07-12-2010
+	Date Edited:  05-26-2013
+	Email:        jenkinjj@gmail.com
+
+	Description:
+
+	This tool automates the insertion and removal of gamma correct
+	nodes in shader trees.  Gamma nodes are only inserted where they are
+	supposed to go, when they are supposed to go there.  This is different from
+	other scripts that naively gamma correct all RGB attrs on shaders and
+	potentially clog up your shader trees with gamma nodes that do nothing.  The
+	attrs that get gamma corrected may change over time based on the author's
+	knowledge growing (hopefully not shrinking)
+
+	Disclaimer:
+	Use at your own risk.  I am not responsible for any damage this script may cause to your projects.
+
+\**************************************************/
+
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// selects an array of nodes to gamma correct based on arguments
+// change this proc to change what shaders get selected for gamma correction
+//
+global proc string[] selectNodes (string $selection)
+{
+	// declare vars used in proc
+	string $myNodes[];
+	string $myNodesSummation[];
+	clear  $myNodesSummation;
+
+	// gamma correct 'selected' or 'ALL' shaders based on selection in UI
+	switch($selection)
+	{
+		case "selected":
+
+// -----> TO DO: This is getting a little sloppy.  Figure out a more intelligent way to handle this.
+
+			// check to make sure mental ray plug-is loaded
+			if (`pluginInfo -q -loaded Mayatomr.mll`)
+			{
+				// check to make sure fur plug-is loaded
+				if (`pluginInfo -q -loaded Fur.mll`)
+					$myNodes = `ls -sl -mat -lights -type "mia_physicalsky" -type "mib_color_mix" -type "mia_light_surface" -type "FurDescription" -type "fluidShape" -type "mia_portal_light"`;
+				else
+					$myNodes = `ls -sl -mat -lights -type "mia_physicalsky" -type "mib_color_mix" -type "mia_light_surface" -type "fluidShape" -type "mia_portal_light"`;
+			}
+			else
+			{
+				if (`pluginInfo -q -loaded Fur.mll`)
+					$myNodes = `ls -sl -mat -lights -type "FurDescription" -type "fluidShape"`;
+				else
+					$myNodes = `ls -sl -mat -lights -type "fluidShape"`;
+			}
+			break;
+
+		case "all":
+
+			// check to make sure mental ray plug-is loaded
+			if (`pluginInfo -q -loaded Mayatomr.mll`)
+			{
+				// check to make sure fur plug-is loaded
+				if (`pluginInfo -q -loaded Fur.mll`)
+					$myNodes = `ls -mat -lights -type "mia_physicalsky" -type "mib_color_mix" -type "mia_light_surface" -type "FurDescription" -type "fluidShape" -type "mia_portal_light"`;
+				else
+					$myNodes = `ls -mat -lights -type "mia_physicalsky" -type "mib_color_mix" -type "mia_light_surface" -type "fluidShape" -type "mia_portal_light"`;
+			}
+			else
+			{
+				if (`pluginInfo -q -loaded Fur.mll`)
+					$myNodes = `ls -mat -lights -type "FurDescription" -type "fluidShape"`;
+				else
+					$myNodes = `ls -mat -lights -type "fluidShape"`;
+			}
+			break;
+	}
+	int $b = 0;
+	// mip_ nodes are classified as materials; filter them out of selection
+	for ($myNode in $myNodes)
+	{
+		string $myNodeType = `nodeType $myNode`;
+		string $myMatch    = `match "mip_.+" $myNodeType`;
+
+		if (`strcmp $myNodeType $myMatch`)
+		{
+			$myNodesSummation[$b] = $myNode;
+			$b++;
+		}
+	}
+	return $myNodesSummation;
+}
+//---------------------------------------------------------------------------------------------------------------------
+// accepts node.attr pair as argument
+// returns true if node.attr pair should be gamma corrected
+// finds common characteristics between disparate nodes:
+// removes shaders, mia_light_surfaces, amb_occlusion etc.
+//
+global proc int testAttrCon (string $myCon)
+{
+	// store node and attr as seperate variables
+	string $myAttr = `plugAttr $myCon`;
+	string $myNode = `plugNode $myCon`;
+
+	// test if node is an mib_texture node
+	string $myNodeMatch = `match "mib_texture_.+" $myNode`;
+	int $myNodeCompare  = `strcmp $myNodeMatch $myNode`;
+
+	// test if node is a maya shader
+	string $nodeType          = `nodeType $myNode`;
+	string $classification1[] = `getClassification $nodeType`;
+	string $matchClass        = `match "[a-z]+" $classification1[0]`;
+
+	// if node is an mib_texture node, or the attr is `outColor`, or it's NOT a maya shader return true
+	if ( $myAttr == "outColor" || !$myNodeCompare )
+		if ( $matchClass != "shader" )
+
+			return true;
+
+	return false;
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// takes a node.attr pair as an argument
+// returns true if the attr is an RGB connection
+//
+global proc int testCon (string $myTestNode)
+{
+	string $myNode  = `plugNode $myTestNode`;
+	string $myAttr  = `plugAttr $myTestNode`;
+	int $numChild[];
+
+	// this is for multi attrs
+	// filter the long string of stuff to test only what you need
+	// otherwise the attr is not recognized
+	string $myMatchAttr = `match "[a-z,A-Z,0-9_]+" $myAttr`;
+
+	// make sure the attr exists for the node you are checking to avoid errors
+	if (`attributeQuery -ex -n $myNode $myMatchAttr`)
+	{
+		$numChild = `attributeQuery -n $myNode -nc $myMatchAttr`;
+
+		if ($numChild[0] == 3)
+			return true;
+	}
+
+	return false;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// return true if color of swatch is NOT pure black or white
+//
+global proc int testColorSwatch (string $myNode, string $myAttr)
+{
+	vector $origColor = `getAttr ($myNode + $myAttr)`;
+
+	if ( $origColor  != <<0,0,0>> && $origColor != <<1,1,1>>)
+		return true;
+
+	return false;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// return a list of Vray node.attrs that need to be gamma corrected
+//
+global proc string[] getVrayGammaAttrs (string $myGammaNodes[])
+{
+	// the array that will contain the list of node.attrs to gamma correct
+	string $myGammaNodeConcat[];
+	int $a = 0;
+	clear $myGammaNodeConcat;
+
+	if (!`size $myGammaNodes`)
+		warning "Nothing selected.";
+	else
+	{
+		for ($myGammaNode in $myGammaNodes)
+		{
+			string $myAttrsToGammaCorrect[];
+			string $myNodeType = `nodeType $myGammaNode`;
+
+			// -------------------- Vray Material -----------------
+
+			if ($myNodeType == "VRayMtl")
+
+				$myAttrsToGammaCorrect = {".color", ".illumColor", ".reflectionColor", ".reflectionExitColor", ".refractionColor", ".fogColor", ".translucencyColor", ".refractionExitColor"};
+
+			// -------------------- Vray Car Paint Material -----------------
+
+			else if ($myNodeType == "VRayCarPaintMtl")
+
+				$myAttrsToGammaCorrect = {".color", ".flake_color", ".coat_color"};
+
+			// -------------------- Vray Fast SSS2 -----------------
+
+			else if ($myNodeType == "VRayFastSSS2")
+
+				$myAttrsToGammaCorrect = {".overallTex", ".diffuseTex", ".subsurfaceColor", ".scatterRadiusColor", ".reflection"};
+
+			// -------------------- Vray Light Material -----------------
+
+			else if ($myNodeType == "VRayLightMtl")
+
+				$myAttrsToGammaCorrect = {".color"};
+
+
+			// -------------------- Non-Supported Shaders -----------------
+			else
+				$myAttrsToGammaCorrect = {};
+
+			// store all of the different node.attrs from each shader
+			// if there is at least ONE valid node.attr
+			if (`size($myAttrsToGammaCorrect)` >= 1)
+			{
+				for($i in $myAttrsToGammaCorrect)
+				{
+					$myGammaNodeConcat[$a++] = ($myGammaNode+$i);
+				}
+			}
+		}
+	}
+	return $myGammaNodeConcat;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// return a list of node.attrs that need to be gamma corrected
+//
+global proc string[] getGammaAttrs (string $myGammaNodes[])
+{
+	// the array that will contain the list of node.attrs to gamma correct
+	string $myGammaNodeConcat[];
+	int $a = 0;
+	clear $myGammaNodeConcat;
+
+	if (!`size $myGammaNodes`)
+		warning "Nothing selected.";
+	else
+	{
+		for ($myGammaNode in $myGammaNodes)
+		{
+			// group multiple shaders into one variable based on type using regEX
+			string $myAttrsToGammaCorrect[];
+			string $myNodeType     = `nodeType $myGammaNode`;
+			string $myClass[]      = `getClassification $myNodeType`;
+			// putting a bandaid on a minor cut - maya changed the way it does classifications for lights in 2012
+			string $lightClass     = `match "light" $myClass[0]`;
+			string $myPaintVars    = `match "mi_.+" $myNodeType`;
+			string $myCarPaintVars = `match "mi_car_paint_.+" $myNodeType`;
+			string $myMisssVars    = `match "misss_fast_s.+" $myNodeType`;
+			string $myMiaVars      = `match "mia_mat.+" $myNodeType`;
+			string $myUserDataVars = `match "mib_data_.+" $myNodeType`;
+			string $myMilaVars     = `match "mila_.+" $myNodeType`;
+
+			// -------------------- Regular Maya Shaders -----------------
+			if ($myNodeType == "lambert")
+
+				$myAttrsToGammaCorrect = {".color", ".ambientColor", ".incandescence"};
+
+			else if ($myNodeType == "anisotropic" || $myNodeType == "blinn" || $myNodeType == "phong")
+
+				$myAttrsToGammaCorrect = {".color", ".ambientColor", ".incandescence", ".specularColor", ".reflectedColor"};
+
+			else if ($myNodeType == "phongE")
+
+				$myAttrsToGammaCorrect = {".color", ".ambientColor", ".incandescence", ".specularColor", ".reflectedColor", ".whiteness"};
+
+			// -------------------- Mia Material Shaders -----------------
+			else if ($myNodeType == $myMiaVars)
+			{
+				// indexes the array to the proper number based on whether options are checked on or off
+				// avoids blanks in the returned array
+				int $counter = 3;
+
+				// ----- diffuse color
+				$myAttrsToGammaCorrect = {".diffuse", ".refl_color", ".refr_color", ".additional_color"};
+
+				// if additional color is not black or white OR there is a connection increase counter
+				if (testColorSwatch($myGammaNode, ".additional_color") || `connectionInfo -isDestination ($myGammaNode + ".additional_color")`)
+					$counter++;
+
+				// ----- transluceny color
+				if (`getAttr ($myGammaNode+".refr_translucency")`)
+				{
+					$myAttrsToGammaCorrect[$counter] = ".refr_trans_color";
+
+					// if transluceny swatch is not black or white OR there is a connection increase counter
+					if (testColorSwatch($myGammaNode, ".refr_trans_color") || `connectionInfo -isDestination ($myGammaNode + ".refr_trans_color")`)
+						$counter++;
+				}
+				// ----- reflection color at max distance
+				if (`getAttr ($myGammaNode+".refl_falloff_on")`)
+					if (`getAttr ($myGammaNode+".refl_falloff_color_on")`)
+					{
+						$myAttrsToGammaCorrect[$counter] = ".refl_falloff_color";
+
+						// do not increase counter unless .refr_transluceny is true and the swatch is not black or white OR there is a connection
+						if (`getAttr ($myGammaNode+".refr_translucency")` && testColorSwatch($myGammaNode, ".refl_falloff_color") ||
+							`connectionInfo -isDestination ($myGammaNode + ".refl_falloff_color")`)
+							$counter++;
+					}
+
+				// ----- ambient occlusion
+				if (`getAttr ($myGammaNode+".ao_on")`)
+				{
+					$myAttrsToGammaCorrect[$counter] = ".ao_dark";
+					$counter++;
+
+					$myAttrsToGammaCorrect[$counter] = ".ao_ambient";
+					$counter++;
+				}
+
+				// ----- refraction color at max distance
+				if (`getAttr ($myGammaNode+".refr_falloff_on")`)
+					if (`getAttr ($myGammaNode+".refr_falloff_color_on")`)
+
+						$myAttrsToGammaCorrect[$counter] = ".refr_falloff_color";
+			}
+
+			// -------------------- Car Paint & Metallic Paint Shaders -----------------
+			else if ($myNodeType == $myPaintVars)
+			{
+				$myAttrsToGammaCorrect = {".ambient", ".base_color", ".edge_color", ".lit_color"};
+				if ($myNodeType == $myCarPaintVars)
+					{
+						$myAttrsToGammaCorrect[4] = ".dirt_color";
+						$myAttrsToGammaCorrect[5] = ".flake_color";
+					}
+			}
+
+			// -------------------- Misss Fast Skin Shaders -----------------
+			else if ($myNodeType == $myMisssVars)
+			{
+				$myAttrsToGammaCorrect = {".diffuse_color", ".front_sss_color", ".back_sss_color"};
+				setAttr ($myGammaNode + ".screen_composit") 0;
+
+				if ($myNodeType == "misss_fast_simple_maya" || $myNodeType == "misss_fast_skin_maya" )
+				{
+					$myAttrsToGammaCorrect[3] = ".overall_color";
+					$myAttrsToGammaCorrect[4] = ".ambient";
+					$myAttrsToGammaCorrect[5] = ".specular";
+
+					if ($myNodeType == "misss_fast_skin_maya")
+					{
+						$myAttrsToGammaCorrect[5] = ".mid_sss_color";
+						$myAttrsToGammaCorrect[6] = ".primary_spec_color";
+						$myAttrsToGammaCorrect[7] = ".secondary_spec_color";
+					}
+				}
+			}
+
+			// -------------------- Mia Physical Sky Shaders -----------------
+			else if ($myNodeType == "mia_physicalsky")
+				$myAttrsToGammaCorrect = {".ground_color", ".night_color"};
+
+			// -------------------- Light Shaders -----------------
+			else if ($lightClass == "light")
+			{			    
+    			if ($myNodeType == "mia_portal_light")    			
+    				$myAttrsToGammaCorrect = {".tint_color"};
+    			
+			    else
+				    $myAttrsToGammaCorrect = {".color", ".shadowColor"};
+
+				// -------------------- Volume Light -----------------
+				if ($myNodeType == "volumeLight")
+				{
+					// counter will index out array based on how many colors are in 'color range'
+					int $lightCounter = 2;
+
+					// list all multi attrs on the volume light
+					string $myVolAttrs1[] = `listAttr -m $myGammaNode`;
+
+					// filter out all multi attrs except the ones we want to work with
+					// add the ones we want to the returned array "$myAttrsToGammaCorrect"
+					for ($myVolAttr in $myVolAttrs1)
+					{
+						if ("" == `match "Color$" $myVolAttr`)
+							continue;
+
+						$myAttrsToGammaCorrect[$lightCounter] = ("." + $myVolAttr);
+
+						$lightCounter++;
+					}
+				}
+			}
+			
+			// -------------------- Fluid Shaders -----------------
+			else if ($myNodeType == "fluidShape")
+			{
+				// counter will index out array based on how many colors are in 'color range'
+				int $lightCounter = 0;
+
+				// list all multi attrs on the volume light
+				string $myVolAttrs1[] = `listAttr -m $myGammaNode`;
+
+				// filter out all multi attrs except the ones we want to work with
+				// add the ones we want to the returned array "$myAttrsToGammaCorrect"
+				for ($myVolAttr in $myVolAttrs1)
+				{
+				if ("" == `match "Color$" $myVolAttr`)
+					continue;
+
+					$myAttrsToGammaCorrect[$lightCounter] = ("." + $myVolAttr);
+
+					$lightCounter++;
+				}
+			}
+
+			// -------------------- mia_light_surface -----------------
+
+			else if ($myNodeType == "mia_light_surface")
+			{
+				$myAttrsToGammaCorrect = {".color"};
+			}
+
+			// -------------------- mib_color_mix -----------------
+			else if ($myNodeType == "mib_color_mix")
+			{
+				$myAttrsToGammaCorrect = {".color_0", ".color_1", ".color_2", ".color_3", ".color_4", ".color_5",
+										  ".color_6", ".color_7", ".color_base"};
+			}
+
+			// -------------------- Fur Shaders -----------------
+			else if ($myNodeType == "FurDescription")
+				$myAttrsToGammaCorrect = {".BaseColor", ".TipColor", ".BaseAmbientColor", ".TipAmbientColor", ".SpecularColor"};
+
+			// -------------------- User Data Shaders -----------------
+			else if ($myNodeType == $myUserDataVars)
+				$myAttrsToGammaCorrect = {".value"};
+				
+			// -------------------- MILA Shaders -----------------
+			else if ($myNodeType == $myMilaVars)
+				$myAttrsToGammaCorrect = {".tint"};
+
+			// -------------------- Non-Supported Shaders -----------------
+			else
+				$myAttrsToGammaCorrect = {};
+
+			// store all of the different node.attrs from each shader
+			// if there is at least ONE valid node.attr
+			if (`size($myAttrsToGammaCorrect)` >= 1)
+			{
+				for($i in $myAttrsToGammaCorrect)
+				{
+					$myGammaNodeConcat[$a++] = ($myGammaNode+$i);
+				}
+			}
+		}
+	}
+
+	// add in the Vray node.attrs that need to be gamma corrected if the plug-in is loaded
+	if (`pluginInfo -q -loaded vrayformaya.mll`)
+	{
+		string $vrayAttrs[] = getVrayGammaAttrs($myGammaNodes);
+		int $counter        = size($myGammaNodeConcat);
+
+		for ($vrayAttr in $vrayAttrs)
+		{
+			$myGammaNodeConcat[$counter] = $vrayAttr;
+			$counter++;
+        }
+    }
+
+	return $myGammaNodeConcat;
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// return true if the desired node exists
+//
+global proc int NodeExists (string $myConnectedNodes[], string $myRegEx)
+{
+for ($each in $myConnectedNodes)
+	{
+		string $myNodeType  = `nodeType $each`;
+		string $myMatchNode = `match $myRegEx $myNodeType`;
+		int    $myCompare   = `strcmp $myNodeType $myMatchNode`;
+		if ($myCompare == 0)
+			return true;
+	}
+return false;
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// create gamma nodes and set gamma value
+//
+// Arg 1: type of gamma node to create.
+// Arg 2: node.attr pair - used to name the gamma nodes
+//
+global proc createGammaNodes(string $gammaNodetoCreate, string $nameAttr)
+{
+	string $nodeName[];
+	tokenize $nameAttr "." $nodeName;
+
+	switch($gammaNodetoCreate)
+	{
+		case "gammaCorrect":
+			string $myGammaCorrect   = `shadingNode -asUtility -n ($nodeName[0] + "_" + $nodeName[1]) gammaCorrect`;
+
+			setAttr ($myGammaCorrect + ".gammaX") 0.454;
+			setAttr ($myGammaCorrect + ".gammaY") 0.454;
+			setAttr ($myGammaCorrect + ".gammaZ") 0.454;
+			break;
+
+		case "mipGammaGain":
+			string $myMipGammaGain = `mrCreateCustomNode -asUtility "" mip_gamma_gain`;
+
+			setAttr ($myMipGammaGain + ".gamma") 2.2;
+			setAttr ($myMipGammaGain + ".reverse") 1;
+			rename   $myMipGammaGain ($nodeName[0] + "_" + $nodeName[1]);
+			break;
+	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// apply gamma correction to color swatches ONLY
+//
+global proc gammaCorrectColorSwatches (string $myShadersToGammaCorrect[])
+{
+	// use proc `getGammaAttrs` to retrieve what node.attr connection to gamma correct for each shader
+	string $myNewAttrsToGammaCorrect[]   = `getGammaAttrs($myShadersToGammaCorrect)`;
+
+	// ---- make button selections in UI available to proc
+	global string $myRadioButtonGammaSelect;
+	int $myRadioButtonGammaSelectValue = `radioButtonGrp -q -select $myRadioButtonGammaSelect`;
+
+	// for each node.attr pair that needs gamma correction...
+	for($myNewAttrToGammaCorrect in $myNewAttrsToGammaCorrect)
+	{
+		// is there a connection? if so stop and print a message, otherwise...
+		string $nodeAttr[];
+		tokenize $myNewAttrToGammaCorrect "." $nodeAttr;
+		if ( !`attributeExists $nodeAttr[1] $nodeAttr[0]` )
+		    return;	
+		if ( `connectionInfo -isDestination($myNewAttrToGammaCorrect)` )
+		{
+			print ("A node is already connected to: "+$myNewAttrToGammaCorrect+".  The connection will remain untouched.\n");			
+		}
+		else
+		{		    
+			// if the current attr is a color attr...
+			if ( testCon($myNewAttrToGammaCorrect) )
+			{
+				// Get the original color of the shader's input.
+				vector $origColor = `getAttr ($myNewAttrToGammaCorrect)`;
+				string $myGamma;
+				string $myGammaNodeInputCon;
+
+				// if the color in the swatch isn't pure black or white...
+				if ($origColor != <<0,0,0>> && $origColor != <<1,1,1>>)
+				{
+					// create a gamma node based on selections in UI
+					if ($myRadioButtonGammaSelectValue==1)
+					{
+						$myGamma              = createGammaNodes("gammaCorrect", $myNewAttrToGammaCorrect);
+						$myGammaNodeInputCon  = ".value";
+					}
+					if ($myRadioButtonGammaSelectValue==2)
+					{
+						$myGamma              = createGammaNodes("mipGammaGain", $myNewAttrToGammaCorrect);
+						$myGammaNodeInputCon  = ".input";
+					}
+
+					// make the neccesary connections
+					setAttr ($myGamma + $myGammaNodeInputCon) ($origColor.x)($origColor.y)($origColor.z);
+					connectAttr -f ($myGamma + ".outValue") ($myNewAttrToGammaCorrect);
+				}
+			}
+		}
+	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// apply gamma correction to file textures & non-color swatches ONLY
+//
+global proc gammaCorrectFileTextures (string $myShadersToGammaCorrect[])
+{
+	// get node.attr to gamma correct
+	string $myAttrsToGammaCorrect[] = `getGammaAttrs($myShadersToGammaCorrect)`;
+
+	// ---- make selections in UI available to proc
+	global string $myRadioButtonGammaSelect;
+	int $myRadioButtonGammaSelectValue = `radioButtonGrp -q -select $myRadioButtonGammaSelect`;
+	string $connections[];
+
+	// for each shader.attr...
+	for($myAttrToGammaCorrect in $myAttrsToGammaCorrect)
+	{
+		// is there a connection? if so...		
+		string $nodeAttr[];
+		tokenize $myAttrToGammaCorrect "." $nodeAttr;
+		if ( !`attributeExists $nodeAttr[1] $nodeAttr[0]` )
+		    return;	
+		if ( `connectionInfo -isDestination($myAttrToGammaCorrect)` )
+		{		  
+			// list it's connections...
+   			$connections   = `listConnections ($myAttrToGammaCorrect)`;
+
+			// is the connection a gamma node? if NOT...
+			if (`nodeType $connections[0]` != "gammaCorrect" &&  `nodeType $connections[0]` != "mipGammaGain")
+			{
+				// test to see if the node SHOULD be gamma corrected using proc 'testAttrCon`
+				string $myNodeAttr[] = `listConnections -s 1 -p 1 ($myAttrToGammaCorrect)`;
+
+				if ( testAttrCon($myNodeAttr[0]) )
+				{
+					string $myFileToGamma = $connections[0];
+					string $myGamma;
+					string $myGammaNodeInputCon;
+
+					// create gamma node based on choices in UI
+
+					// Gamma Correct ----
+					if ($myRadioButtonGammaSelectValue==1)
+					{
+						$myGamma              = createGammaNodes("gammaCorrect", $myAttrToGammaCorrect);
+						$myGammaNodeInputCon  = ".value";
+					}
+					// Mip Gamma Gain ----
+					if ($myRadioButtonGammaSelectValue==2)
+					{
+						$myGamma              = createGammaNodes("mipGammaGain", $myAttrToGammaCorrect);
+						$myGammaNodeInputCon  = ".input";
+
+						// ---- Take care of extra 'A' Connection for mental ray shaders ---- \\
+
+						// for current shader get attr and shader name alone for testing
+						string $shader = `plugNode $myAttrToGammaCorrect`;
+						string $attr   = `plugAttr $myAttrToGammaCorrect`;
+
+						// if the mental ray "shader.attr + 'A'" exists...
+						if (`attributeQuery -ex -n $shader ($attr + "A")`)
+						{
+							// if a node is connected to shader.attr + A...
+							if (`connectionInfo -isDestination ($myAttrToGammaCorrect + "A")`)
+							{
+								// get the node.attr connected to shader.attr + A
+								string $myConA[] = `listConnections -p 1 ($myAttrToGammaCorrect + "A")`;
+
+								// disconnect the node.attr connected to shader.attr + A
+								disconnectAttr $myConA[0] ($myAttrToGammaCorrect + "A");
+
+								// connect node.attr to mip_gamma_gain
+								connectAttr $myConA[0] ($myGamma + $myGammaNodeInputCon + "A");
+							}
+						}
+					}
+
+					// list node.attr of connected node, get attr by itself
+					string $conFromNode[] = `listConnections -p 1 $myAttrToGammaCorrect`;
+					string $conNodeAttr   = `plugAttr $conFromNode[0]`;
+
+					// disconnect the node from the shader
+					disconnectAttr ($myFileToGamma + "." + $conNodeAttr) $myAttrToGammaCorrect;
+
+					// connect node to gamma node and connect gamma node to shader
+					connectAttr -f ($myFileToGamma + "." + $conNodeAttr) ($myGamma + $myGammaNodeInputCon);
+					connectAttr -f ($myGamma + ".outValue") ($myAttrToGammaCorrect);
+				}
+			}
+			else
+				print ("The node connected to:"+$myAttrToGammaCorrect+" is already a gamma node.\n");
+		}
+	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// use the two procs: gammaCorrectFileTextures, gammaCorrectColorSwatches to apply gamma correction based on choices in UI
+//
+global proc gammaCorrectShaders (int $typeToGamma)
+{
+	// ---- make selections in UI available to proc
+	global string $myRadioButtonModeSelect;
+	global string $myRadioButtonModeSelect02;
+	int $myRadioButtonModeSelectValue   = `radioButtonGrp -q -select $myRadioButtonModeSelect`;
+	int $myRadioButtonModeSelectValue02 = `radioButtonGrp -q -select $myRadioButtonModeSelect02`;
+
+	// shaders that get passed to procs for gamma correction based on choices in UI
+	string $myVarsToGammaCorrect[];
+
+	switch ($typeToGamma)
+	{
+		// Update Selected ------
+		case 1:
+
+	 		$myVarsToGammaCorrect = selectNodes("selected");
+			// file textures
+			if ($myRadioButtonModeSelectValue==1)
+			{
+				gammaCorrectFileTextures $myVarsToGammaCorrect;
+			}
+			// color swatches
+			if ($myRadioButtonModeSelectValue==2)
+			{
+				gammaCorrectColorSwatches $myVarsToGammaCorrect;
+			}
+			// both
+			if ($myRadioButtonModeSelectValue02==1)
+			{
+				gammaCorrectColorSwatches $myVarsToGammaCorrect;
+				gammaCorrectFileTextures  $myVarsToGammaCorrect;
+			}
+			// Direct Select Mode
+			if ($myRadioButtonModeSelectValue02==2)
+			{
+				connectGammaToSelectedNode;
+			}
+	 		break;
+		// Update All Shaders ------
+		case 2:
+
+			$myVarsToGammaCorrect = selectNodes("all");
+			// file textures
+			if ($myRadioButtonModeSelectValue==1)
+			{
+				gammaCorrectFileTextures $myVarsToGammaCorrect;
+			}
+			// color swatches
+			if ($myRadioButtonModeSelectValue==2)
+			{
+				gammaCorrectColorSwatches $myVarsToGammaCorrect;
+			}
+			// both
+			if ($myRadioButtonModeSelectValue02==1)
+			{
+				gammaCorrectColorSwatches $myVarsToGammaCorrect;
+				gammaCorrectFileTextures  $myVarsToGammaCorrect;
+			}
+			// Direct Select Mode
+			if ($myRadioButtonModeSelectValue02==2)
+			{
+				warning "Direct Select Mode: Button does not function in this mode.";
+			}
+			break;
+	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// return the connection between each shader and all gamma nodes connected to it if those gamma nodes exist
+//
+global proc string[] getConnectedGammaNodes (string $mySelectedShaderstoGamma[])
+{
+	// declare vars
+	string $myConnectedNodes[];
+	string $myConnectedNodeType;
+	string $connectionsOfShaders[];
+	string $gammaNode;
+	string $myGammaCon;
+	int $a = 0;
+	string $connectionsOfShadersSummation[];
+	clear  $connectionsOfShadersSummation;
+	string $connectionsOfShadersFinal[];
+
+	// for each selected shader...
+	for($mySelectedShadertoGamma in $mySelectedShaderstoGamma)
+	{
+		// set the counter $b to 0 for each shader so no extra attrs are created in $connectionsOfShadersFinal
+		// clear $connectionsOfShadersFinal for each shader so no extra attrs are created
+		int $b = 0;
+		clear  $connectionsOfShadersFinal;
+
+		// store the connection between all gamma nodes and current shader in the array $connectionsOfShaders
+		// ignore any node except gamma nodes that have an RGB connection
+		$myConnectedNodes = `listConnections -d 0 -p 1 $mySelectedShadertoGamma`;
+
+		// for each node connected to the shader...
+		for ($myConnectedNode in $myConnectedNodes)
+		{
+			// is it an RGB connection? if so...
+			// (prevents doubling up the list for mia_materials
+			// with the 'A' attribute attached)
+			string $myNode   = `plugNode $myConnectedNode`;
+
+			if ( testCon($myConnectedNode) )
+			{
+				$myConnectedNodeType = `nodeType $myNode`;
+				// is it a gamma node? if so...
+				if ($myConnectedNodeType == "mip_gamma_gain" || $myConnectedNodeType == "gammaCorrect")
+				{
+					if ($myConnectedNodeType == "gammaCorrect")
+					{
+						$myGammaCon = ".value";
+					}else{
+						$myGammaCon = ".input";
+					}
+					// is there a node connected to the gamma node? if so...
+					if (`connectionInfo -id ($myNode + $myGammaCon)`)
+					{
+						// ----> connections of gamma node
+						$connectionsOfShaders = `listConnections -p 1 -d 1 -s 0 -c 1 $myNode`;
+
+						// check the first connection of each pair to test if it's an RGB connection
+						for ( $i=0; $i < `size($connectionsOfShaders)`; $i+=2 )
+						{
+							// if the connection is an _RGB_ connection keep it...gets rid of .message and stuff
+							if ( testCon($connectionsOfShaders[$i]) )
+							{
+								$connectionsOfShadersFinal[$b] = $connectionsOfShaders[($i)+1];
+								$b++;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		// check to see if a gamma node is connected to any plug on the current shader using NodeExists.
+		// if even one gamma node is connected, iterate through $connectionsOfShaders listing the connection between the current shader and the gamma node.
+		// store these connections in a new array and return that array.
+		// do this only once...whether there are 50 gamma nodes connected or only 1.
+		if ( NodeExists($myConnectedNodes, ".*gamma.+") )
+		{
+			for ($each in $connectionsOfShadersFinal)
+			{
+				// ** check one more time that the shader + attr connection is an RGB value **
+				// this catches the bug that plagued this script for some time that would
+				// switch peoples texture connections around
+				if (testCon($each) )
+				{
+					$connectionsOfShadersSummation[$a]=$each;
+					$a++;
+				}
+			}
+		}
+	}
+	return $connectionsOfShadersSummation;
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// return a list of connections of nodes connected to gamma nodes
+//
+global proc string[] getNodesConnectedToGammaNodes (string $mySelectedShaderstoGamma[])
+{
+	// declare vars used in script
+	string $myConnectedNodes[];
+	string $myConnectedNodeType;
+	string $gammaNode;
+	string $connectionsOfNodes[];
+	string $connectionofNodeSummation[];
+	string $connectionofNodeSummationFinal[];
+	string $myGammaCon;
+	// set counter to 0 for returned list at start of script
+	// clear returned list to avoid left overs
+	int $b = 0;
+	clear $connectionofNodeSummationFinal;
+
+	// for each shader...
+	for($mySelectedShadertoGamma in $mySelectedShaderstoGamma)
+	{
+		// set counter to 0 for each shader
+		// clear intermediate list to avoid left overs
+		int $a = 0;
+		clear $connectionofNodeSummation;
+
+		// for each node connected to the shader...
+		$myConnectedNodes = `listConnections -d 0 -p 1 $mySelectedShadertoGamma`;
+
+		for ($myConnectedNode in $myConnectedNodes)
+		{
+			string $myNode = `plugNode $myConnectedNode`;
+			// is it an RGB connection? if so...
+			if (testCon($myConnectedNode))
+			{
+				$myNodeType = `nodeType $myNode`;
+				// is the connected node a gamma node?  if so...
+				if ($myNodeType == "mip_gamma_gain" || $myNodeType == "gammaCorrect")
+				{
+					if ($myNodeType == "gammaCorrect")
+					{
+						$myGammaCon = ".value";
+					}else{
+						$myGammaCon = ".input";
+					}
+					// is there a node connected to the gamma node?  if so...
+					if (`connectionInfo -id ($myNode + $myGammaCon)`)
+					{
+						// list connections of gamma node
+						$connectionsOfNodes = `listConnections -plugs 1 -connections 1 -d 0 $myNode`;
+
+						for ( $c = 1; $c < `size($connectionsOfNodes)`; $c+=2)
+						{
+							// is the connection an RGB connection? if so...
+							if ( testCon($connectionsOfNodes[$c]) )
+							{
+								// -----> node.attr: connection from node connected to gamma node to gamma node
+								$connectionofNodeSummation[$a] = $connectionsOfNodes[$c];
+								$a++;
+							}
+						}
+					}
+				}
+			}
+		}
+		// store all of the node.attr connections from node to gamma node for all selected shaders in a list
+		for ($i in $connectionofNodeSummation)
+		{
+			$connectionofNodeSummationFinal[$b] = $i;
+			$b++;
+		}
+	}
+	return $connectionofNodeSummationFinal;
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// Color Swatches: delete gamma nodes and restore color from gamma node to color swatch on shader
+//
+global proc deleteGammaNodesForColorSwatches(string $mySelectedShaderstoGamma1[])
+{
+	// declare variables to be used in script
+	string $myConnectedNodes[];
+	string $myConnectedNodeType;
+	string $gammaNode;
+	string $inputCon;
+	vector $colorOfGamma;
+	string $myCons[];
+	string $myAttr;
+	int $query[];
+	string $summation;
+
+	// for each shader in the selection...
+	for ($mySelectedShadertoGamma in $mySelectedShaderstoGamma1)
+		{
+			// does the shader still exist? if so...
+			if (`objExists $mySelectedShadertoGamma`)
+			{
+				// list nodes connected to the current shader
+			  	$myConnectedNodes = `listConnections -d 0 $mySelectedShadertoGamma`;
+
+				// is there a connection? if so...
+				if (! `size $myConnectedNodes`)
+				{
+					//print ($mySelectedShadertoGamma + " has no connections.\n");
+				}
+				else
+				{
+					// go through each node connected to the shader one at a time
+					for ($myConnectedNode in $myConnectedNodes)
+					{
+						$myConnectedNodeType = `nodeType $myConnectedNode`;
+						$gammaNode = `match ".*gamma.+" $myConnectedNodeType`;
+						// is the node connected to the shader a gamma node? if so...
+						if ($myConnectedNodeType==$gammaNode)
+						{
+							// set input variable based on which type of gamma node
+							if ($myConnectedNodeType == "gammaCorrect")
+							{
+								$inputCon = ".value";
+							}else{
+								$inputCon = ".input";
+							}
+							// test to see if anything is connected to the gamma node
+							// if not, get the color value in the gamma node and make
+							// that value the color in the shader's color swatch
+							if (! `connectionInfo -id ($myConnectedNode + $inputCon)`)
+							{
+								// get the color stored in the gamma node
+								$colorOfGamma = `getAttr ($myConnectedNode + $inputCon)`;
+
+								// list connections from gamma node to shader _only_
+								$myCons = `listConnections -destination 1 -source 1 -connections 1 -p 1 $myConnectedNode`;
+
+								// to only get the connection from the gamma node to the shader filter the listConnections
+								for ($i=0; $i < `size($myCons)`; $i+=2)
+								{
+									// get the attr by itself and test if it has __RGB connections___, if so...
+									// store the shader + attr...this is the color swatch to set
+									$myAttr = `plugAttr $myCons[$i]`;
+									$query  = `attributeQuery -node $myCons[$i] -numberOfChildren $myAttr`;
+
+									if ($query[0] == 3)
+									{
+										// shader.attr ---> the color swatch
+										$summation = $myCons[($i)+1];
+									}
+								}
+								// delete the gamma node and apply the color in the gamma node to the correct color swatch
+								delete $myConnectedNode;
+								setAttr $summation ($colorOfGamma.x)($colorOfGamma.y)($colorOfGamma.z);
+							}
+						}
+					}
+				}
+			}
+		}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// File Textures: deletes gamma node between file texture and shader
+//
+proc deleteFileTextureGammaNodes(string $mySelectedShaderstoGamma[])
+{
+	// declare variables used in proc
+	string $myConnectedNodes[];
+	string $myConnectedNodeType;
+	string $gammaNode;
+	int $counter = 0;
+
+	// for each shader...
+	for ($mySelectedShadertoGamma in $mySelectedShaderstoGamma)
+	{
+		// if it still exists...
+		if (`objExists $mySelectedShadertoGamma`)
+		{
+			// list it's connections
+		  	$myConnectedNodes = `listConnections -d 0 -p 1 $mySelectedShadertoGamma`;
+
+			for ($myConnectedNode in $myConnectedNodes)
+			{
+				// if that connection still exists...
+				if (`objExists $myConnectedNode`)
+				{
+					// use proc 'testCon' to test if it's an RGB connection? if so...
+					if (testCon($myConnectedNode))
+					{
+						// is the node a gamma node? if so delete it
+						string $myNode       = `plugNode $myConnectedNode`;
+						$myConnectedNodeType = `nodeType $myNode`;
+						$gammaNode           = `match ".*gamma.+" $myConnectedNodeType`;
+
+						if ($myConnectedNodeType==$gammaNode)
+							delete $myNode;
+					}
+				}
+			}
+		}
+	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// delete gamma nodes and restore connections between file textures and shader
+// restore color values back to color swatches
+//
+proc deleteGammaNodes (string $mySelectedShaderstoGamma[])
+{
+	// connections from from shader to gamma nodes
+	string $myConnectedGammaNodeAttrs[]         = `getConnectedGammaNodes($mySelectedShaderstoGamma)`;
+	// connections from gamma node to file texture
+	string $myNodesAttrsConnectedToGammaNodes[] = `getNodesConnectedToGammaNodes($mySelectedShaderstoGamma)`;
+
+	string $matchConnectedNode;
+	string $matchConnectedNodeType;
+
+	// ----- Handle mental ray 'A' value for mip_gamma_gain----- \\
+
+	for ( $i = 0; $i < `size $myNodesAttrsConnectedToGammaNodes`; $i++ )
+	{
+		// type of node connected to gamma node
+		$matchConnectedNode     = `match "[a-zA-Z0-9_:]+" $myNodesAttrsConnectedToGammaNodes[$i]`;
+		$matchConnectedNodeType = `nodeType $matchConnectedNode`;
+
+		// if the node connected to gamma node is NOT a gamma node...
+		if ($matchConnectedNodeType != "gammaCorrect" && $matchConnectedNodeType != "mip_gamma_gain")
+		{
+			// get shader and attr by themselves to test
+			string $myNode = `plugNode $myConnectedGammaNodeAttrs[$i]`;
+			string $myAttr = `plugAttr $myConnectedGammaNodeAttrs[$i]`;
+
+			// is there an 'A' input on the shader? is it a mental ray shader? if so...
+			if (`attributeQuery -ex -n $myNode ($myAttr + "A")`)
+			{
+				// regular input of gamma node
+				string $myCon[]     = `listConnections -p 1 -d 1 ($myNodesAttrsConnectedToGammaNodes[$i])`;
+				string $myGammaNode = `plugNode $myCon[0]`;
+				string $myGammaAttr = `plugAttr $myCon[0]`;
+
+				// is there an 'A' input on the gamma node? is the gamma node a mip_gamma_gain? if so...
+				if (`attributeQuery -ex -n $myGammaNode ($myGammaAttr + "A")`)
+				{
+					// is the file tex connected to the 'A' input of gamma node? if so...
+					if (`connectionInfo -isDestination ($myCon[0] + "A")`)
+					{
+						// alpha output of file tex connected to alpha input of gamma node
+						string $myAlphaCon[] = `listConnections -p 1 -d 1 ($myCon[0] + "A")`;
+
+						// connect alpha output of file tex to alpha input of mental ray shader
+						connectAttr -f $myAlphaCon[0] ($myConnectedGammaNodeAttrs[$i] + "A");
+					}
+				}
+			}
+		}
+	}
+
+	// delete gamma nodes for color swatches and restore color swatch value
+	deleteGammaNodesForColorSwatches($mySelectedShaderstoGamma);
+
+	// delete gamma nodes between file textures and shaders
+	deleteFileTextureGammaNodes($mySelectedShaderstoGamma);
+
+	for ( $i = 0; $i < `size $myNodesAttrsConnectedToGammaNodes`; $i++ )
+	{
+		// type of node connected to gamma node
+		$matchConnectedNode     = `match "[a-zA-Z0-9_:]+" $myNodesAttrsConnectedToGammaNodes[$i]`;
+		$matchConnectedNodeType = `nodeType $matchConnectedNode`;
+
+		// if the node connected to gamma node is NOT a gamma node...
+		if ($matchConnectedNodeType != "gammaCorrect" && $matchConnectedNodeType != "mip_gamma_gain")
+		{
+			// connect file tex to shader
+   			connectAttr -f $myNodesAttrsConnectedToGammaNodes[$i] $myConnectedGammaNodeAttrs[$i];
+		}
+	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// use the proc deleteGammaNodes to delete gamma nodes based on choices in the UI
+//
+global proc undoGammaCorrection(int $a)
+{
+	string $selectedNodes[];
+
+	// ---- make selections in UI available to proc
+	global string $myRadioButtonModeSelect;
+	global string $myRadioButtonModeSelect02;
+	int $myRadioButtonModeSelectValue   = `radioButtonGrp -q -select $myRadioButtonModeSelect`;
+	int $myRadioButtonModeSelectValue02 = `radioButtonGrp -q -select $myRadioButtonModeSelect02`;
+
+	switch ($a)
+	{
+		case 1:
+			// ---- Direct Select Mode
+			if ($myRadioButtonModeSelectValue02 == 2)
+				deleteSelectedGammaNode;
+
+			// ---- UNDO for Selectd
+			else
+			{
+				$selectedNodes = selectNodes("selected");
+
+				if (!`size $selectedNodes`)
+					warning "Nothing selected.";
+				else
+				{
+					deleteGammaNodes($selectedNodes);
+
+					// set screen composite to 1 for misss_fast_skin shaders
+					for ($selectedNode in $selectedNodes)
+					{
+						if (`attributeQuery -ex -n $selectedNode "screen_composit"`)
+							setAttr ($selectedNode + ".screen_composit") 1;
+					}
+				}
+			}
+		break;
+
+		case 2:
+			// ---- Direct Select Mode
+			if ($myRadioButtonModeSelectValue02 == 2)
+				warning "Direct Select Mode: Button does not function in this mode.";
+
+			// ---- UNDO for All Shaders
+			else
+			{
+				$selectedNodes = selectNodes("all");
+				deleteGammaNodes($selectedNodes);
+
+				// set screen composite to 1 for misss_fast_skin shaders
+				for ($selectedNode in $selectedNodes)
+				{
+					if (`attributeQuery -ex -n $selectedNode "screen_composit"`)
+						setAttr ($selectedNode + ".screen_composit") 1;
+				}
+			}
+		break;
+	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// Direct Select Mode: get attrs that require gamma correction
+//
+global proc string[] getNodesAttrsToGamma(string $mySelection)
+{
+	// declare variables and clear returned array
+	int $a = 0;
+	string $myNodesWithAttrs[];
+	clear $myNodesWithAttrs;
+
+	// list node.attr connection of selected node & node.attr of node it's connected to
+	string $myAttrs[] = `listConnections -s 0 -d 1 -c 1 -p 1 $mySelection`;
+
+	for ($i=0; $i < `size $myAttrs` ; $i+=2)
+	{
+		// check first node.attr of node.attr pair and ensure the attr is an RGB connection
+		string $attrName = `plugAttr $myAttrs[$i]`;
+		int $attrNumChild2[] = `attributeQuery -node $myAttrs[$i] -numberOfChildren $attrName`;
+
+		if ($attrNumChild2[0]==3)
+		{
+			// store the node.attr pair that comprise the connection in a new array ; they are valid RGB attrs
+			$myNodesWithAttrs[$a]     = $myAttrs[$i];
+			$myNodesWithAttrs[($a)+1] = $myAttrs[($i)+1];
+			$a+=2;
+		}
+	}
+	// return the new array of node.attr pairs that comprise the connection
+	return $myNodesWithAttrs;
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// Direct Select Mode: insert gamma node after selected node
+//
+global proc connectGammaToSelectedNode ()
+{
+	// proc operates on the selected nodes
+	string $mySelection[] = `ls -sl`;
+
+	// ---- make selections in UI available to proc
+	global string $myRadioButtonGammaSelect;
+	int $myRadioButtonGammaSelectValue = `radioButtonGrp -q -select $myRadioButtonGammaSelect`;
+
+	if (! `size $mySelection`)
+		warning "Direct Select Mode: Nothing selected.  Select a gamma node to remove it.";
+	else
+	{
+		// for each selected node...
+		for ($each in $mySelection)
+		{
+			// get the node.attr pair that comprises the connection from one node to the next
+			string $mySelectionWithAttrs[] = `getNodesAttrsToGamma($each)`;
+			int $a = 0;
+			int $b = 1;
+			// create a variable to store the gamma node and it's unique input connection
+			string $myGamma;
+			string $myGammaNodeInputCon;
+
+			for ($i=0; $i<`size $mySelectionWithAttrs`; $i+=2)
+			{
+				// create a gamma node based on choices in UI
+				if ($myRadioButtonGammaSelectValue==1)
+				{
+					$myGamma              = createGammaNodes("gammaCorrect", $mySelectionWithAttrs[1]);
+					$myGammaNodeInputCon  = ".value";
+				}
+				if ($myRadioButtonGammaSelectValue==2)
+				{
+					$myGamma              = createGammaNodes("mipGammaGain", $mySelectionWithAttrs[1]);
+					$myGammaNodeInputCon  = ".input";
+				}
+
+				// insert the gamma node between the selected node and it's connected node
+				connectAttr -f $mySelectionWithAttrs[$a] ($myGamma + $myGammaNodeInputCon);
+				connectAttr -f ($myGamma + ".outValue") $mySelectionWithAttrs[$b];
+				$a+=2;
+				$b+=2;
+			}
+		}
+	}
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// Direct Select Mode: delete selected gamma node(s)
+//
+global proc deleteSelectedGammaNode ()
+{
+    string $mySel[] = `ls -sl`;
+
+    if (`size($mySel)` != 0)
+    {
+        for ($each in `ls -sl`)
+    	{
+    		string $myGammaNodeType = `nodeType $each`;
+    		string $inComingGammaAttr;
+    		string $inComingConnection;
+    		string $outGoingConnection1[];
+
+    		// for each one selected, test if it's a gamma node
+    		if ($myGammaNodeType == "mip_gamma_gain" || $myGammaNodeType == "gammaCorrect")
+    		{
+    			if ($myGammaNodeType == "mip_gamma_gain")
+    			{
+    				$inComingGammaAttr = ".input";
+    			}
+    			else
+    			{
+    				$inComingGammaAttr = ".value";
+    			}
+    			// get the incoming and outgoing connections of the node for each one in the selection and store them
+    			$inComingConnection  = `connectionInfo -sfd ($each + $inComingGammaAttr)`;
+    			$outGoingConnection1 = `connectionInfo -dfs ($each + ".outValue")`;
+
+    			// connect the incoming node to the outgoing node
+    			for ($connection in $outGoingConnection1)
+    			{
+    				connectAttr -f $inComingConnection $connection;
+    			}
+    			// delete the gamma node
+    			delete $each;
+    		}
+    		else
+    			warning "Direct Select Mode: The selected node is not a gamma node.  Select a gamma node to use this mode.";
+    	}
+    }
+	else
+		warning "Direct Select Mode: Nothing selected.  Select a gamma node to remove it.";
+}
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// Ambient Occlusion (for mia_materials):
+// edit ambient occlusion options for ALL or SELECTED mia_materials (all versions)
+// int passed as argument changes what attrs are edited
+//
+global proc miaAOEdit (int $attr)
+{
+	// declare global vars in UI needed by proc
+	global string $jj_selectedShad;
+	global string $jj_useAOCheckbox;
+	global string $jj_samplesIntSliderGrp;
+	global string $jj_distanceFloatFieldGrp;
+	global string $jj_ambientSColorSldrGrp;
+	global string $jj_ambientLColorSldrGrp;
+	global string $jj_myDDOptionMenu;
+
+	// array of shaders to edit
+	string $myShaders[];
+
+	int $selection = `radioButtonGrp -q -select $jj_selectedShad`; // -- Choose shaders to edit:
+
+	// edit ALL or Selected based on choice in UI
+	if ($selection == 1)
+		$myShaders = `ls -sl -mat`;
+
+	if ($selection == 2)
+		$myShaders = `ls -mat`;
+
+
+	// for each shader...
+	for ($myShader in $myShaders)
+	{
+		// determine its shader type
+		string $myNodeType = `nodeType $myShader`;
+		string $myMiaMat   = `match "mia_mat.+" $myNodeType`;
+
+		// if the shader type is a mia_material...
+		if ($myNodeType == $myMiaMat)
+		{
+			// store queried values of global vars in local vars
+			int    $testChkBox      = `checkBox       -q -v   $jj_useAOCheckbox`;         // -- Use Ambient Occlusion
+			int    $testSamples     = `intSliderGrp   -q -v   $jj_samplesIntSliderGrp`;   // -- Samples
+			float  $testDistance[]  = `floatFieldGrp  -q -v   $jj_distanceFloatFieldGrp`; // -- Distance
+			vector $testAmbientShd  = `colorSliderGrp -q -rgb $jj_ambientSColorSldrGrp`;  // -- Ambient Shadow Color
+			vector $testAmbientLit  = `colorSliderGrp -q -rgb $jj_ambientLColorSldrGrp`;  // -- Ambient Light Color
+			string $testDetailDis   = `optionMenu     -q -v   $jj_myDDOptionMenu`;        // -- Use Detail Distance
+
+			// is 'Use Ambient Occlusion' on for current shader?
+			int $stateAO = `getAttr ($myShader + ".ao_on")`;
+
+			// ---------  Use Ambient Occlusion --------- \\
+
+			if ($attr == 0)
+				setAttr ($myShader + ".ao_on") 0;
+			if ($attr == 1)
+				setAttr ($myShader + ".ao_on") 1;
+
+			// ---------  Samples ------------------------ \\
+
+			if ($attr == 2)
+				if ($stateAO)
+					setAttr ($myShader + ".ao_samples") $testSamples;
+
+			// ---------  Distance ----------------------- \\
+
+			if ($attr == 3)
+				if ($stateAO)
+					setAttr ($myShader + ".ao_distance") $testDistance[0];
+
+			// ---------  Ambient Shadow Color ----------- \\
+
+			if ($attr == 4)
+				if ($stateAO)
+					setAttr ($myShader + ".ao_dark") ($testAmbientShd.x)($testAmbientShd.y)($testAmbientShd.z);
+
+			// ---------  Ambient Light Color ------------ \\
+
+			if ($attr == 5)
+				if ($stateAO)
+					setAttr ($myShader + ".ao_ambient") ($testAmbientLit.x)($testAmbientLit.y)($testAmbientLit.z);
+
+			// ---------  Use Detail Distance ------------- \\
+
+			if ($attr == 6)
+			{
+				if ($stateAO)
+				{
+					// Plain Mia_Material ---
+					if ($myNodeType == "mia_material")
+					{
+						//  if it's set to 'On' or 'With color bleed' set .ao_do_details to True
+						if ( $testDetailDis == "On" || $testDetailDis == "With color bleed" )
+							setAttr ($myShader + ".ao_do_details") 1;
+
+						else
+							setAttr ($myShader + ".ao_do_details") 0;
+					}
+					// Mia_Material_x ---
+					else
+					{
+						if ($testDetailDis == "On")
+							setAttr ($myShader + ".ao_do_details") 1;
+
+						if ($testDetailDis == "Off")
+							setAttr ($myShader + ".ao_do_details") 0;
+
+						if ($testDetailDis == "With color bleed")
+							setAttr ($myShader + ".ao_do_details") 2;
+					}
+				}
+			}
+		}
+	}
+}
+
+// --------------------------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------- USER INTERFACE ------------------------------------------------------------------
+//
+global proc jjj_gammaTools ()
+{
+	// if window exists delete it
+	if (`window -exists LWF_ToolKit`)
+		deleteUI -window LWF_ToolKit;
+
+	// create window and columnLayout
+	window -title "JJJ Gamma Tools v2.1.2" -rtf 1 -widthHeight 490 203 -retain LWF_ToolKit;
+	columnLayout;
+
+		// GAMMA CORRECTION TAB ---------------------------------------------------------------------------------------------------------------------
+
+		frameLayout -collapsable 1 -label "Gamma Correction" -width 415 -mh 5 -mw 5;
+			frameLayout -lv 0 -marginHeight 0 -marginWidth 8;
+				columnLayout -rowSpacing 8 -adj 1 ;
+
+					// declare global vars needed in other procs
+					global string $myRadioButtonGammaSelect;  // --- Select a gamma node:
+					global string $myRadioButtonModeSelect;   // --- Select a mode of operation:
+					global string $myRadioButtonModeSelect02; // --- "
+
+					// RADIO BUTTONS ----
+					$myRadioButtonGammaSelect  = `radioButtonGrp -numberOfRadioButtons 2 -label "Select a gamma node :"
+																									 // Radio Buton Names:
+																									 -labelArray2 "gammaCorrect" "mipGammaGain" -select 1
+																									 -cw 1 145`;
+					$myRadioButtonModeSelect   = `radioButtonGrp -numberOfRadioButtons 2 -label "Select a mode of operation :"
+																									 // Radio Buton Names:
+																									 -labelArray2 "fileTextures ONLY" "colorSwatches ONLY"
+																									 -cw 1 145 -cw 3 128`;
+					$myRadioButtonModeSelect02 = `radioButtonGrp -numberOfRadioButtons 2 -label ""
+																									 // Radio Buton Names:
+																									 -labelArray2 "BOTH" "Direct Select"
+																									 -cw 1 145 -cw 3 128 -select 1
+																									 // this collection is part of $myRadioButtonModeSelect
+																									 -shareCollection $myRadioButtonModeSelect`;
+					// BUTTONS ----
+					button -label "Update Selected"      -rs 1 -c "gammaCorrectShaders(1)";
+					button -label "UNDO for Selected"    -rs 1 -c "undoGammaCorrection(1)";
+					button -label "Update All Shaders"   -rs 1 -c "gammaCorrectShaders(2)";
+					button -label "UNDO for All Shaders" -rs 1 -c "undoGammaCorrection(2)";
+
+				setParent ..; // Back up to the frameLayout
+			setParent ..; // Back up to the frameLayout
+		setParent ..; //Back up to the columnLayout
+
+		// AMBIENT OCCLUSION TAB -------------------------------------------------------------------------------------------------------------------
+		/*
+		frameLayout -collapsable 1 -collapse 1 -label "Ambient Occlusion (for mia_materials)" -width 415 -mh 5 -mw 5;
+			// Create a form
+			string $formAO = `formLayout -numberOfDivisions 100`;
+
+			// declare global vars needed in other procs
+			global string $jj_selectedShad;          // --- Update Selected or All Shaders
+			global string $jj_useAOCheckbox;         // --- Use Ambient Occlusion
+			global string $jj_samplesIntSliderGrp;   // --- Samples
+			global string $jj_distanceFloatFieldGrp; // --- Distance
+			global string $jj_ambientSColorSldrGrp;  // --- Ambient Shadow Color
+			global string $jj_ambientLColorSldrGrp;  // --- Ambient Light Color
+			global string $jj_myDDOptionMenu;        // --- Use Detail Distance
+
+			// ---------- UI Elements ----------
+
+			// Radio Button Grp ----
+			$jj_selectedShad          = `radioButtonGrp -numberOfRadioButtons 2 -label "Choose shaders to edit:"
+																	            -labelArray2 "Selected" "ALL" -select 1`;
+			// Mia_material Options ----
+			$jj_useAOCheckbox         = `checkBox       -label "Use Ambient Occlusion" -onCommand "miaAOEdit(1)" -offCommand "miaAOEdit(0)"`;
+			$jj_samplesIntSliderGrp   = `intSliderGrp   -label "Samples" -min 0 -field true -value 16 -cw3 120 70 100 -fmx 1000000
+														-cc "miaAOEdit(2)"`;
+			$jj_distanceFloatFieldGrp = `floatFieldGrp  -label "Distance" -cw2 120 70 -v1 10
+														-cc "miaAOEdit(3)"`;
+			$jj_ambientSColorSldrGrp  = `colorSliderGrp -label "Ambient Shadow Color" -cw3 120 72 157 -rgb 0.2 0.2 0.2
+														-cc "miaAOEdit(4)"`;
+			$jj_ambientLColorSldrGrp  = `colorSliderGrp -label "Ambient Light Color" -cw3 120 72 157 -rgb 0 0 0
+														-cc "miaAOEdit(5)"`;
+			$jj_myDDOptionMenu        = `optionMenu     -label "Use Detail Distance" -cc "miaAOEdit(6)"`;
+													     menuItem    -label "Off";
+											             menuItem    -label "On";
+											             menuItem    -label "With color bleed";
+													  optionMenu  -e -sl 2 $jj_myDDOptionMenu;
+
+			// ---------- Position UI elements in form layout ----------
+			formLayout -edit
+
+				-attachForm    $jj_selectedShad "top" 2
+				-attachForm    $jj_selectedShad "left" 10
+				-attachNone    $jj_selectedShad "bottom"
+				-attachNone    $jj_selectedShad "right"
+
+				-attachControl $jj_useAOCheckbox "top" 8 $jj_selectedShad
+				-attachForm    $jj_useAOCheckbox "left" 152
+				-attachNone    $jj_useAOCheckbox "bottom"
+				-attachNone    $jj_useAOCheckbox "right"
+
+				-attachControl $jj_samplesIntSliderGrp "top" 1 $jj_useAOCheckbox
+				-attachForm    $jj_samplesIntSliderGrp "left" 30
+				-attachNone    $jj_samplesIntSliderGrp "bottom"
+				-attachNone    $jj_samplesIntSliderGrp "right"
+
+				-attachControl $jj_distanceFloatFieldGrp "top" 1 $jj_samplesIntSliderGrp
+				-attachForm    $jj_distanceFloatFieldGrp "left" 30
+				-attachNone    $jj_distanceFloatFieldGrp "bottom"
+				-attachNone    $jj_distanceFloatFieldGrp "right"
+
+				-attachControl $jj_ambientSColorSldrGrp "top" 1 $jj_distanceFloatFieldGrp
+				-attachForm    $jj_ambientSColorSldrGrp "left" 30
+				-attachNone    $jj_ambientSColorSldrGrp "bottom"
+				-attachNone    $jj_ambientSColorSldrGrp "right"
+
+				-attachControl $jj_ambientLColorSldrGrp "top" 1 $jj_ambientSColorSldrGrp
+				-attachForm    $jj_ambientLColorSldrGrp "left" 30
+				-attachNone    $jj_ambientLColorSldrGrp "bottom"
+				-attachNone    $jj_ambientLColorSldrGrp "right"
+
+				-attachControl $jj_myDDOptionMenu "top" 3 $jj_ambientLColorSldrGrp
+				-attachForm    $jj_myDDOptionMenu "left" 50
+				-attachNone    $jj_myDDOptionMenu "bottom"
+				-attachNone    $jj_myDDOptionMenu "right"
+
+			$formAO;
+			*/
+	showWindow LWF_ToolKit;
+}

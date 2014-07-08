@@ -1,0 +1,2911 @@
+//CopyRight Dustin Nelson 2010-2011. Please do not distribute
+//http://www.creativecrash.com/maya/marketplace/scripts-plugins/character/c/-rapid-rig-advanced-auto-rig-for-maya--2/
+//Script for BiPed Character Rigging.
+//VERSION 2.0.8 BETA
+//JANUARY 18, 2013
+//FILE IS NOT INTENDED TO BE HARMFUL, HOWEVER USE AT YOUR OWN RISK
+/*////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//	INSTRUCTIONS:                                                       //
+//	1. INSTALLATION                                                     //
+//	ON A MAC:                                                           //
+//	Put the script RapidRig_Anim_V2.mel in the following path:          //
+//	Users/YourUser/Library/Preferences/Autodesk/maya/scripts/           //
+//				                                                        //
+//	ON A PC:                                                            //
+//	Put the script RapidRig_Anim_V2.mel in the following path:              //
+//	C:/Users/YourUser/Documents/maya/scripts/                           //
+//                                                                      //
+//	2. START UP MAYA, ENTER THE FOLLOWING COMMAND INTO                  //
+//	THE COMMAND LINE OR THE SCRIPT EDITOR:                              //
+//                                                                      //
+//	RapidRig_Anim_V2                                                    //
+//                                                                      //
+//	3. TO HAVE EASY ACCESS TO SCRIPT, CREATE A SHELF BUTTON             //
+//	WITH ONLY THAT COMMAND. EVERY TIME YOU HIT THE BUTTON,              //
+//	THE RAPID RIG INTERFACE WILL POP UP. HAPPY ANIMATING!               //
+//                                                                      //
+////////////////////////////////////////////////////////////////////////*/
+
+global proc RRAnim_ControlsUpDn()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigName")`)
+		{
+			$rigName = `getAttr ($rig[0] + ".RRARigName")`;
+
+			select -cl;
+			string $currentFingerToe;
+			for ($currentFingerToe in $rig)
+			{
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger1J*C")`)
+				{select -add {$rigName + "_lFinger1J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger2J*C")`)
+				{select -add {$rigName + "_lFinger2J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger3J*C")`)
+				{select -add {$rigName + "_lFinger3J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger4J*C")`)
+				{select -add {$rigName + "_lFinger4J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger5J*C")`)
+				{select -add {$rigName + "_lFinger5J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger6J*C")`)
+				{select -add {$rigName + "_lFinger6J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger7J*C")`)
+				{select -add {$rigName + "_lFinger7J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger8J*C")`)
+				{select -add {$rigName + "_lFinger8J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger9J*C")`)
+				{select -add {$rigName + "_lFinger9J*C"};}
+			
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger1J*C")`)
+				{select -add {$rigName + "_rFinger1J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger2J*C")`)
+				{select -add {$rigName + "_rFinger2J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger3J*C")`)
+				{select -add {$rigName + "_rFinger3J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger4J*C")`)
+				{select -add {$rigName + "_rFinger4J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger5J*C")`)
+				{select -add {$rigName + "_rFinger5J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger6J*C")`)
+				{select -add {$rigName + "_rFinger6J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger7J*C")`)
+				{select -add {$rigName + "_rFinger7J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger8J*C")`)
+				{select -add {$rigName + "_rFinger8J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger9J*C")`)
+				{select -add {$rigName + "_rFinger9J*C"};}
+
+			
+				if (`gmatch $currentFingerToe ($rigName + "_lThumbJ*C")`)
+				{select -add {$rigName + "_lThumbJ*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rThumbJ*C")`)
+				{select -add {$rigName + "_rThumbJ*C"};}
+			
+			
+				if (`gmatch $currentFingerToe ($rigName + "_lToe01J*C")`)
+				{select -add {$rigName + "_lToe01J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe02J*C")`)
+				{select -add {$rigName + "_lToe02J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe03J*C")`)
+				{select -add {$rigName + "_lToe03J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe04J*C")`)
+				{select -add {$rigName + "_lToe04J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe05J*C")`)
+				{select -add {$rigName + "_lToe05J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe06J*C")`)
+				{select -add {$rigName + "_lToe06J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe07J*C")`)
+				{select -add {$rigName + "_lToe07J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe08J*C")`)
+				{select -add {$rigName + "_lToe08J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe09J*C")`)
+				{select -add {$rigName + "_lToe09J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe10J*C")`)
+				{select -add {$rigName + "_lToe10J*C"};}
+			
+				if (`gmatch $currentFingerToe ($rigName + "_rToe01J*C")`)
+				{select -add {$rigName + "_rToe01J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe02J*C")`)
+				{select -add {$rigName + "_rToe02J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe03J*C")`)
+				{select -add {$rigName + "_rToe03J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe04J*C")`)
+				{select -add {$rigName + "_rToe04J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe05J*C")`)
+				{select -add {$rigName + "_rToe05J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe06J*C")`)
+				{select -add {$rigName + "_rToe06J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe07J*C")`)
+				{select -add {$rigName + "_rToe07J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe08J*C")`)
+				{select -add {$rigName + "_rToe08J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe09J*C")`)
+				{select -add {$rigName + "_rToe09J*C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe10J*C")`)
+				{select -add {$rigName + "_rToe10J*C"};}
+			
+
+			}
+			$fingerToes = `ls -sl`;
+			$fingerToeSize = `size $fingerToes`;
+			if ($fingerToeSize == 0)
+			{warning "SELECTION IS NOT A FINGER OR TOE CONTROL. NO ACTION WAS TAKEN";}
+		}
+		else
+			{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+select -add $rig;
+}
+
+
+
+
+global proc RRAnim_ControlsAcross()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigName")`)
+		{
+			$rigName = `getAttr ($rig[0] + ".RRARigName")`;
+
+			select -cl;
+			string $currentFingerToe;
+			for ($currentFingerToe in $rig)
+			{
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger*J1C")`)
+				{select -add {$rigName + "_lFinger*J1C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger*J2C")`)
+				{select -add {$rigName + "_lFinger*J2C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lFinger*J3C")`)
+				{select -add {$rigName + "_lFinger*J3C"};}
+			
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger*J1C")`)
+				{select -add {$rigName + "_rFinger*J1C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger*J2C")`)
+				{select -add {$rigName + "_rFinger*J2C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rFinger*J3C")`)
+				{select -add {$rigName + "_rFinger*J3C"};}
+
+				if (`gmatch $currentFingerToe ($rigName + "_lToe*J1C")`)
+				{select -add {$rigName + "_lToe*J1C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe*J2C")`)
+				{select -add {$rigName + "_lToe*J2C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe*J3C")`)
+				{select -add {$rigName + "_lToe*J3C"};}
+
+				if (`gmatch $currentFingerToe ($rigName + "_lToe*J1C")`)
+				{select -add {$rigName + "_lToe*J1C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe*J2C")`)
+				{select -add {$rigName + "_lToe*J2C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_lToe*J3C")`)
+				{select -add {$rigName + "_lToe*J3C"};}
+
+				if (`gmatch $currentFingerToe ($rigName + "_rToe*J1C")`)
+				{select -add {$rigName + "_rToe*J1C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe*J2C")`)
+				{select -add {$rigName + "_rToe*J2C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe*J3C")`)
+				{select -add {$rigName + "_rToe*J3C"};}
+
+				if (`gmatch $currentFingerToe ($rigName + "_rToe*J1C")`)
+				{select -add {$rigName + "_rToe*J1C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe*J2C")`)
+				{select -add {$rigName + "_rToe*J2C"};}
+				if (`gmatch $currentFingerToe ($rigName + "_rToe*J3C")`)
+				{select -add {$rigName + "_rToe*J3C"};}
+
+			}
+			$fingerToes = `ls -sl`;
+			$fingerToeSize = `size $fingerToes`;
+			if ($fingerToeSize == 0)
+			{warning "SELECTION IS NOT A FINGER OR TOE CONTROL. NO ACTION WAS TAKEN";}
+		}
+		else
+			{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+select -add $rig;
+}
+
+global proc RRAnim_LeftToRightControlsToonArms(string $rigName)
+{
+	//CURVE
+	$lArmCurve = `getAttr {$rigName + "_lArmSwitchC.curve"}`;
+	setAttr {$rigName + "_rArmSwitchC.curve"} $lArmCurve;
+	
+	if (`objExists ($rigName + "_lArmSwitchC.upperCurve")`)
+	{
+		$lArmUprCurve = `getAttr {$rigName + "_lArmSwitchC.upperCurve"}`;
+		$lArmMidCurve = `getAttr {$rigName + "_lArmSwitchC.midCurve"}`;
+		$lArmLwrCurve = `getAttr {$rigName + "_lArmSwitchC.lowerCurve"}`;
+		setAttr {$rigName + "_rArmSwitchC.upperCurve"} $lArmUprCurve;		
+		setAttr {$rigName + "_rArmSwitchC.midCurve"} $lArmMidCurve;		
+		setAttr {$rigName + "_rArmSwitchC.lowerCurve"} $lArmLwrCurve;
+	}
+	
+	//MACRO CONTROLS
+	$lUpperArmCurveC_R = `xform -q -ro {$rigName + "_lUpperArmCurveC"}`;
+	$lUpperArmCurveC_T = `xform -q -t {$rigName + "_lUpperArmCurveC"}`;
+	setAttr ({$rigName + "_rUpperArmCurveC.rotate"}, $lUpperArmCurveC_R[0], $lUpperArmCurveC_R[1], $lUpperArmCurveC_R[2]);
+	setAttr ({$rigName + "_rUpperArmCurveC.translate"}, ($lUpperArmCurveC_T[0] * -1), ($lUpperArmCurveC_T[1] * -1), ($lUpperArmCurveC_T[2] * -1));
+	
+	$lLowerArmCurveC_R = `xform -q -ro {$rigName + "_lLowerArmCurveC"}`;
+	$lLowerArmCurveC_T = `xform -q -t {$rigName + "_lLowerArmCurveC"}`;
+	setAttr ({$rigName + "_rLowerArmCurveC.rotate"}, $lLowerArmCurveC_R[0], $lLowerArmCurveC_R[1], $lLowerArmCurveC_R[2]);
+	setAttr ({$rigName + "_rLowerArmCurveC.translate"}, ($lLowerArmCurveC_T[0] * -1), ($lLowerArmCurveC_T[1] * -1), ($lLowerArmCurveC_T[2] * -1));
+
+	$lElbowCurveC_R = `xform -q -ro {$rigName + "_lElbowCurveC"}`;
+	$lElbowCurveC_T = `xform -q -t {$rigName + "_lElbowCurveC"}`;
+	setAttr ({$rigName + "_rElbowCurveC.rotate"}, $lElbowCurveC_R[0], $lElbowCurveC_R[1], $lElbowCurveC_R[2]);
+	setAttr ({$rigName + "_rElbowCurveC.translate"}, ($lElbowCurveC_T[0] * -1), ($lElbowCurveC_T[1] * -1), ($lElbowCurveC_T[2] * -1));
+	
+	//MICRO CONTROLS
+	$lUpperArmCurve1C_R = `xform -q -ro {$rigName + "_lUpperArmCurve1C"}`;
+	$lUpperArmCurve1C_T = `xform -q -t {$rigName + "_lUpperArmCurve1C"}`;
+	setAttr ({$rigName + "_rUpperArmCurve1C.rotate"}, $lUpperArmCurve1C_R[0], $lUpperArmCurve1C_R[1], $lUpperArmCurve1C_R[2]);
+	setAttr ({$rigName + "_rUpperArmCurve1C.translate"}, ($lUpperArmCurve1C_T[0] * -1), ($lUpperArmCurve1C_T[1] * -1), ($lUpperArmCurve1C_T[2] * -1));
+	
+	$lUpperArmCurve2C_R = `xform -q -ro {$rigName + "_lUpperArmCurve2C"}`;
+	$lUpperArmCurve2C_T = `xform -q -t {$rigName + "_lUpperArmCurve2C"}`;
+	setAttr ({$rigName + "_rUpperArmCurve2C.rotate"}, $lUpperArmCurve2C_R[0], $lUpperArmCurve2C_R[1], $lUpperArmCurve2C_R[2]);
+	setAttr ({$rigName + "_rUpperArmCurve2C.translate"}, ($lUpperArmCurve2C_T[0] * -1), ($lUpperArmCurve2C_T[1] * -1), ($lUpperArmCurve2C_T[2] * -1));
+	
+	$lUpperArmCurve3C_R = `xform -q -ro {$rigName + "_lUpperArmCurve3C"}`;
+	$lUpperArmCurve3C_T = `xform -q -t {$rigName + "_lUpperArmCurve3C"}`;
+	setAttr ({$rigName + "_rUpperArmCurve3C.rotate"}, $lUpperArmCurve3C_R[0], $lUpperArmCurve3C_R[1], $lUpperArmCurve3C_R[2]);
+	setAttr ({$rigName + "_rUpperArmCurve3C.translate"}, ($lUpperArmCurve3C_T[0] * -1), ($lUpperArmCurve3C_T[1] * -1), ($lUpperArmCurve3C_T[2] * -1));	
+	
+	$lLowerArmCurve1C_R = `xform -q -ro {$rigName + "_lLowerArmCurve1C"}`;
+	$lLowerArmCurve1C_T = `xform -q -t {$rigName + "_lLowerArmCurve1C"}`;
+	setAttr ({$rigName + "_rLowerArmCurve1C.rotate"}, $lLowerArmCurve1C_R[0], $lLowerArmCurve1C_R[1], $lLowerArmCurve1C_R[2]);
+	setAttr ({$rigName + "_rLowerArmCurve1C.translate"}, ($lLowerArmCurve1C_T[0] * -1), ($lLowerArmCurve1C_T[1] * -1), ($lLowerArmCurve1C_T[2] * -1));
+	
+	$lLowerArmCurve2C_R = `xform -q -ro {$rigName + "_lLowerArmCurve2C"}`;
+	$lLowerArmCurve2C_T = `xform -q -t {$rigName + "_lLowerArmCurve2C"}`;
+	setAttr ({$rigName + "_rLowerArmCurve2C.rotate"}, $lLowerArmCurve2C_R[0], $lLowerArmCurve2C_R[1], $lLowerArmCurve2C_R[2]);
+	setAttr ({$rigName + "_rLowerArmCurve2C.translate"}, ($lLowerArmCurve2C_T[0] * -1), ($lLowerArmCurve2C_T[1] * -1), ($lLowerArmCurve2C_T[2] * -1));
+	
+	$lLowerArmCurve3C_R = `xform -q -ro {$rigName + "_lLowerArmCurve3C"}`;
+	$lLowerArmCurve3C_T = `xform -q -t {$rigName + "_lLowerArmCurve3C"}`;
+	setAttr ({$rigName + "_rLowerArmCurve3C.rotate"}, $lLowerArmCurve3C_R[0], $lLowerArmCurve3C_R[1], $lLowerArmCurve3C_R[2]);
+	setAttr ({$rigName + "_rLowerArmCurve3C.translate"}, ($lLowerArmCurve3C_T[0] * -1), ($lLowerArmCurve3C_T[1] * -1), ($lLowerArmCurve3C_T[2] * -1));
+}
+
+
+global proc RRAnim_LeftToRightControlsToonLegs(string $rigName)
+{
+	//LEG SWITCH
+	$lLegCurve = `getAttr {$rigName + "_lLegSwitchC.curve"}`;
+	setAttr {$rigName + "_rLegSwitchC.curve"} $lLegCurve;	
+	
+	if (`objExists ($rigName + "_lLegSwitchC.upperCurve")`)
+	{
+		$lLegUprCurve = `getAttr {$rigName + "_lLegSwitchC.upperCurve"}`;
+		$lLegMidCurve = `getAttr {$rigName + "_lLegSwitchC.midCurve"}`;
+		$lLegLwrCurve = `getAttr {$rigName + "_lLegSwitchC.lowerCurve"}`;
+		setAttr {$rigName + "_rLegSwitchC.upperCurve"} $lLegUprCurve;		
+		setAttr {$rigName + "_rLegSwitchC.midCurve"} $lLegMidCurve;		
+		setAttr {$rigName + "_rLegSwitchC.lowerCurve"} $lLegLwrCurve;
+	}
+
+	//MACRO CONTROLS
+	$lUpperLegCurveC_R = `xform -q -ro {$rigName + "_lUpperLegCurveC"}`;
+	$lUpperLegCurveC_T = `xform -q -t {$rigName + "_lUpperLegCurveC"}`;
+	setAttr ({$rigName + "_rUpperLegCurveC.rotate"}, $lUpperLegCurveC_R[0], $lUpperLegCurveC_R[1], $lUpperLegCurveC_R[2]);
+	setAttr ({$rigName + "_rUpperLegCurveC.translate"}, ($lUpperLegCurveC_T[0] * -1), ($lUpperLegCurveC_T[1] * -1), ($lUpperLegCurveC_T[2] * -1));
+	
+	$lLowerLegCurveC_R = `xform -q -ro {$rigName + "_lLowerLegCurveC"}`;
+	$lLowerLegCurveC_T = `xform -q -t {$rigName + "_lLowerLegCurveC"}`;
+	setAttr ({$rigName + "_rLowerLegCurveC.rotate"}, $lLowerLegCurveC_R[0], $lLowerLegCurveC_R[1], $lLowerLegCurveC_R[2]);
+	setAttr ({$rigName + "_rLowerLegCurveC.translate"}, ($lLowerLegCurveC_T[0] * -1), ($lLowerLegCurveC_T[1] * -1), ($lLowerLegCurveC_T[2] * -1));
+
+	$lKneeCurveC_R = `xform -q -ro {$rigName + "_lKneeCurveC"}`;
+	$lKneeCurveC_T = `xform -q -t {$rigName + "_lKneeCurveC"}`;
+	setAttr ({$rigName + "_rKneeCurveC.rotate"}, $lKneeCurveC_R[0], $lKneeCurveC_R[1], $lKneeCurveC_R[2]);
+	setAttr ({$rigName + "_rKneeCurveC.translate"}, ($lKneeCurveC_T[0] * -1), ($lKneeCurveC_T[1] * -1), ($lKneeCurveC_T[2] * -1));
+	
+	//MICRO CONTROLS
+	$lUpperLegCurve1C_R = `xform -q -ro {$rigName + "_lUpperLegCurve1C"}`;
+	$lUpperLegCurve1C_T = `xform -q -t {$rigName + "_lUpperLegCurve1C"}`;
+	setAttr ({$rigName + "_rUpperLegCurve1C.rotate"}, $lUpperLegCurve1C_R[0], $lUpperLegCurve1C_R[1], $lUpperLegCurve1C_R[2]);
+	setAttr ({$rigName + "_rUpperLegCurve1C.translate"}, ($lUpperLegCurve1C_T[0] * -1), ($lUpperLegCurve1C_T[1] * -1), ($lUpperLegCurve1C_T[2] * -1));
+	
+	$lUpperLegCurve2C_R = `xform -q -ro {$rigName + "_lUpperLegCurve2C"}`;
+	$lUpperLegCurve2C_T = `xform -q -t {$rigName + "_lUpperLegCurve2C"}`;
+	setAttr ({$rigName + "_rUpperLegCurve2C.rotate"}, $lUpperLegCurve2C_R[0], $lUpperLegCurve2C_R[1], $lUpperLegCurve2C_R[2]);
+	setAttr ({$rigName + "_rUpperLegCurve2C.translate"}, ($lUpperLegCurve2C_T[0] * -1), ($lUpperLegCurve2C_T[1] * -1), ($lUpperLegCurve2C_T[2] * -1));
+	
+	$lUpperLegCurve3C_R = `xform -q -ro {$rigName + "_lUpperLegCurve3C"}`;
+	$lUpperLegCurve3C_T = `xform -q -t {$rigName + "_lUpperLegCurve3C"}`;
+	setAttr ({$rigName + "_rUpperLegCurve3C.rotate"}, $lUpperLegCurve3C_R[0], $lUpperLegCurve3C_R[1], $lUpperLegCurve3C_R[2]);
+	setAttr ({$rigName + "_rUpperLegCurve3C.translate"}, ($lUpperLegCurve3C_T[0] * -1), ($lUpperLegCurve3C_T[1] * -1), ($lUpperLegCurve3C_T[2] * -1));
+	
+	
+	$lLowerLegCurve1C_R = `xform -q -ro {$rigName + "_lLowerLegCurve1C"}`;
+	$lLowerLegCurve1C_T = `xform -q -t {$rigName + "_lLowerLegCurve1C"}`;
+	setAttr ({$rigName + "_rLowerLegCurve1C.rotate"}, $lLowerLegCurve1C_R[0], $lLowerLegCurve1C_R[1], $lLowerLegCurve1C_R[2]);
+	setAttr ({$rigName + "_rLowerLegCurve1C.translate"}, ($lLowerLegCurve1C_T[0] * -1), ($lLowerLegCurve1C_T[1] * -1), ($lLowerLegCurve1C_T[2] * -1));
+	
+	$lLowerLegCurve2C_R = `xform -q -ro {$rigName + "_lLowerLegCurve2C"}`;
+	$lLowerLegCurve2C_T = `xform -q -t {$rigName + "_lLowerLegCurve2C"}`;
+	setAttr ({$rigName + "_rLowerLegCurve2C.rotate"}, $lLowerLegCurve2C_R[0], $lLowerLegCurve2C_R[1], $lLowerLegCurve2C_R[2]);
+	setAttr ({$rigName + "_rLowerLegCurve2C.translate"}, ($lLowerLegCurve2C_T[0] * -1), ($lLowerLegCurve2C_T[1] * -1), ($lLowerLegCurve2C_T[2] * -1));
+	
+	$lLowerLegCurve3C_R = `xform -q -ro {$rigName + "_lLowerLegCurve3C"}`;
+	$lLowerLegCurve3C_T = `xform -q -t {$rigName + "_lLowerLegCurve3C"}`;
+	setAttr ({$rigName + "_rLowerLegCurve3C.rotate"}, $lLowerLegCurve3C_R[0], $lLowerLegCurve3C_R[1], $lLowerLegCurve3C_R[2]);
+	setAttr ({$rigName + "_rLowerLegCurve3C.translate"}, ($lLowerLegCurve3C_T[0] * -1), ($lLowerLegCurve3C_T[1] * -1), ($lLowerLegCurve3C_T[2] * -1));
+}
+
+global proc RRAnim_LeftToRightControlsFingers(string $rigName)
+{
+
+	if (`objExists ($rigName + "_lThumbJ1C")`)
+	{
+		$lThumbJ1C_R = `xform -q -ro {$rigName + "_lThumbJ1C"}`;
+		$lThumbJ1C_S = `xform -q -r -s {$rigName + "_lThumbJ1C"}`;
+		setAttr ({$rigName + "_rThumbJ1C.rotate"}, $lThumbJ1C_R[0], $lThumbJ1C_R[1], $lThumbJ1C_R[2]);
+		setAttr ({$rigName + "_rThumbJ1C.scale"}, $lThumbJ1C_S[0], $lThumbJ1C_S[1], $lThumbJ1C_S[2]);
+		
+		$lThumbJ2C_R = `xform -q -ro {$rigName + "_lThumbJ2C"}`;
+		setAttr ({$rigName + "_rThumbJ2C.rotate"}, $lThumbJ2C_R[0], $lThumbJ2C_R[1], $lThumbJ2C_R[2]);
+
+		$lThumbJ3C_R = `xform -q -ro {$rigName + "_lThumbJ3C"}`;
+		setAttr ({$rigName + "_rThumbJ3C.rotate"}, $lThumbJ3C_R[0], $lThumbJ3C_R[1], $lThumbJ3C_R[2]);
+
+		//SWITCH CHANNELS
+		$lThumbCurl1 = `getAttr ($rigName + "_lArmSwitchC.thumbCurl1")`;
+		$lThumbCurl2 = `getAttr ($rigName + "_lArmSwitchC.thumbCurl2")`;
+		$lThumbCurl3 = `getAttr ($rigName + "_lArmSwitchC.thumbCurl3")`;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl1") $lThumbCurl1;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl2") $lThumbCurl2;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl3") $lThumbCurl3;
+		
+		$lThumbSplay1 = `getAttr ($rigName + "_lArmSwitchC.thumbSplay1")`;
+		$lThumbSplay2 = `getAttr ($rigName + "_lArmSwitchC.thumbSplay2")`;
+		$lThumbSplay3 = `getAttr ($rigName + "_lArmSwitchC.thumbSplay3")`;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay1") $lThumbSplay1;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay2") $lThumbSplay2;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay3") $lThumbSplay3;
+
+		$lThumbTwist1 = `getAttr ($rigName + "_lArmSwitchC.thumbTwist1")`;
+		$lThumbTwist2 = `getAttr ($rigName + "_lArmSwitchC.thumbTwist2")`;
+		$lThumbTwist3 = `getAttr ($rigName + "_lArmSwitchC.thumbTwist3")`;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist1") $lThumbTwist1;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist2") $lThumbTwist2;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist3") $lThumbTwist3;
+	}
+	
+	select ($rigName + "_lFinger?J1C");
+	$fingers = `ls -sl`;
+	string $each;
+	int $i = 1;
+
+	for ($each in $fingers)
+	{
+		$lFingerJ1C_R = `xform -q -ro ($rigName + "_lFinger" + $i + "J1C")`;
+		$lFingerJ1C_S = `xform -q -r -s ($rigName + "_lFinger" + $i + "J1C")`;
+		setAttr (($rigName + "_rFinger" + $i + "J1C.rotate"), $lFingerJ1C_R[0], $lFingerJ1C_R[1], $lFingerJ1C_R[2]);
+		setAttr (($rigName + "_rFinger" + $i + "J1C.scale"), $lFingerJ1C_S[0], $lFingerJ1C_S[1], $lFingerJ1C_S[2]);
+		
+		$lFingerJ2C_R = `xform -q -ro ($rigName + "_lFinger" + $i + "J2C")`;
+		setAttr (($rigName + "_rFinger" + $i + "J2C.rotate"), $lFingerJ2C_R[0], $lFingerJ2C_R[1], $lFingerJ2C_R[2]);
+
+		$lFingerJ3C_R = `xform -q -ro ($rigName + "_lFinger" + $i + "J3C")`;
+		setAttr (($rigName + "_rFinger" + $i + "J3C.rotate"), $lFingerJ3C_R[0], $lFingerJ3C_R[1], $lFingerJ3C_R[2]);
+		
+		//SWITCH CHANNELS
+		$lFingerCurl1 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl1")`;
+		$lFingerCurl2 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl2")`;
+		$lFingerCurl3 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl3")`;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl1") $lFingerCurl1;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl2") $lFingerCurl2;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl3") $lFingerCurl3;
+		
+		$lFingerSplay1 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay1")`;
+		$lFingerSplay2 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay2")`;
+		$lFingerSplay3 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay3")`;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay1") $lFingerSplay1;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay2") $lFingerSplay2;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay3") $lFingerSplay3;
+
+		$lFingerTwist1 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist1")`;
+		$lFingerTwist2 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist2")`;
+		$lFingerTwist3 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist3")`;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist1") $lFingerTwist1;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist2") $lFingerTwist2;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist3") $lFingerTwist3;
+		$i++;
+	}
+	
+	//TOES
+	if (`objExists ($rigName + "_lToe??J1C")`)
+	{
+		select ($rigName + "_lToe??J1C");
+		$toes = `ls -sl`;
+		string $each;
+		int $i = 1;
+		
+		for ($each in $toes)
+		{
+			string $nPad = "0";
+			if ($i >= 10)
+			{
+				$nPad = "";
+			}
+			$lToeJ1C_R = `xform -q -ro ($rigName + "_lToe"+ $nPad + $i + "J1C")`;
+			$lToeJ1C_S = `xform -q -r -s ($rigName + "_lToe"+ $nPad + $i + "J1C")`;
+			setAttr (($rigName + "_rToe"+ $nPad + $i + "J1C.rotate"), $lToeJ1C_R[0], $lToeJ1C_R[1], $lToeJ1C_R[2]);
+			
+			$lToeJ2C_R = `xform -q -ro ($rigName + "_lToe"+ $nPad + $i + "J2C")`;
+			setAttr (($rigName + "_rToe"+ $nPad + $i + "J2C.rotate"), $lToeJ2C_R[0], $lToeJ2C_R[1], $lToeJ2C_R[2]);
+    	
+			//SWITCH CHANNELS
+			$lToeCurl1 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl1")`;
+			$lToeCurl2 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl2")`;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl1") $lToeCurl1;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl2") $lToeCurl2;
+			
+			$lToeSplay1 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay1")`;
+			$lToeSplay2 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay2")`;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay1") $lToeSplay1;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay2") $lToeSplay2;
+    	
+			$lToeTwist1 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist1")`;
+			$lToeTwist2 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist2")`;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist1") $lToeTwist1;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist2") $lToeTwist2;
+    	
+			if (`objExists ($rigName + "_lToe"+ $nPad + $i + "J3C")`)
+			{
+				$lToeJ3C_R = `xform -q -ro ($rigName + "_lToe"+ $nPad + $i + "J3C")`;
+				setAttr (($rigName + "_rToe"+ $nPad + $i + "J3C.rotate"), $lToeJ3C_R[0], $lToeJ3C_R[1], $lToeJ3C_R[2]);
+    	
+				//SWITCH CHANNELS
+				$lToeCurl3 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl3")`;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl3") $lToeCurl3;
+				
+				$lToeSplay3 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay3")`;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay3") $lToeSplay3;
+    	    	
+				$lToeTwist3 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist3")`;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist3") $lToeTwist3;
+			}
+			$i++;
+		}
+	}
+}
+
+
+global proc RRAnim_LeftToRightControls(string $rigName)
+{
+
+	//ARMS////////////////////////////////////////////////////////////////////////
+	$lClavicleC_R = `xform -q -ro {$rigName + "_lClavicleC"}`;
+	setAttr ({$rigName + "_rClavicleC.rotate"}, $lClavicleC_R[0], $lClavicleC_R[1], $lClavicleC_R[2]);
+	$translateLock = `getAttr -lock  ($rigName + "_rClavicleC.tx")`;
+	if ($translateLock == 0)
+	{
+		$lClavicleC_T = `xform -q -t ($rigName + "_lClavicleC")`;
+		setAttr ({$rigName + "_rClavicleC.translate"}, ($lClavicleC_T[0] * -1), ($lClavicleC_T[1]*-1), ($lClavicleC_T[2]*-1));
+	}
+		
+	
+	//FK SHOULDERS
+	$lShoulderFKC_R = `xform -q -ro {$rigName + "_lShoulderFKC"}`;
+	$lShoulderFKC_SX = `getAttr {$rigName + "_lShoulderFKC.sx"}`;	
+	$lShoulderFKC_Orient = `getAttr {$rigName + "_lShoulderFKC.ShoulderOrient"}`;	
+	setAttr ({$rigName + "_rShoulderFKC.rotate"}, $lShoulderFKC_R[0], $lShoulderFKC_R[1], $lShoulderFKC_R[2]);	
+	setAttr {$rigName + "_rShoulderFKC.sx"} $lShoulderFKC_SX;
+	setAttr {$rigName + "_rShoulderFKC.ShoulderOrient"} $lShoulderFKC_Orient;
+	
+	if (`objExists ($rigName + "_lShoulderFKC.ClavicleInfluence")`)
+	{
+		$lShoulderFKC_ClavInf = `getAttr {$rigName + "_lShoulderFKC.ClavicleInfluence"}`;	
+		setAttr {$rigName + "_rShoulderFKC.ClavicleInfluence"} $lShoulderFKC_ClavInf;
+	}
+
+	//FK ELBOWS
+	$lElbowFKC_R = `getAttr {$rigName + "_lElbowFKC.ry"}`;
+	setAttr {$rigName + "_rElbowFKC.ry"} $lElbowFKC_R;
+	//FK WRISTS
+	$lWristFKC_R = `xform -q -ro {$rigName + "_lWristFKC"}`;
+	$lWristFKC_SX = `getAttr {$rigName + "_lWristFKC.sx"}`;	
+	setAttr ({$rigName + "_rWristFKC.rotate"}, $lWristFKC_R[0], $lWristFKC_R[1], $lWristFKC_R[2]);	
+	setAttr {$rigName + "_rWristFKC.sx"} $lWristFKC_SX;
+	
+	//IK ELBOWS
+	$lElbowIKC_T = `xform -q -t {$rigName + "_lElbowIKC"}`;
+	setAttr ({$rigName + "_rElbowIKC.translate"}, ($lElbowIKC_T[0] * -1), $lElbowIKC_T[1], $lElbowIKC_T[2]);
+
+	//IK WRISTS
+	$lWristIKC_R = `xform -q -ro {$rigName + "_lWristIKC"}`;
+	$lWristIKC_T = `xform -q -t {$rigName + "_lWristIKC"}`;
+	$lWristIKC_SX = `getAttr {$rigName + "_lWristIKC.sx"}`;
+	$lWristIKC_Stretch = `getAttr {$rigName + "_lWristIKC.Stretch"}`;	
+	$lWristIKC_ElbowLock = `getAttr {$rigName + "_lWristIKC.ElbowLock"}`;
+	$lWristIKC_Hips = `getAttr {$rigName + "_lWristIKC.Hips"}`;	
+	$lWristIKC_Chest = `getAttr {$rigName + "_lWristIKC.Chest"}`;	
+	$lWristIKC_Head = `getAttr {$rigName + "_lWristIKC.Head"}`;
+	
+	setAttr ({$rigName + "_rWristIKC.translate"}, ($lWristIKC_T[0] * -1), ($lWristIKC_T[1] * 1), ($lWristIKC_T[2] * 1));
+	setAttr ({$rigName + "_rWristIKC.rotate"}, $lWristIKC_R[0], ($lWristIKC_R[1] * -1), ($lWristIKC_R[2] * -1));	
+	setAttr {$rigName + "_rWristIKC.sx"} $lWristIKC_SX;
+	setAttr {$rigName + "_rWristIKC.Stretch"} $lWristIKC_Stretch;
+	setAttr {$rigName + "_rWristIKC.ElbowLock"} $lWristIKC_ElbowLock;
+	setAttr {$rigName + "_rWristIKC.Hips"} $lWristIKC_Hips;
+	setAttr {$rigName + "_rWristIKC.Chest"} $lWristIKC_Chest;
+	setAttr {$rigName + "_rWristIKC.Head"} $lWristIKC_Head;
+
+	//PALM
+	$lPalmC_R = `xform -q -ro {$rigName + "_lPalmC"}`;
+	$rPalmC_R = `xform -q -ro {$rigName + "_rPalmC"}`;
+	setAttr ({$rigName + "_lPalmC.rotate"}, $rPalmC_R[0], $rPalmC_R[1], $rPalmC_R[2]);
+	setAttr ({$rigName + "_rPalmC.rotate"}, $lPalmC_R[0], $lPalmC_R[1], $lPalmC_R[2]);
+		
+	
+	//ARM SWITCH
+	$lArmSwitch = `getAttr {$rigName + "_lArmSwitchC.SwitchIkFk"}`;
+	$lArmVolume = `getAttr {$rigName + "_lArmSwitchC.AutoVolume"}`;
+	setAttr {$rigName + "_rArmSwitchC.SwitchIkFk"} $lArmSwitch;
+	setAttr {$rigName + "_rArmSwitchC.AutoVolume"} $lArmVolume;
+
+	//LEGS////////////////////////////////////////////////////////////////////////
+	//FK HIPS
+	$lHipFKC_R = `xform -q -ro {$rigName + "_lHipFKC"}`;
+	$lHipFKC_SX = `getAttr {$rigName + "_lHipFKC.sx"}`;	
+	$lHipFKC_Orient = `getAttr {$rigName + "_lHipFKC.HipOrient"}`;	
+	setAttr ({$rigName + "_rHipFKC.rotate"}, $lHipFKC_R[0], $lHipFKC_R[1], $lHipFKC_R[2]);
+	setAttr {$rigName + "_rHipFKC.sx"} $lHipFKC_SX;
+	setAttr {$rigName + "_rHipFKC.HipOrient"} $lHipFKC_Orient;
+
+	//FK KNEES
+	$lKneeFKC_R = `getAttr {$rigName + "_lKneeFKC.rz"}`;
+	setAttr {$rigName + "_rKneeFKC.rz"} $lKneeFKC_R;
+	//FK ANKLES
+	$lAnkleFKC_R = `xform -q -ro {$rigName + "_lAnkleFKC"}`;
+	setAttr ({$rigName + "_rAnkleFKC.rotate"}, $lAnkleFKC_R[0], $lAnkleFKC_R[1], $lAnkleFKC_R[2]);	
+	//FK BALLS
+	$lBallFKC_R = `xform -q -ro {$rigName + "_lBallFKC"}`;
+	setAttr ({$rigName + "_rBallFKC.rotate"}, $lBallFKC_R[0], $lBallFKC_R[1], $lBallFKC_R[2]);
+	
+	//IK KNEES
+	$lKneeIKC_T = `xform -q -t {$rigName + "_lKneeIKC"}`;
+	setAttr ({$rigName + "_rKneeIKC.translate"}, ($lKneeIKC_T[0] * -1), $lKneeIKC_T[1], $lKneeIKC_T[2]);
+
+	//IK FEET
+	$lFootIKC_R = `xform -q -ro {$rigName + "_lFootIKC"}`;
+	$lFootIKC_T = `xform -q -t {$rigName + "_lFootIKC"}`;
+	$lFootIKC_Stretch = `getAttr {$rigName + "_lFootIKC.Stretch"}`;	
+	$lFootIKC_KneeLock = `getAttr {$rigName + "_lFootIKC.KneeLock"}`;
+	$lFootIKC_footTilt = `getAttr {$rigName + "_lFootIKC.footTilt"}`;	
+	$lFootIKC_heelBall = `getAttr {$rigName + "_lFootIKC.heelBall"}`;	
+	$lFootIKC_toeUpDn = `getAttr {$rigName + "_lFootIKC.toeUpDn"}`;	
+	$lFootIKC_ballSwivel = `getAttr {$rigName + "_lFootIKC.ballSwivel"}`;
+	
+	setAttr {$rigName + "_rFootIKC.tx"} ($lFootIKC_T[0] * -1);
+	setAttr {$rigName + "_rFootIKC.ty"} ($lFootIKC_T[1] * 1);
+	setAttr {$rigName + "_rFootIKC.tz"} ($lFootIKC_T[2] * 1);
+	setAttr {$rigName + "_rFootIKC.rx"} $lFootIKC_R[0];
+	setAttr {$rigName + "_rFootIKC.ry"} ($lFootIKC_R[1] * -1);
+	setAttr {$rigName + "_rFootIKC.rz"} ($lFootIKC_R[2] * -1);	
+	setAttr {$rigName + "_rFootIKC.Stretch"} $lFootIKC_Stretch;
+	setAttr {$rigName + "_rFootIKC.KneeLock"} $lFootIKC_KneeLock;
+	setAttr {$rigName + "_rFootIKC.footTilt"} $lFootIKC_footTilt;
+	setAttr {$rigName + "_rFootIKC.heelBall"} $lFootIKC_heelBall;
+	setAttr {$rigName + "_rFootIKC.toeUpDn"} $lFootIKC_toeUpDn;
+	setAttr {$rigName + "_rFootIKC.ballSwivel"} $lFootIKC_ballSwivel;
+	
+	//IK TOE
+	$lToeIKC_R = `xform -q -ro {$rigName + "_lToeIKC"}`;
+	setAttr ({$rigName + "_rToeIKC.rotate"}, $lToeIKC_R[0], $lToeIKC_R[1], $lToeIKC_R[2]);
+	
+	//LEG SWITCH
+	$lLegSwitch = `getAttr {$rigName + "_lLegSwitchC.SwitchIkFk"}`;
+	$lLegVolume = `getAttr {$rigName + "_lLegSwitchC.AutoVolume"}`;
+	setAttr {$rigName + "_rLegSwitchC.SwitchIkFk"} $lLegSwitch;
+	setAttr {$rigName + "_rLegSwitchC.AutoVolume"} $lLegVolume;
+
+	
+	if (`objExists ($rigName + "_lElbowCurveC")`)
+		{
+			RRAnim_LeftToRightControlsToonArms($rigName);
+		}
+	if (`objExists ($rigName + "_lKneeCurveC")`)
+		{
+			RRAnim_LeftToRightControlsToonLegs($rigName);
+		}
+		
+	RRAnim_LeftToRightControlsFingers($rigName);
+}
+
+global proc RRAnim_LeftToRightControlsCheck()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigConnection")`)
+		{
+			$rigConnections = `listConnections ($rig[0] + ".RRARigConnection")`;
+			$rigName = $rigConnections[0];
+			RRAnim_LeftToRightControls($rigName);
+		}
+		else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+	{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+
+	select $rig;
+}
+
+global proc RRAnim_ResetTransforms(string $rigName)
+{
+	//TRANSLATE AND ROTATE
+	select ($rigName + "_MainC") ($rigName + "_ROOTC") ($rigName + "_MainHipC")
+	($rigName + "_lShoulderFKC") ($rigName + "_rShoulderFKC")
+	($rigName + "_lHipFKC") ($rigName + "_rHipFKC")
+	($rigName + "_Spine??FKC") ($rigName + "_Spine??CurveC")
+	($rigName + "_SpineMidIKC") ($rigName + "_SpineTopIKC")
+	($rigName + "_Neck??FKC") ($rigName + "_Neck??CurveC")
+	($rigName + "_NeckMidIKC") ($rigName + "_HeadC")
+	($rigName + "_lWristIKC") ($rigName + "_rWristIKC") ($rigName + "_lFootIKC") ($rigName + "_rFootIKC");
+	if (`objExists ($rigName + "_JawC")`)
+	{
+		select -add {$rigName + "_JawC"};
+	}
+	if (`objExists ($rigName + "_lElbowCurveC")`)
+	{
+		select -add {$rigName + "_lUpperArmCurveC"} {$rigName + "_lElbowCurveC"} {$rigName + "_lLowerArmCurveC"}
+		{$rigName + "_lUpperArmCurve1C"} {$rigName + "_lUpperArmCurve2C"} {$rigName + "_lUpperArmCurve3C"}
+		{$rigName + "_lLowerArmCurve1C"} {$rigName + "_lLowerArmCurve2C"} {$rigName + "_lLowerArmCurve3C"}
+		{$rigName + "_rUpperArmCurveC"} {$rigName + "_rElbowCurveC"} {$rigName + "_rLowerArmCurveC"}
+		{$rigName + "_rUpperArmCurve1C"} {$rigName + "_rUpperArmCurve2C"} {$rigName + "_rUpperArmCurve3C"}
+		{$rigName + "_rLowerArmCurve1C"} {$rigName + "_rLowerArmCurve2C"} {$rigName + "_rLowerArmCurve3C"}
+
+		{$rigName + "_lUpperLegCurveC"} {$rigName + "_lKneeCurveC"} {$rigName + "_lLowerLegCurveC"}
+		{$rigName + "_lUpperLegCurve1C"} {$rigName + "_lUpperLegCurve2C"} {$rigName + "_lUpperLegCurve3C"}
+		{$rigName + "_lLowerLegCurve1C"} {$rigName + "_lLowerLegCurve2C"} {$rigName + "_lLowerLegCurve3C"}
+		{$rigName + "_rUpperLegCurveC"} {$rigName + "_rKneeCurveC"} {$rigName + "_rLowerLegCurveC"}
+		{$rigName + "_rUpperLegCurve1C"} {$rigName + "_rUpperLegCurve2C"} {$rigName + "_rUpperLegCurve3C"}
+		{$rigName + "_rLowerLegCurve1C"} {$rigName + "_rLowerLegCurve2C"} {$rigName + "_rLowerLegCurve3C"};
+	}
+	
+	$allR_allT = `ls -sl`;
+	string $currentObj;
+	for ($currentObj in $allR_allT)
+	{
+		setAttr ({$currentObj + ".translate"}, 0,0,0);
+		setAttr ({$currentObj + ".rotate"}, 0,0,0);
+	}
+	
+	//TRANSLATE ONLY
+	select {$rigName + "_lElbowIKC"} {$rigName + "_rElbowIKC"} {$rigName + "_lKneeIKC"} {$rigName + "_rKneeIKC"};
+	
+	$translateLock = `getAttr -lock ($rigName + "_lClavicleC.tx")`;
+	if ($translateLock == 0)
+	{
+		select -add ($rigName + "_lClavicleC") ($rigName + "_rClavicleC");
+	}
+	if (`objExists ($rigName + "_EyeAimC")`)
+	{
+		select -add {$rigName + "_EyeAimC"};
+	}
+	if (`objExists ($rigName + "_lEyeAimC")`)
+	{
+		select -add {$rigName + "_lEyeAimC"};
+	}
+	if (`objExists ($rigName + "_rEyeAimC")`)
+	{
+		select -add {$rigName + "_rEyeAimC"};
+	}
+
+	
+	
+			
+	if (`objExists ($rigName + "_lElbowCurveC")`)
+	{
+		select -add {$rigName + "_lUpperArmCurveC"} {$rigName + "_lElbowCurveC"} {$rigName + "_lLowerArmCurveC"}
+		{$rigName + "_lUpperArmCurve1C"} {$rigName + "_lUpperArmCurve2C"} {$rigName + "_lUpperArmCurve3C"}
+		{$rigName + "_lLowerArmCurve1C"} {$rigName + "_lLowerArmCurve2C"} {$rigName + "_lLowerArmCurve3C"}
+		{$rigName + "_rUpperArmCurveC"} {$rigName + "_rElbowCurveC"} {$rigName + "_rLowerArmCurveC"}
+		{$rigName + "_rUpperArmCurve1C"} {$rigName + "_rUpperArmCurve2C"} {$rigName + "_rUpperArmCurve3C"}
+		{$rigName + "_rLowerArmCurve1C"} {$rigName + "_rLowerArmCurve2C"} {$rigName + "_rLowerArmCurve3C"}
+
+		{$rigName + "_lUpperLegCurveC"} {$rigName + "_lKneeCurveC"} {$rigName + "_lLowerLegCurveC"}
+		{$rigName + "_lUpperLegCurve1C"} {$rigName + "_lUpperLegCurve2C"} {$rigName + "_lUpperLegCurve3C"}
+		{$rigName + "_lLowerLegCurve1C"} {$rigName + "_lLowerLegCurve2C"} {$rigName + "_lLowerLegCurve3C"}
+		{$rigName + "_rUpperLegCurveC"} {$rigName + "_rKneeCurveC"} {$rigName + "_rLowerLegCurveC"}
+		{$rigName + "_rUpperLegCurve1C"} {$rigName + "_rUpperLegCurve2C"} {$rigName + "_rUpperLegCurve3C"}
+		{$rigName + "_rLowerLegCurve1C"} {$rigName + "_rLowerLegCurve2C"} {$rigName + "_rLowerLegCurve3C"};
+	}	
+
+	$allR_allT = `ls -sl`;
+	string $currentObj;
+	for ($currentObj in $allR_allT)
+	{
+		setAttr ({$currentObj + ".translate"}, 0,0,0);
+	}
+
+	//ROTATE ONLY
+	select
+	{$rigName + "_lClavicleC"} {$rigName + "_lWristFKC"} {$rigName + "_lPalmC"}
+	{$rigName + "_rClavicleC"} {$rigName + "_rWristFKC"} {$rigName + "_rPalmC"}	
+	{$rigName + "_lAnkleFKC"} {$rigName + "_lBallFKC"} {$rigName + "_lToeIKC"}
+	{$rigName + "_rAnkleFKC"} {$rigName + "_rBallFKC"} {$rigName + "_rToeIKC"};
+	if (`objExists ($rigName + "_lElbowCurveC")`)
+	{
+		select -add {$rigName + "_lUpperArmCurveC"} {$rigName + "_lElbowCurveC"} {$rigName + "_lLowerArmCurveC"}
+		{$rigName + "_lUpperArmCurve1C"} {$rigName + "_lUpperArmCurve2C"} {$rigName + "_lUpperArmCurve3C"}
+		{$rigName + "_lLowerArmCurve1C"} {$rigName + "_lLowerArmCurve2C"} {$rigName + "_lLowerArmCurve3C"}
+		{$rigName + "_rUpperArmCurveC"} {$rigName + "_rElbowCurveC"} {$rigName + "_rLowerArmCurveC"}
+		{$rigName + "_rUpperArmCurve1C"} {$rigName + "_rUpperArmCurve2C"} {$rigName + "_rUpperArmCurve3C"}
+		{$rigName + "_rLowerArmCurve1C"} {$rigName + "_rLowerArmCurve2C"} {$rigName + "_rLowerArmCurve3C"}
+
+		{$rigName + "_lUpperLegCurveC"} {$rigName + "_lKneeCurveC"} {$rigName + "_lLowerLegCurveC"}
+		{$rigName + "_lUpperLegCurve1C"} {$rigName + "_lUpperLegCurve2C"} {$rigName + "_lUpperLegCurve3C"}
+		{$rigName + "_lLowerLegCurve1C"} {$rigName + "_lLowerLegCurve2C"} {$rigName + "_lLowerLegCurve3C"}
+		{$rigName + "_rUpperLegCurveC"} {$rigName + "_rKneeCurveC"} {$rigName + "_rLowerLegCurveC"}
+		{$rigName + "_rUpperLegCurve1C"} {$rigName + "_rUpperLegCurve2C"} {$rigName + "_rUpperLegCurve3C"}
+		{$rigName + "_rLowerLegCurve1C"} {$rigName + "_rLowerLegCurve2C"} {$rigName + "_rLowerLegCurve3C"};
+	}
+
+	//FINGERS
+	select -add {$rigName + "_lFinger1J1C"} {$rigName + "_lFinger1J2C"} {$rigName + "_lFinger1J3C"} {$rigName + "_rFinger1J1C"} {$rigName + "_rFinger1J2C"} {$rigName + "_rFinger1J3C"};
+	if (`objExists ($rigName + "_lThumbJ1")`)
+	{select -add {$rigName + "_lThumbJ1C"} {$rigName + "_lThumbJ2C"} {$rigName + "_lThumbJ3C"} {$rigName + "_rThumbJ1C"} {$rigName + "_rThumbJ2C"} {$rigName + "_rThumbJ3C"};}
+	if (`objExists ($rigName + "_lFinger2J1")`)
+	{select -add {$rigName + "_lFinger2J1C"} {$rigName + "_lFinger2J2C"} {$rigName + "_lFinger2J3C"} {$rigName + "_rFinger2J1C"} {$rigName + "_rFinger2J2C"} {$rigName + "_rFinger2J3C"};}
+	if (`objExists ($rigName + "_lFinger3J1")`)
+	{select -add {$rigName + "_lFinger3J1C"} {$rigName + "_lFinger3J2C"} {$rigName + "_lFinger3J3C"} {$rigName + "_rFinger3J1C"} {$rigName + "_rFinger3J2C"} {$rigName + "_rFinger3J3C"};}
+	if (`objExists ($rigName + "_lFinger4J1")`)
+	{select -add {$rigName + "_lFinger4J1C"} {$rigName + "_lFinger4J2C"} {$rigName + "_lFinger4J3C"} {$rigName + "_rFinger4J1C"} {$rigName + "_rFinger4J2C"} {$rigName + "_rFinger4J3C"};}
+	if (`objExists ($rigName + "_lFinger5J1")`)
+	{select -add {$rigName + "_lFinger5J1C"} {$rigName + "_lFinger5J2C"} {$rigName + "_rFinger5J3C"} {$rigName + "_rFinger5J1C"} {$rigName + "_rFinger5J2C"} {$rigName + "_rFinger5J3C"};}
+	if (`objExists ($rigName + "_lFinger6J1")`)
+	{select -add {$rigName + "_lFinger6J1C"} {$rigName + "_lFinger6J2C"} {$rigName + "_lFinger6J3C"} {$rigName + "_rFinger6J1C"} {$rigName + "_rFinger6J2C"} {$rigName + "_rFinger6J3C"};}
+	if (`objExists ($rigName + "_lFinger7J1")`)
+	{select -add {$rigName + "_lFinger7J1C"} {$rigName + "_lFinger7J2C"} {$rigName + "_lFinger7J3C"} {$rigName + "_rFinger7J1C"} {$rigName + "_rFinger7J2C"} {$rigName + "_rFinger7J3C"};}
+	if (`objExists ($rigName + "_lFinger8J1")`)
+	{select -add {$rigName + "_lFinger8J1C"} {$rigName + "_lFinger8J2C"} {$rigName + "_lFinger8J3C"} {$rigName + "_rFinger8J1C"} {$rigName + "_rFinger8J2C"} {$rigName + "_rFinger8J3C"};}
+	if (`objExists ($rigName + "_lFinger9J1")`)
+	{select -add {$rigName + "_lFinger9J1C"} {$rigName + "_lFinger9J2C"} {$rigName + "_lFinger9J3C"} {$rigName + "_rFinger9J1C"} {$rigName + "_rFinger9J2C"} {$rigName + "_rFinger9J3C"};}
+	
+	//TOES
+	if (`objExists ($rigName + "_lToe01J1")`)
+	select -add {$rigName + "_lToe01J1C"} {$rigName + "_lToe01J2C"} {$rigName + "_rToe01J1C"} {$rigName + "_rToe01J2C"};
+	if (`objExists ($rigName + "_lToe02J1")`)
+	{select -add {$rigName + "_lToe02J1C"} {$rigName + "_lToe02J2C"} {$rigName + "_lToe02J3C"} {$rigName + "_rToe02J1C"} {$rigName + "_rToe02J2C"} {$rigName + "_rToe02J3C"};}
+	if (`objExists ($rigName + "_lToe03J1")`)
+	{select -add {$rigName + "_lToe03J1C"} {$rigName + "_lToe03J2C"} {$rigName + "_lToe03J3C"} {$rigName + "_rToe03J1C"} {$rigName + "_rToe03J2C"} {$rigName + "_rToe03J3C"};}
+	if (`objExists ($rigName + "_lToe04J1")`)
+	{select -add {$rigName + "_lToe04J1C"} {$rigName + "_lToe04J2C"} {$rigName + "_lToe04J3C"} {$rigName + "_rToe04J1C"} {$rigName + "_rToe04J2C"} {$rigName + "_rToe04J3C"};}
+	if (`objExists ($rigName + "_lToe05J1")`)
+	{select -add {$rigName + "_lToe05J1C"} {$rigName + "_lToe05J2C"} {$rigName + "_lToe05J3C"} {$rigName + "_rToe05J1C"} {$rigName + "_rToe05J2C"} {$rigName + "_rToe05J3C"};}
+	if (`objExists ($rigName + "_lToe06J1")`)
+	{select -add {$rigName + "_lToe06J1C"} {$rigName + "_lToe06J2C"} {$rigName + "_lToe06J3C"} {$rigName + "_rToe06J1C"} {$rigName + "_rToe06J2C"} {$rigName + "_rToe06J3C"};}
+	if (`objExists ($rigName + "_lToe07J1")`)
+	{select -add {$rigName + "_lToe07J1C"} {$rigName + "_lToe07J2C"} {$rigName + "_lToe07J3C"} {$rigName + "_rToe07J1C"} {$rigName + "_rToe07J2C"} {$rigName + "_rToe07J3C"};}
+	if (`objExists ($rigName + "_lToe08J1")`)
+	{select -add {$rigName + "_lToe08J1C"} {$rigName + "_lToe08J2C"} {$rigName + "_lToe08J3C"} {$rigName + "_rToe08J1C"} {$rigName + "_rToe08J2C"} {$rigName + "_rToe08J3C"};}
+	if (`objExists ($rigName + "_lToe09J1")`)
+	{select -add {$rigName + "_lToe09J1C"} {$rigName + "_lToe09J2C"} {$rigName + "_lToe09J3C"} {$rigName + "_rToe09J1C"} {$rigName + "_rToe09J2C"} {$rigName + "_rToe09J3C"};}
+	if (`objExists ($rigName + "_lToe10J1")`)
+	{select -add {$rigName + "_lToe10J1C"} {$rigName + "_lToe10J2C"} {$rigName + "_lToe10J3C"} {$rigName + "_rToe10J1C"} {$rigName + "_rToe10J2C"} {$rigName + "_rToe10J3C"};}
+	
+	$allR_allT = `ls -sl`;
+	string $currentObj;
+	for ($currentObj in $allR_allT)
+{
+	setAttr ({$currentObj + ".rotate"}, 0,0,0);
+}
+
+//FINGER AND TOE CHANNELS ON SWITCH CONTROLS
+	if (`objExists ($rigName + "_lThumbJ1C")`)
+	{
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl1") 0;
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl2") 0;
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl3") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl1") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl2") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl3") 0;
+		
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay1") 0;
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay2") 0;
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay3") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay1") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay2") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay3") 0;
+
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist1") 0;
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist2") 0;
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist3") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist1") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist2") 0;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist3") 0;
+	}
+	
+	select ($rigName + "_lFinger?J1C");
+	$fingers = `ls -sl`;
+	string $each;
+	int $i = 1;
+	
+	for ($each in $fingers)
+	{
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl1") 0;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl2") 0;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl3") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl1") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl2") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl3") 0;
+		
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay1") 0;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay2") 0;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay3") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay1") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay2") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay3") 0;
+
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist1") 0;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist2") 0;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist3") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist1") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist2") 0;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist3") 0;
+		$i++;
+	}		
+
+	if (`objExists ($rigName + "_lToe01J1C")`)
+	{
+		select ($rigName + "_lToe??J1C");
+		$toes = `ls -sl`;
+		string $each;
+		int $i = 1;
+		
+		for ($each in $toes)
+		{
+			string $nPad = "0";
+			if ($i >= 10)
+			{
+				$nPad = "";
+			}
+	
+			//SWITCH CHANNELS
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl1") 0;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl2") 0;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl1") 0;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl2") 0;
+			
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay1") 0;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay2") 0;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay1") 0;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay2") 0;
+	
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist1") 0;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist2") 0;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist1") 0;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist2") 0;
+	
+			if (`objExists ($rigName + "_lToe"+ $nPad + $i + "J3C")`)
+			{
+				setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl3") 0;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl3") 0;
+				
+				setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay3") 0;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay3") 0;
+				
+				setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist3") 0;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist3") 0;
+			}
+			$i++;
+		}
+	}
+
+//SCALES
+
+setAttr ({$rigName + "_lFinger1J1C.scale"}, 1,1,1);
+setAttr ({$rigName + "_rFinger1J1C.scale"}, 1,1,1);
+if (`objExists ($rigName + "_lThumbJ1")`)
+{
+	setAttr ({$rigName + "_lThumbJ1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rThumbJ1C.scale"}, 1,1,1);
+}
+if (`objExists ($rigName + "_lFinger2J1")`)
+{
+	setAttr ({$rigName + "_lFinger2J1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rFinger2J1C.scale"}, 1,1,1);
+}
+if (`objExists ($rigName + "_lFinger3J1")`)
+{
+	setAttr ({$rigName + "_lFinger3J1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rFinger3J1C.scale"}, 1,1,1);
+}
+if (`objExists ($rigName + "_lFinger4J1")`)
+{
+	setAttr ({$rigName + "_lFinger4J1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rFinger4J1C.scale"}, 1,1,1);
+}
+if (`objExists ($rigName + "_lFinger5J1")`)
+{
+	setAttr ({$rigName + "_lFinger5J1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rFinger5J1C.scale"}, 1,1,1);
+}
+if (`objExists ($rigName + "_lFinger6J1")`)
+{
+	setAttr ({$rigName + "_lFinger6J1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rFinger6J1C.scale"}, 1,1,1);
+}
+if (`objExists ($rigName + "_lFinger7J1")`)
+{
+	setAttr ({$rigName + "_lFinger7J1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rFinger7J1C.scale"}, 1,1,1);
+}
+if (`objExists ($rigName + "_lFinger8J1")`)
+{
+	setAttr ({$rigName + "_lFinger8J1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rFinger8J1C.scale"}, 1,1,1);
+}
+if (`objExists ($rigName + "_lFinger9J1")`)
+{
+	setAttr ({$rigName + "_lFinger9J1C.scale"}, 1,1,1);
+	setAttr ({$rigName + "_rFinger9J1C.scale"}, 1,1,1);
+}
+
+setAttr {$rigName + "_MainC.scaleY"} 1;
+setAttr ({$rigName + "_HeadC.scale"}, 1, 1, 1);
+setAttr {$rigName + "_lWristIKC.scaleX"} 1;
+setAttr {$rigName + "_rWristIKC.scaleX"} 1;
+setAttr {$rigName + "_lWristFKC.scaleX"} 1;
+setAttr {$rigName + "_rWristFKC.scaleX"} 1;
+setAttr {$rigName + "_lShoulderFKC.scaleX"} 1;
+setAttr {$rigName + "_rShoulderFKC.scaleX"} 1;
+setAttr {$rigName + "_lHipFKC.scaleX"} 1;
+setAttr {$rigName + "_rHipFKC.scaleX"} 1;
+
+//SPINES WITH BACKWARDS COMPATIBILITY
+$Spine01FKC_SYL = `getAttr -l {$rigName + "_Spine01FKC.sy"}`;
+if ($Spine01FKC_SYL == 0)
+{
+	select ($rigName + "_Spine??FKC") ($rigName + "_Neck??FKC");
+	$SplineFKC = `ls -sl`;
+	string $each;
+	for ($each in $SplineFKC)
+	{
+		setAttr {$each + ".sy"} 1;
+	}
+}
+
+//OTHER TRANSFORMS
+setAttr {$rigName + "_lElbowFKC.rotateY"} 0;
+setAttr {$rigName + "_rElbowFKC.rotateY"} 0;
+
+setAttr {$rigName + "_lWristIKC.ArmScale"} 1;
+setAttr {$rigName + "_rWristIKC.ArmScale"} 1;
+
+setAttr {$rigName + "_lKneeFKC.rotateZ"} 0;
+setAttr {$rigName + "_rKneeFKC.rotateZ"} 0;
+
+
+setAttr {$rigName + "_lFootIKC.Stretch"} 0;
+setAttr {$rigName + "_lFootIKC.KneeLock"} 0;
+setAttr {$rigName + "_lFootIKC.footTilt"} 0;
+setAttr {$rigName + "_lFootIKC.heelBall"} 0;
+setAttr {$rigName + "_lFootIKC.toeUpDn"} 0;
+setAttr {$rigName + "_lFootIKC.ballSwivel"} 0;
+setAttr {$rigName + "_lFootIKC.Stretch"} 0;
+setAttr {$rigName + "_lFootIKC.KneeLock"} 0;
+setAttr {$rigName + "_lFootIKC.footTilt"} 0;
+setAttr {$rigName + "_lFootIKC.heelBall"} 0;
+setAttr {$rigName + "_lFootIKC.toeUpDn"} 0;
+setAttr {$rigName + "_lFootIKC.ballSwivel"} 0;
+setAttr {$rigName + "_lFootIKC.LegScale"} 1;
+
+setAttr {$rigName + "_rFootIKC.Stretch"} 0;
+setAttr {$rigName + "_rFootIKC.KneeLock"} 0;
+setAttr {$rigName + "_rFootIKC.footTilt"} 0;
+setAttr {$rigName + "_rFootIKC.heelBall"} 0;
+setAttr {$rigName + "_rFootIKC.toeUpDn"} 0;
+setAttr {$rigName + "_rFootIKC.ballSwivel"} 0;
+setAttr {$rigName + "_rFootIKC.Stretch"} 0;
+setAttr {$rigName + "_rFootIKC.KneeLock"} 0;
+setAttr {$rigName + "_rFootIKC.footTilt"} 0;
+setAttr {$rigName + "_rFootIKC.heelBall"} 0;
+setAttr {$rigName + "_rFootIKC.toeUpDn"} 0;
+setAttr {$rigName + "_rFootIKC.ballSwivel"} 0;
+setAttr {$rigName + "_rFootIKC.LegScale"} 1;
+}
+
+global proc RRAnim_ResetTransformsCheck()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigConnection")`)
+		{
+			$rigConnections = `listConnections ($rig[0] + ".RRARigConnection")`;
+			$rigName = $rigConnections[0];
+			RRAnim_ResetTransforms($rigName);
+		}
+		else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+	{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+
+select $rig;
+}
+
+
+global proc RRAnim_ResetExtras(string $rigName)
+{
+
+	//IKFK SWITCHES
+	setAttr {$rigName + "_lLegSwitchC.SwitchIkFk"} 0;
+	setAttr {$rigName + "_lLegSwitchC.AutoVolume"} 1;
+	
+	setAttr {$rigName + "_rLegSwitchC.SwitchIkFk"} 0;
+	setAttr {$rigName + "_rLegSwitchC.AutoVolume"} 1;
+	
+	setAttr {$rigName + "_lArmSwitchC.SwitchIkFk"} 1;
+	setAttr {$rigName + "_rArmSwitchC.SwitchIkFk"} 1;
+	setAttr {$rigName + "_rArmSwitchC.AutoVolume"} 1;
+	setAttr {$rigName + "_lArmSwitchC.AutoVolume"} 1;
+	
+	setAttr {$rigName + "_rKneeIKC.Follow"} 0;
+	setAttr {$rigName + "_lElbowIKC.Follow"} 0;
+	setAttr {$rigName + "_rElbowIKC.Follow"} 0;
+	setAttr {$rigName + "_lKneeIKC.Follow"} 0;
+	
+	//CURVE ATTRIBUTES
+	if (`objExists ($rigName + "_lArmSwitchC.curve")`)
+	{
+		setAttr {$rigName + "_rArmSwitchC.curve"} 0;
+		setAttr {$rigName + "_lArmSwitchC.curve"} 0;
+		if (`objExists ($rigName + "_lArmSwitchC.upperCurve")`)
+		{
+			setAttr {$rigName + "_lArmSwitchC.upperCurve"} 0;
+			setAttr {$rigName + "_lArmSwitchC.midCurve"} 0;
+			setAttr {$rigName + "_lArmSwitchC.lowerCurve"} 0;
+			setAttr {$rigName + "_rArmSwitchC.upperCurve"} 0;
+			setAttr {$rigName + "_rArmSwitchC.midCurve"} 0;
+			setAttr {$rigName + "_rArmSwitchC.lowerCurve"} 0;
+		}
+	}
+
+	if (`objExists ($rigName + "_lUpperLegCurveC")`)
+	{
+		setAttr {$rigName + "_rLegSwitchC.curve"} 0;
+		setAttr {$rigName + "_lLegSwitchC.curve"} 0;
+		if (`objExists ($rigName + "_lLegSwitchC.upperCurve")`)
+		{
+			setAttr {$rigName + "_lLegSwitchC.upperCurve"} 0;
+			setAttr {$rigName + "_lLegSwitchC.midCurve"} 0;
+			setAttr {$rigName + "_lLegSwitchC.lowerCurve"} 0;
+			setAttr {$rigName + "_rLegSwitchC.upperCurve"} 0;
+			setAttr {$rigName + "_rLegSwitchC.midCurve"} 0;
+			setAttr {$rigName + "_rLegSwitchC.lowerCurve"} 0;
+		}
+	}	
+	
+	//SHOULDERS, HIPS AND HEAD ORIENTS
+	setAttr {$rigName + "_rShoulderFKC.ShoulderOrient"} 1;
+	setAttr {$rigName + "_lShoulderFKC.ShoulderOrient"} 1;
+	
+	if (`objExists ($rigName + "_lShoulderFKC.ClavicleInfluence")`)
+	{
+		$lShoulderFKC_ClavInf = `getAttr {$rigName + "_lShoulderFKC.ClavicleInfluence"}`;	
+		$rShoulderFKC_ClavInf = `getAttr {$rigName + "_rShoulderFKC.ClavicleInfluence"}`;	
+		setAttr {$rigName + "_rShoulderFKC.ClavicleInfluence"} 0;
+		setAttr {$rigName + "_lShoulderFKC.ClavicleInfluence"} 0;
+	}
+	
+	setAttr {$rigName + "_rHipFKC.HipOrient"} 1;
+	setAttr {$rigName + "_lHipFKC.HipOrient"} 1;
+	
+	setAttr {$rigName + "_HeadC.HeadOrient"} 1;
+	setAttr {$rigName + "_HeadC.NeckAutoVolume"} 1;
+	
+	if (`objExists ($rigName + "_Neck01FKC.NeckOrient")`)
+	{
+		setAttr {$rigName + "_Neck01FKC.NeckOrient"} 1;
+	}
+	
+	//ELBOW LOCK AND ARM SCALE
+	setAttr {$rigName + "_lWristIKC.ElbowLock"} 0;
+	setAttr {$rigName + "_lWristIKC.ArmScale"} 1;
+	setAttr {$rigName + "_rWristIKC.ElbowLock"} 0;
+	setAttr {$rigName + "_rWristIKC.ArmScale"} 1;
+	
+	setAttr {$rigName + "_lFootIKC.KneeLock"} 0;
+	setAttr {$rigName + "_lFootIKC.LegScale"} 1;
+	setAttr {$rigName + "_rFootIKC.KneeLock"} 0;
+	setAttr {$rigName + "_rFootIKC.LegScale"} 1;
+	
+	//SPINE 
+	setAttr {$rigName + "_SpineTopIKC.SpineAutoVolume"} 1;
+	setAttr {$rigName + "_SpineTopIKC.SpineTopOrient"} 1;
+
+	//SPINE CURVE
+	if (`objExists ($rigName + "_ROOTC.SpineCurve")`)
+	{
+		setAttr {$rigName + "_ROOTC.SpineCurve"} 1;
+	}
+	
+	//HEAD
+	setAttr ($rigName + "_EyeAimC.LocalGlobal") 1;
+	if (`objExists ($rigName + "_EyeAimC.AutoAim")`)
+	{
+		setAttr ($rigName + "_EyeAimC.AutoAim") 1;
+	}
+}
+	
+	
+global proc RRAnim_ResetExtrasCheck()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigConnection")`)
+		{
+			$rigConnections = `listConnections ($rig[0] + ".RRARigConnection")`;
+			$rigName = $rigConnections[0];
+			RRAnim_ResetExtras($rigName);
+		}
+		else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+	{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+
+select $rig;	
+}
+
+global proc RRAnim_RightToLeftControlsToonArms(string $rigName)
+{
+	//CURVE 
+	$rArmCurve = `getAttr {$rigName + "_rArmSwitchC.curve"}`;
+	setAttr {$rigName + "_lArmSwitchC.curve"} $rArmCurve;
+	
+	if (`objExists ($rigName + "_rArmSwitchC.upperCurve")`)
+	{
+		$rArmUprCurve = `getAttr {$rigName + "_rArmSwitchC.upperCurve"}`;
+		$rArmMidCurve = `getAttr {$rigName + "_rArmSwitchC.midCurve"}`;
+		$rArmLwrCurve = `getAttr {$rigName + "_rArmSwitchC.lowerCurve"}`;
+		setAttr {$rigName + "_lArmSwitchC.upperCurve"} $rArmUprCurve;		
+		setAttr {$rigName + "_lArmSwitchC.midCurve"} $rArmMidCurve;		
+		setAttr {$rigName + "_lArmSwitchC.lowerCurve"} $rArmLwrCurve;
+	}
+
+	//MACRO CONTROLS
+	$rUpperArmCurveC_R = `xform -q -ro {$rigName + "_rUpperArmCurveC"}`;
+	$rUpperArmCurveC_T = `xform -q -t {$rigName + "_rUpperArmCurveC"}`;
+	setAttr ({$rigName + "_lUpperArmCurveC.rotate"}, $rUpperArmCurveC_R[0], $rUpperArmCurveC_R[1], $rUpperArmCurveC_R[2]);
+	setAttr ({$rigName + "_lUpperArmCurveC.translate"}, ($rUpperArmCurveC_T[0] * -1), ($rUpperArmCurveC_T[1] * -1), ($rUpperArmCurveC_T[2] * -1));
+	
+	$rLowerArmCurveC_R = `xform -q -ro {$rigName + "_rLowerArmCurveC"}`;
+	$rLowerArmCurveC_T = `xform -q -t {$rigName + "_rLowerArmCurveC"}`;
+	setAttr ({$rigName + "_lLowerArmCurveC.rotate"}, $rLowerArmCurveC_R[0], $rLowerArmCurveC_R[1], $rLowerArmCurveC_R[2]);
+	setAttr ({$rigName + "_lLowerArmCurveC.translate"}, ($rLowerArmCurveC_T[0] * -1), ($rLowerArmCurveC_T[1] * -1), ($rLowerArmCurveC_T[2] * -1));
+
+	$rElbowCurveC_R = `xform -q -ro {$rigName + "_rElbowCurveC"}`;
+	$rElbowCurveC_T = `xform -q -t {$rigName + "_rElbowCurveC"}`;
+	setAttr ({$rigName + "_lElbowCurveC.rotate"}, $rElbowCurveC_R[0], $rElbowCurveC_R[1], $rElbowCurveC_R[2]);
+	setAttr ({$rigName + "_lElbowCurveC.translate"}, ($rElbowCurveC_T[0] * -1), ($rElbowCurveC_T[1] * -1), ($rElbowCurveC_T[2] * -1));
+	
+	//MICRO CONTROLS
+	$rUpperArmCurve1C_R = `xform -q -ro {$rigName + "_rUpperArmCurve1C"}`;
+	$rUpperArmCurve1C_T = `xform -q -t {$rigName + "_rUpperArmCurve1C"}`;
+	setAttr ({$rigName + "_lUpperArmCurve1C.rotate"}, $rUpperArmCurve1C_R[0], $rUpperArmCurve1C_R[1], $rUpperArmCurve1C_R[2]);
+	setAttr ({$rigName + "_lUpperArmCurve1C.translate"}, ($rUpperArmCurve1C_T[0] * -1), ($rUpperArmCurve1C_T[1] * -1), ($rUpperArmCurve1C_T[2] * -1));
+	
+	$rUpperArmCurve2C_R = `xform -q -ro {$rigName + "_rUpperArmCurve2C"}`;
+	$rUpperArmCurve2C_T = `xform -q -t {$rigName + "_rUpperArmCurve2C"}`;
+	setAttr ({$rigName + "_lUpperArmCurve2C.rotate"}, $rUpperArmCurve2C_R[0], $rUpperArmCurve2C_R[1], $rUpperArmCurve2C_R[2]);
+	setAttr ({$rigName + "_lUpperArmCurve2C.translate"}, ($rUpperArmCurve2C_T[0] * -1), ($rUpperArmCurve2C_T[1] * -1), ($rUpperArmCurve2C_T[2] * -1));
+	
+	$rUpperArmCurve3C_R = `xform -q -ro {$rigName + "_rUpperArmCurve3C"}`;
+	$rUpperArmCurve3C_T = `xform -q -t {$rigName + "_rUpperArmCurve3C"}`;
+	setAttr ({$rigName + "_lUpperArmCurve3C.rotate"}, $rUpperArmCurve3C_R[0], $rUpperArmCurve3C_R[1], $rUpperArmCurve3C_R[2]);
+	setAttr ({$rigName + "_lUpperArmCurve3C.translate"}, ($rUpperArmCurve3C_T[0] * -1), ($rUpperArmCurve3C_T[1] * -1), ($rUpperArmCurve3C_T[2] * -1));	
+	
+	$rLowerArmCurve1C_R = `xform -q -ro {$rigName + "_rLowerArmCurve1C"}`;
+	$rLowerArmCurve1C_T = `xform -q -t {$rigName + "_rLowerArmCurve1C"}`;
+	setAttr ({$rigName + "_lLowerArmCurve1C.rotate"}, $rLowerArmCurve1C_R[0], $rLowerArmCurve1C_R[1], $rLowerArmCurve1C_R[2]);
+	setAttr ({$rigName + "_lLowerArmCurve1C.translate"}, ($rLowerArmCurve1C_T[0] * -1), ($rLowerArmCurve1C_T[1] * -1), ($rLowerArmCurve1C_T[2] * -1));
+	
+	$rLowerArmCurve2C_R = `xform -q -ro {$rigName + "_rLowerArmCurve2C"}`;
+	$rLowerArmCurve2C_T = `xform -q -t {$rigName + "_rLowerArmCurve2C"}`;
+	setAttr ({$rigName + "_lLowerArmCurve2C.rotate"}, $rLowerArmCurve2C_R[0], $rLowerArmCurve2C_R[1], $rLowerArmCurve2C_R[2]);
+	setAttr ({$rigName + "_lLowerArmCurve2C.translate"}, ($rLowerArmCurve2C_T[0] * -1), ($rLowerArmCurve2C_T[1] * -1), ($rLowerArmCurve2C_T[2] * -1));
+	
+	$rLowerArmCurve3C_R = `xform -q -ro {$rigName + "_rLowerArmCurve3C"}`;
+	$rLowerArmCurve3C_T = `xform -q -t {$rigName + "_rLowerArmCurve3C"}`;
+	setAttr ({$rigName + "_lLowerArmCurve3C.rotate"}, $rLowerArmCurve3C_R[0], $rLowerArmCurve3C_R[1], $rLowerArmCurve3C_R[2]);
+	setAttr ({$rigName + "_lLowerArmCurve3C.translate"}, ($rLowerArmCurve3C_T[0] * -1), ($rLowerArmCurve3C_T[1] * -1), ($rLowerArmCurve3C_T[2] * -1));
+}
+
+
+global proc RRAnim_RightToLeftControlsToonLegs(string $rigName)
+{
+	//LEG SWITCH
+	$rLegCurve = `getAttr {$rigName + "_rLegSwitchC.curve"}`;
+	setAttr {$rigName + "_lLegSwitchC.curve"} $rLegCurve;	
+	
+	if (`objExists ($rigName + "_rLegSwitchC.upperCurve")`)
+	{
+		$rLegUprCurve = `getAttr {$rigName + "_rLegSwitchC.upperCurve"}`;
+		$rLegMidCurve = `getAttr {$rigName + "_rLegSwitchC.midCurve"}`;
+		$rLegLwrCurve = `getAttr {$rigName + "_rLegSwitchC.lowerCurve"}`;
+		setAttr {$rigName + "_lLegSwitchC.upperCurve"} $rLegUprCurve;		
+		setAttr {$rigName + "_lLegSwitchC.midCurve"} $rLegMidCurve;		
+		setAttr {$rigName + "_lLegSwitchC.lowerCurve"} $rLegLwrCurve;
+	}
+
+	//MACRO CONTROLS
+	$rUpperLegCurveC_R = `xform -q -ro {$rigName + "_rUpperLegCurveC"}`;
+	$rUpperLegCurveC_T = `xform -q -t {$rigName + "_rUpperLegCurveC"}`;
+	setAttr ({$rigName + "_lUpperLegCurveC.rotate"}, $rUpperLegCurveC_R[0], $rUpperLegCurveC_R[1], $rUpperLegCurveC_R[2]);
+	setAttr ({$rigName + "_lUpperLegCurveC.translate"}, ($rUpperLegCurveC_T[0] * -1), ($rUpperLegCurveC_T[1] * -1), ($rUpperLegCurveC_T[2] * -1));
+	
+	$rLowerLegCurveC_R = `xform -q -ro {$rigName + "_rLowerLegCurveC"}`;
+	$rLowerLegCurveC_T = `xform -q -t {$rigName + "_rLowerLegCurveC"}`;
+	setAttr ({$rigName + "_lLowerLegCurveC.rotate"}, $rLowerLegCurveC_R[0], $rLowerLegCurveC_R[1], $rLowerLegCurveC_R[2]);
+	setAttr ({$rigName + "_lLowerLegCurveC.translate"}, ($rLowerLegCurveC_T[0] * -1), ($rLowerLegCurveC_T[1] * -1), ($rLowerLegCurveC_T[2] * -1));
+
+	$rKneeCurveC_R = `xform -q -ro {$rigName + "_rKneeCurveC"}`;
+	$rKneeCurveC_T = `xform -q -t {$rigName + "_rKneeCurveC"}`;
+	setAttr ({$rigName + "_lKneeCurveC.rotate"}, $rKneeCurveC_R[0], $rKneeCurveC_R[1], $rKneeCurveC_R[2]);
+	setAttr ({$rigName + "_lKneeCurveC.translate"}, ($rKneeCurveC_T[0] * -1), ($rKneeCurveC_T[1] * -1), ($rKneeCurveC_T[2] * -1));
+	
+	//MICRO CONTROLS
+	$rUpperLegCurve1C_R = `xform -q -ro {$rigName + "_rUpperLegCurve1C"}`;
+	$rUpperLegCurve1C_T = `xform -q -t {$rigName + "_rUpperLegCurve1C"}`;
+	setAttr ({$rigName + "_lUpperLegCurve1C.rotate"}, $rUpperLegCurve1C_R[0], $rUpperLegCurve1C_R[1], $rUpperLegCurve1C_R[2]);
+	setAttr ({$rigName + "_lUpperLegCurve1C.translate"}, ($rUpperLegCurve1C_T[0] * -1), ($rUpperLegCurve1C_T[1] * -1), ($rUpperLegCurve1C_T[2] * -1));
+	
+	$rUpperLegCurve2C_R = `xform -q -ro {$rigName + "_rUpperLegCurve2C"}`;
+	$rUpperLegCurve2C_T = `xform -q -t {$rigName + "_rUpperLegCurve2C"}`;
+	setAttr ({$rigName + "_lUpperLegCurve2C.rotate"}, $rUpperLegCurve2C_R[0], $rUpperLegCurve2C_R[1], $rUpperLegCurve2C_R[2]);
+	setAttr ({$rigName + "_lUpperLegCurve2C.translate"}, ($rUpperLegCurve2C_T[0] * -1), ($rUpperLegCurve2C_T[1] * -1), ($rUpperLegCurve2C_T[2] * -1));
+	
+	$rUpperLegCurve3C_R = `xform -q -ro {$rigName + "_rUpperLegCurve3C"}`;
+	$rUpperLegCurve3C_T = `xform -q -t {$rigName + "_rUpperLegCurve3C"}`;
+	setAttr ({$rigName + "_lUpperLegCurve3C.rotate"}, $rUpperLegCurve3C_R[0], $rUpperLegCurve3C_R[1], $rUpperLegCurve3C_R[2]);
+	setAttr ({$rigName + "_lUpperLegCurve3C.translate"}, ($rUpperLegCurve3C_T[0] * -1), ($rUpperLegCurve3C_T[1] * -1), ($rUpperLegCurve3C_T[2] * -1));
+	
+	
+	$rLowerLegCurve1C_R = `xform -q -ro {$rigName + "_rLowerLegCurve1C"}`;
+	$rLowerLegCurve1C_T = `xform -q -t {$rigName + "_rLowerLegCurve1C"}`;
+	setAttr ({$rigName + "_lLowerLegCurve1C.rotate"}, $rLowerLegCurve1C_R[0], $rLowerLegCurve1C_R[1], $rLowerLegCurve1C_R[2]);
+	setAttr ({$rigName + "_lLowerLegCurve1C.translate"}, ($rLowerLegCurve1C_T[0] * -1), ($rLowerLegCurve1C_T[1] * -1), ($rLowerLegCurve1C_T[2] * -1));
+	
+	$rLowerLegCurve2C_R = `xform -q -ro {$rigName + "_rLowerLegCurve2C"}`;
+	$rLowerLegCurve2C_T = `xform -q -t {$rigName + "_rLowerLegCurve2C"}`;
+	setAttr ({$rigName + "_lLowerLegCurve2C.rotate"}, $rLowerLegCurve2C_R[0], $rLowerLegCurve2C_R[1], $rLowerLegCurve2C_R[2]);
+	setAttr ({$rigName + "_lLowerLegCurve2C.translate"}, ($rLowerLegCurve2C_T[0] * -1), ($rLowerLegCurve2C_T[1] * -1), ($rLowerLegCurve2C_T[2] * -1));
+	
+	$rLowerLegCurve3C_R = `xform -q -ro {$rigName + "_rLowerLegCurve3C"}`;
+	$rLowerLegCurve3C_T = `xform -q -t {$rigName + "_rLowerLegCurve3C"}`;
+	setAttr ({$rigName + "_lLowerLegCurve3C.rotate"}, $rLowerLegCurve3C_R[0], $rLowerLegCurve3C_R[1], $rLowerLegCurve3C_R[2]);
+	setAttr ({$rigName + "_lLowerLegCurve3C.translate"}, ($rLowerLegCurve3C_T[0] * -1), ($rLowerLegCurve3C_T[1] * -1), ($rLowerLegCurve3C_T[2] * -1));
+}
+
+global proc RRAnim_RightToLeftControlsFingers(string $rigName)
+{
+	if (`objExists ($rigName + "_lThumbJ1C")`)
+	{
+		$rThumbJ1C_R = `xform -q -ro {$rigName + "_rThumbJ1C"}`;
+		$rThumbJ1C_S = `xform -q -r -s {$rigName + "_rThumbJ1C"}`;
+		setAttr ({$rigName + "_lThumbJ1C.rotate"}, $rThumbJ1C_R[0], $rThumbJ1C_R[1], $rThumbJ1C_R[2]);
+		setAttr ({$rigName + "_lThumbJ1C.scale"}, $rThumbJ1C_S[0], $rThumbJ1C_S[1], $rThumbJ1C_S[2]);
+		
+		$rThumbJ2C_R = `xform -q -ro {$rigName + "_rThumbJ2C"}`;
+		setAttr ({$rigName + "_lThumbJ2C.rotate"}, $rThumbJ2C_R[0], $rThumbJ2C_R[1], $rThumbJ2C_R[2]);
+
+		$rThumbJ3C_R = `xform -q -ro {$rigName + "_rThumbJ3C"}`;
+		setAttr ({$rigName + "_lThumbJ3C.rotate"}, $rThumbJ3C_R[0], $rThumbJ3C_R[1], $rThumbJ3C_R[2]);
+
+		//SWITCH CHANNELS
+		$rThumbCurl1 = `getAttr ($rigName + "_rArmSwitchC.thumbCurl1")`;
+		$rThumbCurl2 = `getAttr ($rigName + "_rArmSwitchC.thumbCurl2")`;
+		$rThumbCurl3 = `getAttr ($rigName + "_rArmSwitchC.thumbCurl3")`;
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl1") $rThumbCurl1;
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl2") $rThumbCurl2;
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl3") $rThumbCurl3;
+		
+		$rThumbSplay1 = `getAttr ($rigName + "_rArmSwitchC.thumbSplay1")`;
+		$rThumbSplay2 = `getAttr ($rigName + "_rArmSwitchC.thumbSplay2")`;
+		$rThumbSplay3 = `getAttr ($rigName + "_rArmSwitchC.thumbSplay3")`;
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay1") $rThumbSplay1;
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay2") $rThumbSplay2;
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay3") $rThumbSplay3;
+
+		$rThumbTwist1 = `getAttr ($rigName + "_rArmSwitchC.thumbTwist1")`;
+		$rThumbTwist2 = `getAttr ($rigName + "_rArmSwitchC.thumbTwist2")`;
+		$rThumbTwist3 = `getAttr ($rigName + "_rArmSwitchC.thumbTwist3")`;
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist1") $rThumbTwist1;
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist2") $rThumbTwist2;
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist3") $rThumbTwist3;
+	}
+	
+	select ($rigName + "_lFinger?J1C");
+	$fingers = `ls -sl`;
+	string $each;
+	int $i = 1;
+	
+	for ($each in $fingers)
+	{
+		$rFingerJ1C_R = `xform -q -ro ($rigName + "_rFinger" + $i + "J1C")`;
+		$rFingerJ1C_S = `xform -q -r -s ($rigName + "_rFinger" + $i + "J1C")`;
+		setAttr (($rigName + "_lFinger" + $i + "J1C.rotate"), $rFingerJ1C_R[0], $rFingerJ1C_R[1], $rFingerJ1C_R[2]);
+		setAttr (($rigName + "_lFinger" + $i + "J1C.scale"), $rFingerJ1C_S[0], $rFingerJ1C_S[1], $rFingerJ1C_S[2]);
+		
+		$rFingerJ2C_R = `xform -q -ro ($rigName + "_rFinger" + $i + "J2C")`;
+		setAttr (($rigName + "_lFinger" + $i + "J2C.rotate"), $rFingerJ2C_R[0], $rFingerJ2C_R[1], $rFingerJ2C_R[2]);
+
+		$rFingerJ3C_R = `xform -q -ro ($rigName + "_rFinger" + $i + "J3C")`;
+		setAttr (($rigName + "_lFinger" + $i + "J3C.rotate"), $rFingerJ3C_R[0], $rFingerJ3C_R[1], $rFingerJ3C_R[2]);
+		
+		//SWITCH CHANNELS
+		$rFingerCurl1 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl1")`;
+		$rFingerCurl2 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl2")`;
+		$rFingerCurl3 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl3")`;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl1") $rFingerCurl1;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl2") $rFingerCurl2;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl3") $rFingerCurl3;
+		
+		$rFingerSplay1 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay1")`;
+		$rFingerSplay2 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay2")`;
+		$rFingerSplay3 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay3")`;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay1") $rFingerSplay1;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay2") $rFingerSplay2;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay3") $rFingerSplay3;
+
+		$rFingerTwist1 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist1")`;
+		$rFingerTwist2 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist2")`;
+		$rFingerTwist3 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist3")`;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist1") $rFingerTwist1;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist2") $rFingerTwist2;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist3") $rFingerTwist3;
+		$i++;
+	}
+}
+
+
+global proc RRAnim_RightToLeftControls(string $rigName)
+{
+	//ARMS////////////////////////////////////////////////////////////////////////
+	$rClavicleC_R = `xform -q -ro {$rigName + "_rClavicleC"}`;
+	setAttr ({$rigName + "_lClavicleC.rotate"}, $rClavicleC_R[0], $rClavicleC_R[1], $rClavicleC_R[2]);
+	$translateLock = `getAttr -lock  ($rigName + "_lClavicleC.tx")`;
+	if ($translateLock == 0)
+	{
+		$rClavicleC_T = `xform -q -t ($rigName + "_rClavicleC")`;
+		setAttr ({$rigName + "_lClavicleC.translate"}, ($rClavicleC_T[0] * -1), ($rClavicleC_T[1] * -1), ($rClavicleC_T[2] * -1));
+	}
+	
+	//FK SHOULDERS
+	$rShoulderFKC_R = `xform -q -ro {$rigName + "_rShoulderFKC"}`;
+	$rShoulderFKC_SX = `getAttr {$rigName + "_rShoulderFKC.sx"}`;	
+	$rShoulderFKC_Orient = `getAttr {$rigName + "_rShoulderFKC.ShoulderOrient"}`;	
+	setAttr ({$rigName + "_lShoulderFKC.rotate"}, $rShoulderFKC_R[0], $rShoulderFKC_R[1], $rShoulderFKC_R[2]);	
+	setAttr {$rigName + "_lShoulderFKC.sx"} $rShoulderFKC_SX;
+	setAttr {$rigName + "_lShoulderFKC.ShoulderOrient"} $rShoulderFKC_Orient;
+	
+		if (`objExists ($rigName + "_rShoulderFKC.ClavicleInfluence")`)
+	{
+		$rShoulderFKC_ClavInf = `getAttr {$rigName + "_rShoulderFKC.ClavicleInfluence"}`;	
+		setAttr {$rigName + "_lShoulderFKC.ClavicleInfluence"} $rShoulderFKC_ClavInf;
+	}
+	
+	//FK ELBOWS
+	$rElbowFKC_R = `getAttr {$rigName + "_rElbowFKC.ry"}`;
+	setAttr {$rigName + "_lElbowFKC.ry"} $rElbowFKC_R;
+	//FK WRISTS
+	$rWristFKC_R = `xform -q -ro {$rigName + "_rWristFKC"}`;
+	$rWristFKC_SX = `getAttr {$rigName + "_rWristFKC.sx"}`;	
+	setAttr ({$rigName + "_lWristFKC.rotate"}, $rWristFKC_R[0], $rWristFKC_R[1], $rWristFKC_R[2]);	
+	setAttr {$rigName + "_lWristFKC.sx"} $rWristFKC_SX;
+	
+	//IK ELBOWS
+	$rElbowIKC_T = `xform -q -t {$rigName + "_rElbowIKC"}`;
+	setAttr ({$rigName + "_lElbowIKC.translate"}, ($rElbowIKC_T[0] * -1), $rElbowIKC_T[1], $rElbowIKC_T[2]);
+
+	//IK WRISTS
+	$rWristIKC_R = `xform -q -ro {$rigName + "_rWristIKC"}`;
+	$rWristIKC_T = `xform -q -t {$rigName + "_rWristIKC"}`;
+	$rWristIKC_SX = `getAttr {$rigName + "_rWristIKC.sx"}`;
+	$rWristIKC_Stretch = `getAttr {$rigName + "_rWristIKC.Stretch"}`;	
+	$rWristIKC_ElbowLock = `getAttr {$rigName + "_rWristIKC.ElbowLock"}`;
+	$rWristIKC_Hips = `getAttr {$rigName + "_rWristIKC.Hips"}`;	
+	$rWristIKC_Chest = `getAttr {$rigName + "_rWristIKC.Chest"}`;	
+	$rWristIKC_Head = `getAttr {$rigName + "_rWristIKC.Head"}`;
+	
+	setAttr ({$rigName + "_lWristIKC.translate"}, ($rWristIKC_T[0] * -1), ($rWristIKC_T[1] * 1), ($rWristIKC_T[2] * 1));
+	setAttr ({$rigName + "_lWristIKC.rotate"}, $rWristIKC_R[0], ($rWristIKC_R[1] * -1), ($rWristIKC_R[2] * -1));	
+	setAttr {$rigName + "_lWristIKC.sx"} $rWristIKC_SX;
+	setAttr {$rigName + "_lWristIKC.Stretch"} $rWristIKC_Stretch;
+	setAttr {$rigName + "_lWristIKC.ElbowLock"} $rWristIKC_ElbowLock;
+	setAttr {$rigName + "_lWristIKC.Hips"} $rWristIKC_Hips;
+	setAttr {$rigName + "_lWristIKC.Chest"} $rWristIKC_Chest;
+	setAttr {$rigName + "_lWristIKC.Head"} $rWristIKC_Head;
+
+	//PALM
+	$rPalmC_R = `xform -q -ro {$rigName + "_rPalmC"}`;
+	$rPalmC_R = `xform -q -ro {$rigName + "_rPalmC"}`;
+	setAttr ({$rigName + "_lPalmC.rotate"}, $rPalmC_R[0], $rPalmC_R[1], $rPalmC_R[2]);
+	setAttr ({$rigName + "_lPalmC.rotate"}, $rPalmC_R[0], $rPalmC_R[1], $rPalmC_R[2]);
+		
+	
+	//ARM SWITCH
+	$rArmSwitch = `getAttr {$rigName + "_rArmSwitchC.SwitchIkFk"}`;
+	$rArmVolume = `getAttr {$rigName + "_rArmSwitchC.AutoVolume"}`;
+	setAttr {$rigName + "_lArmSwitchC.SwitchIkFk"} $rArmSwitch;
+	setAttr {$rigName + "_lArmSwitchC.AutoVolume"} $rArmVolume;
+	
+	//LEGS////////////////////////////////////////////////////////////////////////
+	//FK HIPS
+	$rHipFKC_R = `xform -q -ro {$rigName + "_rHipFKC"}`;
+	$rHipFKC_SX = `getAttr {$rigName + "_rHipFKC.sx"}`;	
+	$rHipFKC_Orient = `getAttr {$rigName + "_rHipFKC.HipOrient"}`;	
+	setAttr ({$rigName + "_lHipFKC.rotate"}, $rHipFKC_R[0], $rHipFKC_R[1], $rHipFKC_R[2]);
+	setAttr {$rigName + "_lHipFKC.sx"} $rHipFKC_SX;
+	setAttr {$rigName + "_lHipFKC.HipOrient"} $rHipFKC_Orient;
+
+	//FK KNEES
+	$rKneeFKC_R = `getAttr {$rigName + "_rKneeFKC.rz"}`;
+	setAttr {$rigName + "_lKneeFKC.rz"} $rKneeFKC_R;
+	//FK ANKLES
+	$rAnkleFKC_R = `xform -q -ro {$rigName + "_rAnkleFKC"}`;
+	setAttr ({$rigName + "_lAnkleFKC.rotate"}, $rAnkleFKC_R[0], $rAnkleFKC_R[1], $rAnkleFKC_R[2]);	
+	//FK BALLS
+	$rBallFKC_R = `xform -q -ro {$rigName + "_rBallFKC"}`;
+	setAttr ({$rigName + "_lBallFKC.rotate"}, $rBallFKC_R[0], $rBallFKC_R[1], $rBallFKC_R[2]);
+	
+	//IK KNEES
+	$rKneeIKC_T = `xform -q -t {$rigName + "_rKneeIKC"}`;
+	setAttr ({$rigName + "_lKneeIKC.translate"}, ($rKneeIKC_T[0] * -1), $rKneeIKC_T[1], $rKneeIKC_T[2]);
+
+	//IK FEET
+	$rFootIKC_R = `xform -q -ro {$rigName + "_rFootIKC"}`;
+	$rFootIKC_T = `xform -q -t {$rigName + "_rFootIKC"}`;
+	$rFootIKC_Stretch = `getAttr {$rigName + "_rFootIKC.Stretch"}`;	
+	$rFootIKC_KneeLock = `getAttr {$rigName + "_rFootIKC.KneeLock"}`;
+	$rFootIKC_footTilt = `getAttr {$rigName + "_rFootIKC.footTilt"}`;	
+	$rFootIKC_heelBall = `getAttr {$rigName + "_rFootIKC.heelBall"}`;	
+	$rFootIKC_toeUpDn = `getAttr {$rigName + "_rFootIKC.toeUpDn"}`;	
+	$rFootIKC_ballSwivel = `getAttr {$rigName + "_rFootIKC.ballSwivel"}`;
+	
+	setAttr {$rigName + "_lFootIKC.tx"} ($rFootIKC_T[0] * -1);
+	setAttr {$rigName + "_lFootIKC.ty"} ($rFootIKC_T[1] * 1);
+	setAttr {$rigName + "_lFootIKC.tz"} ($rFootIKC_T[2] * 1);
+	setAttr {$rigName + "_lFootIKC.rx"} $rFootIKC_R[0];
+	setAttr {$rigName + "_lFootIKC.ry"} ($rFootIKC_R[1] * -1);
+	setAttr {$rigName + "_lFootIKC.rz"} ($rFootIKC_R[2] * -1);	
+	setAttr {$rigName + "_lFootIKC.Stretch"} $rFootIKC_Stretch;
+	setAttr {$rigName + "_lFootIKC.KneeLock"} $rFootIKC_KneeLock;
+	setAttr {$rigName + "_lFootIKC.footTilt"} $rFootIKC_footTilt;
+	setAttr {$rigName + "_lFootIKC.heelBall"} $rFootIKC_heelBall;
+	setAttr {$rigName + "_lFootIKC.toeUpDn"} $rFootIKC_toeUpDn;
+	setAttr {$rigName + "_lFootIKC.ballSwivel"} $rFootIKC_ballSwivel;
+	
+	//IK TOE
+	$rToeIKC_R = `xform -q -ro {$rigName + "_rToeIKC"}`;
+	setAttr ({$rigName + "_lToeIKC.rotate"}, $rToeIKC_R[0], $rToeIKC_R[1], $rToeIKC_R[2]);
+	
+	//LEG SWITCH
+	$rLegSwitch = `getAttr {$rigName + "_rLegSwitchC.SwitchIkFk"}`;
+	$rLegVolume = `getAttr {$rigName + "_rLegSwitchC.AutoVolume"}`;
+	setAttr {$rigName + "_lLegSwitchC.SwitchIkFk"} $rLegSwitch;
+	setAttr {$rigName + "_lLegSwitchC.AutoVolume"} $rLegVolume;
+	
+	if (`objExists ($rigName + "_rElbowCurveC")`)
+		{
+			RRAnim_RightToLeftControlsToonArms($rigName);
+		}
+	if (`objExists ($rigName + "_rKneeCurveC")`)
+		{
+			RRAnim_RightToLeftControlsToonLegs($rigName);
+		}
+		
+	RRAnim_RightToLeftControlsFingers($rigName);
+}
+
+global proc RRAnim_RightToLeftControlsCheck()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigConnection")`)
+		{
+			$rigConnections = `listConnections ($rig[0] + ".RRARigConnection")`;
+			$rigName = $rigConnections[0];
+			RRAnim_RightToLeftControls($rigName);
+		}
+		else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+	{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+
+select $rig;	
+}
+
+
+
+global proc RRAnim_MirrorToonArms()
+{
+	string $rigName[] = `ls -sl`;
+	//CURVE 
+	$lArmCurve = `getAttr {$rigName[0] + "_lArmSwitchC.curve"}`;
+	$rArmCurve = `getAttr {$rigName[0] + "_rArmSwitchC.curve"}`;	
+	setAttr {$rigName[0] + "_lArmSwitchC.curve"} $rArmCurve;
+	setAttr {$rigName[0] + "_rArmSwitchC.curve"} $lArmCurve;
+	
+	if (`objExists ($rigName[0] + "_lArmSwitchC.upperCurve")`)
+	{
+		$lArmUprCurve = `getAttr {$rigName[0] + "_lArmSwitchC.upperCurve"}`;
+		$lArmMidCurve = `getAttr {$rigName[0] + "_lArmSwitchC.midCurve"}`;
+		$lArmLwrCurve = `getAttr {$rigName[0] + "_lArmSwitchC.lowerCurve"}`;
+		$rArmUprCurve = `getAttr {$rigName[0] + "_rArmSwitchC.upperCurve"}`;
+		$rArmMidCurve = `getAttr {$rigName[0] + "_rArmSwitchC.midCurve"}`;
+		$rArmLwrCurve = `getAttr {$rigName[0] + "_rArmSwitchC.lowerCurve"}`;
+		setAttr {$rigName[0] + "_lArmSwitchC.upperCurve"} $rArmUprCurve;		
+		setAttr {$rigName[0] + "_lArmSwitchC.midCurve"} $rArmMidCurve;		
+		setAttr {$rigName[0] + "_lArmSwitchC.lowerCurve"} $rArmLwrCurve;
+		setAttr {$rigName[0] + "_rArmSwitchC.upperCurve"} $lArmUprCurve;		
+		setAttr {$rigName[0] + "_rArmSwitchC.midCurve"} $lArmMidCurve;		
+		setAttr {$rigName[0] + "_rArmSwitchC.lowerCurve"} $lArmLwrCurve;
+	}
+
+	//MACRO CONTROLS
+	$lUpperArmCurveC_R = `xform -q -ro {$rigName[0] + "_lUpperArmCurveC"}`;
+	$lUpperArmCurveC_T = `xform -q -t {$rigName[0] + "_lUpperArmCurveC"}`;
+	$rUpperArmCurveC_R = `xform -q -ro {$rigName[0] + "_rUpperArmCurveC"}`;
+	$rUpperArmCurveC_T = `xform -q -t {$rigName[0] + "_rUpperArmCurveC"}`;	
+	setAttr ({$rigName[0] + "_rUpperArmCurveC.rotate"}, $lUpperArmCurveC_R[0], $lUpperArmCurveC_R[1], $lUpperArmCurveC_R[2]);
+	setAttr ({$rigName[0] + "_rUpperArmCurveC.translate"}, ($lUpperArmCurveC_T[0] * -1), ($lUpperArmCurveC_T[1] * -1), ($lUpperArmCurveC_T[2] * -1));
+	setAttr ({$rigName[0] + "_lUpperArmCurveC.rotate"}, $rUpperArmCurveC_R[0], $rUpperArmCurveC_R[1], $rUpperArmCurveC_R[2]);
+	setAttr ({$rigName[0] + "_lUpperArmCurveC.translate"}, ($rUpperArmCurveC_T[0] * -1), ($rUpperArmCurveC_T[1] * -1), ($rUpperArmCurveC_T[2] * -1));
+	
+	$lLowerArmCurveC_R = `xform -q -ro {$rigName[0] + "_lLowerArmCurveC"}`;
+	$lLowerArmCurveC_T = `xform -q -t {$rigName[0] + "_lLowerArmCurveC"}`;
+	$rLowerArmCurveC_R = `xform -q -ro {$rigName[0] + "_rLowerArmCurveC"}`;
+	$rLowerArmCurveC_T = `xform -q -t {$rigName[0] + "_rLowerArmCurveC"}`;	
+	setAttr ({$rigName[0] + "_rLowerArmCurveC.rotate"}, $lLowerArmCurveC_R[0], $lLowerArmCurveC_R[1], $lLowerArmCurveC_R[2]);
+	setAttr ({$rigName[0] + "_rLowerArmCurveC.translate"}, ($lLowerArmCurveC_T[0] * -1), ($lLowerArmCurveC_T[1] * -1), ($lLowerArmCurveC_T[2] * -1));
+	setAttr ({$rigName[0] + "_lLowerArmCurveC.rotate"}, $rLowerArmCurveC_R[0], $rLowerArmCurveC_R[1], $rLowerArmCurveC_R[2]);
+	setAttr ({$rigName[0] + "_lLowerArmCurveC.translate"}, ($rLowerArmCurveC_T[0] * -1), ($rLowerArmCurveC_T[1] * -1), ($rLowerArmCurveC_T[2] * -1));	
+
+	$lElbowCurveC_R = `xform -q -ro {$rigName[0] + "_lElbowCurveC"}`;
+	$lElbowCurveC_T = `xform -q -t {$rigName[0] + "_lElbowCurveC"}`;
+	$rElbowCurveC_R = `xform -q -ro {$rigName[0] + "_rElbowCurveC"}`;
+	$rElbowCurveC_T = `xform -q -t {$rigName[0] + "_rElbowCurveC"}`;	
+	setAttr ({$rigName[0] + "_rElbowCurveC.rotate"}, $lElbowCurveC_R[0], $lElbowCurveC_R[1], $lElbowCurveC_R[2]);
+	setAttr ({$rigName[0] + "_rElbowCurveC.translate"}, ($lElbowCurveC_T[0] * -1), ($lElbowCurveC_T[1] * -1), ($lElbowCurveC_T[2] * -1));
+	setAttr ({$rigName[0] + "_lElbowCurveC.rotate"}, $rElbowCurveC_R[0], $rElbowCurveC_R[1], $rElbowCurveC_R[2]);
+	setAttr ({$rigName[0] + "_lElbowCurveC.translate"}, ($rElbowCurveC_T[0] * -1), ($rElbowCurveC_T[1] * -1), ($rElbowCurveC_T[2] * -1));
+	
+	//MICRO CONTROLS
+	$lUpperArmCurve1C_R = `xform -q -ro {$rigName[0] + "_lUpperArmCurve1C"}`;
+	$lUpperArmCurve1C_T = `xform -q -t {$rigName[0] + "_lUpperArmCurve1C"}`;
+	$rUpperArmCurve1C_R = `xform -q -ro {$rigName[0] + "_rUpperArmCurve1C"}`;
+	$rUpperArmCurve1C_T = `xform -q -t {$rigName[0] + "_rUpperArmCurve1C"}`;	
+	setAttr ({$rigName[0] + "_rUpperArmCurve1C.rotate"}, $lUpperArmCurve1C_R[0], $lUpperArmCurve1C_R[1], $lUpperArmCurve1C_R[2]);
+	setAttr ({$rigName[0] + "_rUpperArmCurve1C.translate"}, ($lUpperArmCurve1C_T[0] * -1), ($lUpperArmCurve1C_T[1] * -1), ($lUpperArmCurve1C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lUpperArmCurve1C.rotate"}, $rUpperArmCurve1C_R[0], $rUpperArmCurve1C_R[1], $rUpperArmCurve1C_R[2]);
+	setAttr ({$rigName[0] + "_lUpperArmCurve1C.translate"}, ($rUpperArmCurve1C_T[0] * -1), ($rUpperArmCurve1C_T[1] * -1), ($rUpperArmCurve1C_T[2] * -1));
+	
+	$lUpperArmCurve2C_R = `xform -q -ro {$rigName[0] + "_lUpperArmCurve2C"}`;
+	$lUpperArmCurve2C_T = `xform -q -t {$rigName[0] + "_lUpperArmCurve2C"}`;
+	$rUpperArmCurve2C_R = `xform -q -ro {$rigName[0] + "_rUpperArmCurve2C"}`;
+	$rUpperArmCurve2C_T = `xform -q -t {$rigName[0] + "_rUpperArmCurve2C"}`;	
+	setAttr ({$rigName[0] + "_rUpperArmCurve2C.rotate"}, $lUpperArmCurve2C_R[0], $lUpperArmCurve2C_R[1], $lUpperArmCurve2C_R[2]);
+	setAttr ({$rigName[0] + "_rUpperArmCurve2C.translate"}, ($lUpperArmCurve2C_T[0] * -1), ($lUpperArmCurve2C_T[1] * -1), ($lUpperArmCurve2C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lUpperArmCurve2C.rotate"}, $rUpperArmCurve2C_R[0], $rUpperArmCurve2C_R[1], $rUpperArmCurve2C_R[2]);
+	setAttr ({$rigName[0] + "_lUpperArmCurve2C.translate"}, ($rUpperArmCurve2C_T[0] * -1), ($rUpperArmCurve2C_T[1] * -1), ($rUpperArmCurve2C_T[2] * -1));
+	
+	$lUpperArmCurve3C_R = `xform -q -ro {$rigName[0] + "_lUpperArmCurve3C"}`;
+	$lUpperArmCurve3C_T = `xform -q -t {$rigName[0] + "_lUpperArmCurve3C"}`;
+	$rUpperArmCurve3C_R = `xform -q -ro {$rigName[0] + "_rUpperArmCurve3C"}`;
+	$rUpperArmCurve3C_T = `xform -q -t {$rigName[0] + "_rUpperArmCurve3C"}`;	
+	setAttr ({$rigName[0] + "_rUpperArmCurve3C.rotate"}, $lUpperArmCurve3C_R[0], $lUpperArmCurve3C_R[1], $lUpperArmCurve3C_R[2]);
+	setAttr ({$rigName[0] + "_rUpperArmCurve3C.translate"}, ($lUpperArmCurve3C_T[0] * -1), ($lUpperArmCurve3C_T[1] * -1), ($lUpperArmCurve3C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lUpperArmCurve3C.rotate"}, $rUpperArmCurve3C_R[0], $rUpperArmCurve3C_R[1], $rUpperArmCurve3C_R[2]);
+	setAttr ({$rigName[0] + "_lUpperArmCurve3C.translate"}, ($rUpperArmCurve3C_T[0] * -1), ($rUpperArmCurve3C_T[1] * -1), ($rUpperArmCurve3C_T[2] * -1));
+	
+	
+	$lLowerArmCurve1C_R = `xform -q -ro {$rigName[0] + "_lLowerArmCurve1C"}`;
+	$lLowerArmCurve1C_T = `xform -q -t {$rigName[0] + "_lLowerArmCurve1C"}`;
+	$rLowerArmCurve1C_R = `xform -q -ro {$rigName[0] + "_rLowerArmCurve1C"}`;
+	$rLowerArmCurve1C_T = `xform -q -t {$rigName[0] + "_rLowerArmCurve1C"}`;	
+	setAttr ({$rigName[0] + "_rLowerArmCurve1C.rotate"}, $lLowerArmCurve1C_R[0], $lLowerArmCurve1C_R[1], $lLowerArmCurve1C_R[2]);
+	setAttr ({$rigName[0] + "_rLowerArmCurve1C.translate"}, ($lLowerArmCurve1C_T[0] * -1), ($lLowerArmCurve1C_T[1] * -1), ($lLowerArmCurve1C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lLowerArmCurve1C.rotate"}, $rLowerArmCurve1C_R[0], $rLowerArmCurve1C_R[1], $rLowerArmCurve1C_R[2]);
+	setAttr ({$rigName[0] + "_lLowerArmCurve1C.translate"}, ($rLowerArmCurve1C_T[0] * -1), ($rLowerArmCurve1C_T[1] * -1), ($rLowerArmCurve1C_T[2] * -1));
+	
+	$lLowerArmCurve2C_R = `xform -q -ro {$rigName[0] + "_lLowerArmCurve2C"}`;
+	$lLowerArmCurve2C_T = `xform -q -t {$rigName[0] + "_lLowerArmCurve2C"}`;
+	$rLowerArmCurve2C_R = `xform -q -ro {$rigName[0] + "_rLowerArmCurve2C"}`;
+	$rLowerArmCurve2C_T = `xform -q -t {$rigName[0] + "_rLowerArmCurve2C"}`;	
+	setAttr ({$rigName[0] + "_rLowerArmCurve2C.rotate"}, $lLowerArmCurve2C_R[0], $lLowerArmCurve2C_R[1], $lLowerArmCurve2C_R[2]);
+	setAttr ({$rigName[0] + "_rLowerArmCurve2C.translate"}, ($lLowerArmCurve2C_T[0] * -1), ($lLowerArmCurve2C_T[1] * -1), ($lLowerArmCurve2C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lLowerArmCurve2C.rotate"}, $rLowerArmCurve2C_R[0], $rLowerArmCurve2C_R[1], $rLowerArmCurve2C_R[2]);
+	setAttr ({$rigName[0] + "_lLowerArmCurve2C.translate"}, ($rLowerArmCurve2C_T[0] * -1), ($rLowerArmCurve2C_T[1] * -1), ($rLowerArmCurve2C_T[2] * -1));
+	
+	$lLowerArmCurve3C_R = `xform -q -ro {$rigName[0] + "_lLowerArmCurve3C"}`;
+	$lLowerArmCurve3C_T = `xform -q -t {$rigName[0] + "_lLowerArmCurve3C"}`;
+	$rLowerArmCurve3C_R = `xform -q -ro {$rigName[0] + "_rLowerArmCurve3C"}`;
+	$rLowerArmCurve3C_T = `xform -q -t {$rigName[0] + "_rLowerArmCurve3C"}`;	
+	setAttr ({$rigName[0] + "_rLowerArmCurve3C.rotate"}, $lLowerArmCurve3C_R[0], $lLowerArmCurve3C_R[1], $lLowerArmCurve3C_R[2]);
+	setAttr ({$rigName[0] + "_rLowerArmCurve3C.translate"}, ($lLowerArmCurve3C_T[0] * -1), ($lLowerArmCurve3C_T[1] * -1), ($lLowerArmCurve3C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lLowerArmCurve3C.rotate"}, $rLowerArmCurve3C_R[0], $rLowerArmCurve3C_R[1], $rLowerArmCurve3C_R[2]);
+	setAttr ({$rigName[0] + "_lLowerArmCurve3C.translate"}, ($rLowerArmCurve3C_T[0] * -1), ($rLowerArmCurve3C_T[1] * -1), ($rLowerArmCurve3C_T[2] * -1));
+}
+
+
+global proc RRAnim_MirrorToonLegs()
+{
+	string $rigName[] = `ls -sl`;
+	//LEG SWITCH
+	$lLegCurve = `getAttr {$rigName[0] + "_lLegSwitchC.curve"}`;
+	$rLegCurve = `getAttr {$rigName[0] + "_rLegSwitchC.curve"}`;	
+	setAttr {$rigName[0] + "_lLegSwitchC.curve"} $rLegCurve;
+	setAttr {$rigName[0] + "_rLegSwitchC.curve"} $lLegCurve;	
+	
+	if (`objExists ($rigName[0] + "_lLegSwitchC.upperCurve")`)
+	{
+		$lLegUprCurve = `getAttr {$rigName[0] + "_lLegSwitchC.upperCurve"}`;
+		$lLegMidCurve = `getAttr {$rigName[0] + "_lLegSwitchC.midCurve"}`;
+		$lLegLwrCurve = `getAttr {$rigName[0] + "_lLegSwitchC.lowerCurve"}`;
+		$rLegUprCurve = `getAttr {$rigName[0] + "_rLegSwitchC.upperCurve"}`;
+		$rLegMidCurve = `getAttr {$rigName[0] + "_rLegSwitchC.midCurve"}`;
+		$rLegLwrCurve = `getAttr {$rigName[0] + "_rLegSwitchC.lowerCurve"}`;
+		setAttr {$rigName[0] + "_lLegSwitchC.upperCurve"} $rLegUprCurve;		
+		setAttr {$rigName[0] + "_lLegSwitchC.midCurve"} $rLegMidCurve;		
+		setAttr {$rigName[0] + "_lLegSwitchC.lowerCurve"} $rLegLwrCurve;
+		setAttr {$rigName[0] + "_rLegSwitchC.upperCurve"} $lLegUprCurve;		
+		setAttr {$rigName[0] + "_rLegSwitchC.midCurve"} $lLegMidCurve;		
+		setAttr {$rigName[0] + "_rLegSwitchC.lowerCurve"} $lLegLwrCurve;
+	}
+
+	//MACRO CONTROLS
+	$lUpperLegCurveC_R = `xform -q -ro {$rigName[0] + "_lUpperLegCurveC"}`;
+	$lUpperLegCurveC_T = `xform -q -t {$rigName[0] + "_lUpperLegCurveC"}`;
+	$rUpperLegCurveC_R = `xform -q -ro {$rigName[0] + "_rUpperLegCurveC"}`;
+	$rUpperLegCurveC_T = `xform -q -t {$rigName[0] + "_rUpperLegCurveC"}`;	
+	setAttr ({$rigName[0] + "_rUpperLegCurveC.rotate"}, $lUpperLegCurveC_R[0], $lUpperLegCurveC_R[1], $lUpperLegCurveC_R[2]);
+	setAttr ({$rigName[0] + "_rUpperLegCurveC.translate"}, ($lUpperLegCurveC_T[0] * -1), ($lUpperLegCurveC_T[1] * -1), ($lUpperLegCurveC_T[2] * -1));
+	setAttr ({$rigName[0] + "_lUpperLegCurveC.rotate"}, $rUpperLegCurveC_R[0], $rUpperLegCurveC_R[1], $rUpperLegCurveC_R[2]);
+	setAttr ({$rigName[0] + "_lUpperLegCurveC.translate"}, ($rUpperLegCurveC_T[0] * -1), ($rUpperLegCurveC_T[1] * -1), ($rUpperLegCurveC_T[2] * -1));
+	
+	$lLowerLegCurveC_R = `xform -q -ro {$rigName[0] + "_lLowerLegCurveC"}`;
+	$lLowerLegCurveC_T = `xform -q -t {$rigName[0] + "_lLowerLegCurveC"}`;
+	$rLowerLegCurveC_R = `xform -q -ro {$rigName[0] + "_rLowerLegCurveC"}`;
+	$rLowerLegCurveC_T = `xform -q -t {$rigName[0] + "_rLowerLegCurveC"}`;	
+	setAttr ({$rigName[0] + "_rLowerLegCurveC.rotate"}, $lLowerLegCurveC_R[0], $lLowerLegCurveC_R[1], $lLowerLegCurveC_R[2]);
+	setAttr ({$rigName[0] + "_rLowerLegCurveC.translate"}, ($lLowerLegCurveC_T[0] * -1), ($lLowerLegCurveC_T[1] * -1), ($lLowerLegCurveC_T[2] * -1));
+	setAttr ({$rigName[0] + "_lLowerLegCurveC.rotate"}, $rLowerLegCurveC_R[0], $rLowerLegCurveC_R[1], $rLowerLegCurveC_R[2]);
+	setAttr ({$rigName[0] + "_lLowerLegCurveC.translate"}, ($rLowerLegCurveC_T[0] * -1), ($rLowerLegCurveC_T[1] * -1), ($rLowerLegCurveC_T[2] * -1));	
+
+	$lKneeCurveC_R = `xform -q -ro {$rigName[0] + "_lKneeCurveC"}`;
+	$lKneeCurveC_T = `xform -q -t {$rigName[0] + "_lKneeCurveC"}`;
+	$rKneeCurveC_R = `xform -q -ro {$rigName[0] + "_rKneeCurveC"}`;
+	$rKneeCurveC_T = `xform -q -t {$rigName[0] + "_rKneeCurveC"}`;	
+	setAttr ({$rigName[0] + "_rKneeCurveC.rotate"}, $lKneeCurveC_R[0], $lKneeCurveC_R[1], $lKneeCurveC_R[2]);
+	setAttr ({$rigName[0] + "_rKneeCurveC.translate"}, ($lKneeCurveC_T[0] * -1), ($lKneeCurveC_T[1] * -1), ($lKneeCurveC_T[2] * -1));
+	setAttr ({$rigName[0] + "_lKneeCurveC.rotate"}, $rKneeCurveC_R[0], $rKneeCurveC_R[1], $rKneeCurveC_R[2]);
+	setAttr ({$rigName[0] + "_lKneeCurveC.translate"}, ($rKneeCurveC_T[0] * -1), ($rKneeCurveC_T[1] * -1), ($rKneeCurveC_T[2] * -1));
+	
+	//MICRO CONTROLS
+	$lUpperLegCurve1C_R = `xform -q -ro {$rigName[0] + "_lUpperLegCurve1C"}`;
+	$lUpperLegCurve1C_T = `xform -q -t {$rigName[0] + "_lUpperLegCurve1C"}`;
+	$rUpperLegCurve1C_R = `xform -q -ro {$rigName[0] + "_rUpperLegCurve1C"}`;
+	$rUpperLegCurve1C_T = `xform -q -t {$rigName[0] + "_rUpperLegCurve1C"}`;	
+	setAttr ({$rigName[0] + "_rUpperLegCurve1C.rotate"}, $lUpperLegCurve1C_R[0], $lUpperLegCurve1C_R[1], $lUpperLegCurve1C_R[2]);
+	setAttr ({$rigName[0] + "_rUpperLegCurve1C.translate"}, ($lUpperLegCurve1C_T[0] * -1), ($lUpperLegCurve1C_T[1] * -1), ($lUpperLegCurve1C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lUpperLegCurve1C.rotate"}, $rUpperLegCurve1C_R[0], $rUpperLegCurve1C_R[1], $rUpperLegCurve1C_R[2]);
+	setAttr ({$rigName[0] + "_lUpperLegCurve1C.translate"}, ($rUpperLegCurve1C_T[0] * -1), ($rUpperLegCurve1C_T[1] * -1), ($rUpperLegCurve1C_T[2] * -1));
+	
+	$lUpperLegCurve2C_R = `xform -q -ro {$rigName[0] + "_lUpperLegCurve2C"}`;
+	$lUpperLegCurve2C_T = `xform -q -t {$rigName[0] + "_lUpperLegCurve2C"}`;
+	$rUpperLegCurve2C_R = `xform -q -ro {$rigName[0] + "_rUpperLegCurve2C"}`;
+	$rUpperLegCurve2C_T = `xform -q -t {$rigName[0] + "_rUpperLegCurve2C"}`;	
+	setAttr ({$rigName[0] + "_rUpperLegCurve2C.rotate"}, $lUpperLegCurve2C_R[0], $lUpperLegCurve2C_R[1], $lUpperLegCurve2C_R[2]);
+	setAttr ({$rigName[0] + "_rUpperLegCurve2C.translate"}, ($lUpperLegCurve2C_T[0] * -1), ($lUpperLegCurve2C_T[1] * -1), ($lUpperLegCurve2C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lUpperLegCurve2C.rotate"}, $rUpperLegCurve2C_R[0], $rUpperLegCurve2C_R[1], $rUpperLegCurve2C_R[2]);
+	setAttr ({$rigName[0] + "_lUpperLegCurve2C.translate"}, ($rUpperLegCurve2C_T[0] * -1), ($rUpperLegCurve2C_T[1] * -1), ($rUpperLegCurve2C_T[2] * -1));
+	
+	$lUpperLegCurve3C_R = `xform -q -ro {$rigName[0] + "_lUpperLegCurve3C"}`;
+	$lUpperLegCurve3C_T = `xform -q -t {$rigName[0] + "_lUpperLegCurve3C"}`;
+	$rUpperLegCurve3C_R = `xform -q -ro {$rigName[0] + "_rUpperLegCurve3C"}`;
+	$rUpperLegCurve3C_T = `xform -q -t {$rigName[0] + "_rUpperLegCurve3C"}`;	
+	setAttr ({$rigName[0] + "_rUpperLegCurve3C.rotate"}, $lUpperLegCurve3C_R[0], $lUpperLegCurve3C_R[1], $lUpperLegCurve3C_R[2]);
+	setAttr ({$rigName[0] + "_rUpperLegCurve3C.translate"}, ($lUpperLegCurve3C_T[0] * -1), ($lUpperLegCurve3C_T[1] * -1), ($lUpperLegCurve3C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lUpperLegCurve3C.rotate"}, $rUpperLegCurve3C_R[0], $rUpperLegCurve3C_R[1], $rUpperLegCurve3C_R[2]);
+	setAttr ({$rigName[0] + "_lUpperLegCurve3C.translate"}, ($rUpperLegCurve3C_T[0] * -1), ($rUpperLegCurve3C_T[1] * -1), ($rUpperLegCurve3C_T[2] * -1));
+	
+	
+	$lLowerLegCurve1C_R = `xform -q -ro {$rigName[0] + "_lLowerLegCurve1C"}`;
+	$lLowerLegCurve1C_T = `xform -q -t {$rigName[0] + "_lLowerLegCurve1C"}`;
+	$rLowerLegCurve1C_R = `xform -q -ro {$rigName[0] + "_rLowerLegCurve1C"}`;
+	$rLowerLegCurve1C_T = `xform -q -t {$rigName[0] + "_rLowerLegCurve1C"}`;	
+	setAttr ({$rigName[0] + "_rLowerLegCurve1C.rotate"}, $lLowerLegCurve1C_R[0], $lLowerLegCurve1C_R[1], $lLowerLegCurve1C_R[2]);
+	setAttr ({$rigName[0] + "_rLowerLegCurve1C.translate"}, ($lLowerLegCurve1C_T[0] * -1), ($lLowerLegCurve1C_T[1] * -1), ($lLowerLegCurve1C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lLowerLegCurve1C.rotate"}, $rLowerLegCurve1C_R[0], $rLowerLegCurve1C_R[1], $rLowerLegCurve1C_R[2]);
+	setAttr ({$rigName[0] + "_lLowerLegCurve1C.translate"}, ($rLowerLegCurve1C_T[0] * -1), ($rLowerLegCurve1C_T[1] * -1), ($rLowerLegCurve1C_T[2] * -1));
+	
+	$lLowerLegCurve2C_R = `xform -q -ro {$rigName[0] + "_lLowerLegCurve2C"}`;
+	$lLowerLegCurve2C_T = `xform -q -t {$rigName[0] + "_lLowerLegCurve2C"}`;
+	$rLowerLegCurve2C_R = `xform -q -ro {$rigName[0] + "_rLowerLegCurve2C"}`;
+	$rLowerLegCurve2C_T = `xform -q -t {$rigName[0] + "_rLowerLegCurve2C"}`;	
+	setAttr ({$rigName[0] + "_rLowerLegCurve2C.rotate"}, $lLowerLegCurve2C_R[0], $lLowerLegCurve2C_R[1], $lLowerLegCurve2C_R[2]);
+	setAttr ({$rigName[0] + "_rLowerLegCurve2C.translate"}, ($lLowerLegCurve2C_T[0] * -1), ($lLowerLegCurve2C_T[1] * -1), ($lLowerLegCurve2C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lLowerLegCurve2C.rotate"}, $rLowerLegCurve2C_R[0], $rLowerLegCurve2C_R[1], $rLowerLegCurve2C_R[2]);
+	setAttr ({$rigName[0] + "_lLowerLegCurve2C.translate"}, ($rLowerLegCurve2C_T[0] * -1), ($rLowerLegCurve2C_T[1] * -1), ($rLowerLegCurve2C_T[2] * -1));
+	
+	$lLowerLegCurve3C_R = `xform -q -ro {$rigName[0] + "_lLowerLegCurve3C"}`;
+	$lLowerLegCurve3C_T = `xform -q -t {$rigName[0] + "_lLowerLegCurve3C"}`;
+	$rLowerLegCurve3C_R = `xform -q -ro {$rigName[0] + "_rLowerLegCurve3C"}`;
+	$rLowerLegCurve3C_T = `xform -q -t {$rigName[0] + "_rLowerLegCurve3C"}`;	
+	setAttr ({$rigName[0] + "_rLowerLegCurve3C.rotate"}, $lLowerLegCurve3C_R[0], $lLowerLegCurve3C_R[1], $lLowerLegCurve3C_R[2]);
+	setAttr ({$rigName[0] + "_rLowerLegCurve3C.translate"}, ($lLowerLegCurve3C_T[0] * -1), ($lLowerLegCurve3C_T[1] * -1), ($lLowerLegCurve3C_T[2] * -1));
+	setAttr ({$rigName[0] + "_lLowerLegCurve3C.rotate"}, $rLowerLegCurve3C_R[0], $rLowerLegCurve3C_R[1], $rLowerLegCurve3C_R[2]);
+	setAttr ({$rigName[0] + "_lLowerLegCurve3C.translate"}, ($rLowerLegCurve3C_T[0] * -1), ($rLowerLegCurve3C_T[1] * -1), ($rLowerLegCurve3C_T[2] * -1));
+}
+
+global proc RRAnim_MirrorFingers(string $rigName)
+{
+	if (`objExists ($rigName + "_lThumbJ1C")`)
+	{
+		$lThumbJ1C_R = `xform -q -ro {$rigName + "_lThumbJ1C"}`;
+		$lThumbJ1C_S = `xform -q -r -s {$rigName + "_lThumbJ1C"}`;
+		$rThumbJ1C_R = `xform -q -ro {$rigName + "_rThumbJ1C"}`;
+		$rThumbJ1C_S = `xform -q -r -s {$rigName + "_rThumbJ1C"}`;
+		setAttr ({$rigName + "_lThumbJ1C.rotate"}, $rThumbJ1C_R[0], $rThumbJ1C_R[1], $rThumbJ1C_R[2]);
+		setAttr ({$rigName + "_lThumbJ1C.scale"}, $rThumbJ1C_S[0], $rThumbJ1C_S[1], $rThumbJ1C_S[2]);
+		setAttr ({$rigName + "_rThumbJ1C.rotate"}, $lThumbJ1C_R[0], $lThumbJ1C_R[1], $lThumbJ1C_R[2]);
+		setAttr ({$rigName + "_rThumbJ1C.scale"}, $lThumbJ1C_S[0], $lThumbJ1C_S[1], $lThumbJ1C_S[2]);
+		
+		$lThumbJ2C_R = `xform -q -ro {$rigName + "_lThumbJ2C"}`;
+		$rThumbJ2C_R = `xform -q -ro {$rigName + "_rThumbJ2C"}`;
+		setAttr ({$rigName + "_lThumbJ2C.rotate"}, $rThumbJ2C_R[0], $rThumbJ2C_R[1], $rThumbJ2C_R[2]);
+		setAttr ({$rigName + "_rThumbJ2C.rotate"}, $lThumbJ2C_R[0], $lThumbJ2C_R[1], $lThumbJ2C_R[2]);
+
+		$lThumbJ3C_R = `xform -q -ro {$rigName + "_lThumbJ3C"}`;
+		$rThumbJ3C_R = `xform -q -ro {$rigName + "_rThumbJ3C"}`;
+		setAttr ({$rigName + "_lThumbJ3C.rotate"}, $rThumbJ3C_R[0], $rThumbJ3C_R[1], $rThumbJ3C_R[2]);
+		setAttr ({$rigName + "_rThumbJ3C.rotate"}, $lThumbJ3C_R[0], $lThumbJ3C_R[1], $lThumbJ3C_R[2]);
+
+		//SWITCH CHANNELS
+		$lThumbCurl1 = `getAttr ($rigName + "_lArmSwitchC.thumbCurl1")`;
+		$lThumbCurl2 = `getAttr ($rigName + "_lArmSwitchC.thumbCurl2")`;
+		$lThumbCurl3 = `getAttr ($rigName + "_lArmSwitchC.thumbCurl3")`;
+		$rThumbCurl1 = `getAttr ($rigName + "_rArmSwitchC.thumbCurl1")`;
+		$rThumbCurl2 = `getAttr ($rigName + "_rArmSwitchC.thumbCurl2")`;
+		$rThumbCurl3 = `getAttr ($rigName + "_rArmSwitchC.thumbCurl3")`;
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl1") $rThumbCurl1;
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl2") $rThumbCurl2;
+		setAttr ($rigName + "_lArmSwitchC.thumbCurl3") $rThumbCurl3;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl1") $lThumbCurl1;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl2") $lThumbCurl2;
+		setAttr ($rigName + "_rArmSwitchC.thumbCurl3") $lThumbCurl3;
+		
+		$lThumbSplay1 = `getAttr ($rigName + "_lArmSwitchC.thumbSplay1")`;
+		$lThumbSplay2 = `getAttr ($rigName + "_lArmSwitchC.thumbSplay2")`;
+		$lThumbSplay3 = `getAttr ($rigName + "_lArmSwitchC.thumbSplay3")`;
+		$rThumbSplay1 = `getAttr ($rigName + "_rArmSwitchC.thumbSplay1")`;
+		$rThumbSplay2 = `getAttr ($rigName + "_rArmSwitchC.thumbSplay2")`;
+		$rThumbSplay3 = `getAttr ($rigName + "_rArmSwitchC.thumbSplay3")`;
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay1") $rThumbSplay1;
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay2") $rThumbSplay2;
+		setAttr ($rigName + "_lArmSwitchC.thumbSplay3") $rThumbSplay3;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay1") $lThumbSplay1;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay2") $lThumbSplay2;
+		setAttr ($rigName + "_rArmSwitchC.thumbSplay3") $lThumbSplay3;
+
+		$lThumbTwist1 = `getAttr ($rigName + "_lArmSwitchC.thumbTwist1")`;
+		$lThumbTwist2 = `getAttr ($rigName + "_lArmSwitchC.thumbTwist2")`;
+		$lThumbTwist3 = `getAttr ($rigName + "_lArmSwitchC.thumbTwist3")`;
+		$rThumbTwist1 = `getAttr ($rigName + "_rArmSwitchC.thumbTwist1")`;
+		$rThumbTwist2 = `getAttr ($rigName + "_rArmSwitchC.thumbTwist2")`;
+		$rThumbTwist3 = `getAttr ($rigName + "_rArmSwitchC.thumbTwist3")`;
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist1") $rThumbTwist1;
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist2") $rThumbTwist2;
+		setAttr ($rigName + "_lArmSwitchC.thumbTwist3") $rThumbTwist3;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist1") $lThumbTwist1;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist2") $lThumbTwist2;
+		setAttr ($rigName + "_rArmSwitchC.thumbTwist3") $lThumbTwist3;
+	}
+	
+	select ($rigName + "_lFinger?J1C");
+	$fingers = `ls -sl`;
+	string $each;
+	int $i = 1;
+	
+	for ($each in $fingers)
+	{
+		$lFingerJ1C_R = `xform -q -ro ($rigName + "_lFinger" + $i + "J1C")`;
+		$lFingerJ1C_S = `xform -q -r -s ($rigName + "_lFinger" + $i + "J1C")`;
+		$rFingerJ1C_R = `xform -q -ro ($rigName + "_rFinger" + $i + "J1C")`;
+		$rFingerJ1C_S = `xform -q -r -s ($rigName + "_rFinger" + $i + "J1C")`;
+		setAttr (($rigName + "_lFinger" + $i + "J1C.rotate"), $rFingerJ1C_R[0], $rFingerJ1C_R[1], $rFingerJ1C_R[2]);
+		setAttr (($rigName + "_lFinger" + $i + "J1C.scale"), $rFingerJ1C_S[0], $rFingerJ1C_S[1], $rFingerJ1C_S[2]);
+		setAttr (($rigName + "_rFinger" + $i + "J1C.rotate"), $lFingerJ1C_R[0], $lFingerJ1C_R[1], $lFingerJ1C_R[2]);
+		setAttr (($rigName + "_rFinger" + $i + "J1C.scale"), $lFingerJ1C_S[0], $lFingerJ1C_S[1], $lFingerJ1C_S[2]);
+		
+		$lFingerJ2C_R = `xform -q -ro ($rigName + "_lFinger" + $i + "J2C")`;
+		$rFingerJ2C_R = `xform -q -ro ($rigName + "_rFinger" + $i + "J2C")`;
+		setAttr (($rigName + "_lFinger" + $i + "J2C.rotate"), $rFingerJ2C_R[0], $rFingerJ2C_R[1], $rFingerJ2C_R[2]);
+		setAttr (($rigName + "_rFinger" + $i + "J2C.rotate"), $lFingerJ2C_R[0], $lFingerJ2C_R[1], $lFingerJ2C_R[2]);
+
+		$lFingerJ3C_R = `xform -q -ro ($rigName + "_lFinger" + $i + "J3C")`;
+		$rFingerJ3C_R = `xform -q -ro ($rigName + "_rFinger" + $i + "J3C")`;
+		setAttr (($rigName + "_lFinger" + $i + "J3C.rotate"), $rFingerJ3C_R[0], $rFingerJ3C_R[1], $rFingerJ3C_R[2]);
+		setAttr (($rigName + "_rFinger" + $i + "J3C.rotate"), $lFingerJ3C_R[0], $lFingerJ3C_R[1], $lFingerJ3C_R[2]);
+		
+		//SWITCH CHANNELS
+		$lFingerCurl1 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl1")`;
+		$lFingerCurl2 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl2")`;
+		$lFingerCurl3 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl3")`;
+		$rFingerCurl1 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl1")`;
+		$rFingerCurl2 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl2")`;
+		$rFingerCurl3 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl3")`;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl1") $rFingerCurl1;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl2") $rFingerCurl2;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Curl3") $rFingerCurl3;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl1") $lFingerCurl1;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl2") $lFingerCurl2;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Curl3") $lFingerCurl3;
+		
+		$lFingerSplay1 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay1")`;
+		$lFingerSplay2 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay2")`;
+		$lFingerSplay3 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay3")`;
+		$rFingerSplay1 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay1")`;
+		$rFingerSplay2 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay2")`;
+		$rFingerSplay3 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay3")`;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay1") $rFingerSplay1;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay2") $rFingerSplay2;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Splay3") $rFingerSplay3;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay1") $lFingerSplay1;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay2") $lFingerSplay2;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Splay3") $lFingerSplay3;
+
+		$lFingerTwist1 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist1")`;
+		$lFingerTwist2 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist2")`;
+		$lFingerTwist3 = `getAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist3")`;
+		$rFingerTwist1 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist1")`;
+		$rFingerTwist2 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist2")`;
+		$rFingerTwist3 = `getAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist3")`;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist1") $rFingerTwist1;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist2") $rFingerTwist2;
+		setAttr ($rigName + "_lArmSwitchC.finger" + $i + "Twist3") $rFingerTwist3;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist1") $lFingerTwist1;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist2") $lFingerTwist2;
+		setAttr ($rigName + "_rArmSwitchC.finger" + $i + "Twist3") $lFingerTwist3;
+		$i++;
+	}		
+
+	if (`objExists ($rigName + "_lToe01J1C")`)
+	{
+		select ($rigName + "_lToe??J1C");
+		$toes = `ls -sl`;
+		string $each;
+		int $i = 1;
+		
+		for ($each in $toes)
+		{
+			string $nPad = "0";
+			if ($i >= 10)
+			{
+				$nPad = "";
+			}
+			$lToeJ1C_R = `xform -q -ro ($rigName + "_lToe"+ $nPad + $i + "J1C")`;
+			$lToeJ1C_S = `xform -q -r -s ($rigName + "_lToe"+ $nPad + $i + "J1C")`;
+			$rToeJ1C_R = `xform -q -ro ($rigName + "_rToe"+ $nPad + $i + "J1C")`;
+			$rToeJ1C_S = `xform -q -r -s ($rigName + "_rToe"+ $nPad + $i + "J1C")`;
+			setAttr (($rigName + "_lToe"+ $nPad + $i + "J1C.rotate"), $rToeJ1C_R[0], $rToeJ1C_R[1], $rToeJ1C_R[2]);
+			setAttr (($rigName + "_rToe"+ $nPad + $i + "J1C.rotate"), $lToeJ1C_R[0], $lToeJ1C_R[1], $lToeJ1C_R[2]);
+			
+			$lToeJ2C_R = `xform -q -ro ($rigName + "_lToe"+ $nPad + $i + "J2C")`;
+			$rToeJ2C_R = `xform -q -ro ($rigName + "_rToe"+ $nPad + $i + "J2C")`;
+			setAttr (($rigName + "_lToe"+ $nPad + $i + "J2C.rotate"), $rToeJ2C_R[0], $rToeJ2C_R[1], $rToeJ2C_R[2]);
+			setAttr (($rigName + "_rToe"+ $nPad + $i + "J2C.rotate"), $lToeJ2C_R[0], $lToeJ2C_R[1], $lToeJ2C_R[2]);
+	
+			//SWITCH CHANNELS
+			$lToeCurl1 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl1")`;
+			$lToeCurl2 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl2")`;
+			$rToeCurl1 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl1")`;
+			$rToeCurl2 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl2")`;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl1") $rToeCurl1;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl2") $rToeCurl2;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl1") $lToeCurl1;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl2") $lToeCurl2;
+			
+			$lToeSplay1 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay1")`;
+			$lToeSplay2 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay2")`;
+			$rToeSplay1 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay1")`;
+			$rToeSplay2 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay2")`;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay1") $rToeSplay1;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay2") $rToeSplay2;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay1") $lToeSplay1;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay2") $lToeSplay2;
+	
+			$lToeTwist1 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist1")`;
+			$lToeTwist2 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist2")`;
+			$rToeTwist1 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist1")`;
+			$rToeTwist2 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist2")`;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist1") $rToeTwist1;
+			setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist2") $rToeTwist2;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist1") $lToeTwist1;
+			setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist2") $lToeTwist2;
+	
+			if (`objExists ($rigName + "_lToe"+ $nPad + $i + "J3C")`)
+			{
+				$lToeJ3C_R = `xform -q -ro ($rigName + "_lToe"+ $nPad + $i + "J3C")`;
+				$rToeJ3C_R = `xform -q -ro ($rigName + "_rToe"+ $nPad + $i + "J3C")`;
+				setAttr (($rigName + "_lToe"+ $nPad + $i + "J3C.rotate"), $rToeJ3C_R[0], $rToeJ3C_R[1], $rToeJ3C_R[2]);
+				setAttr (($rigName + "_rToe"+ $nPad + $i + "J3C.rotate"), $lToeJ3C_R[0], $lToeJ3C_R[1], $lToeJ3C_R[2]);
+	
+				//SWITCH CHANNELS
+				$lToeCurl3 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl3")`;
+				$rToeCurl3 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl3")`;
+				setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Curl3") $rToeCurl3;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Curl3") $lToeCurl3;
+				
+				$lToeSplay3 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay3")`;
+				$rToeSplay3 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay3")`;
+				setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Splay3") $rToeSplay3;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Splay3") $lToeSplay3;
+				
+				$lToeTwist3 = `getAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist3")`;
+				$rToeTwist3 = `getAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist3")`;
+				setAttr ($rigName + "_lLegSwitchC.toe" + $nPad + $i + "Twist3") $rToeTwist3;
+				setAttr ($rigName + "_rLegSwitchC.toe" + $nPad + $i + "Twist3") $lToeTwist3;
+			}
+			$i++;
+		}
+	}
+}
+
+
+global proc RRAnim_Mirror(string $rigName)
+{
+	//CENTER CONTROLS
+	$ROOTC_R = `xform -q -ro {$rigName + "_ROOTC"}`;
+	$ROOTC_T = `xform -q -t {$rigName + "_ROOTC"}`;
+	setAttr {$rigName + "_ROOTC.ry"} ($ROOTC_R[1] * -1);
+	setAttr {$rigName + "_ROOTC.rz"} ($ROOTC_R[2] * -1);
+	setAttr {$rigName + "_ROOTC.tx"} ($ROOTC_T[2] * -1);
+	
+	$MainHipC_R = `xform -q -ro {$rigName + "_MainHipC"}`;
+	$MainHipC_T = `xform -q -t {$rigName + "_MainHipC"}`;
+	setAttr {$rigName + "_MainHipC.ry"} ($MainHipC_R[1] * -1);
+	setAttr {$rigName + "_MainHipC.rz"} ($MainHipC_R[2] * -1);
+	setAttr {$rigName + "_MainHipC.tx"} ($MainHipC_T[0] * -1);
+
+	//SPINE
+	select ($rigName + "_Spine??FKC");
+	$SpineFKC = `ls -sl`;
+	int $SpineNum = `size $SpineFKC`;
+	int $CurrentNum = 1;
+	string $sVertebrae = "_Spine";
+	while ($CurrentNum <= $SpineNum)
+	{
+		string $currentString = $CurrentNum;
+		if ($CurrentNum < 10)
+		{
+		   $sVertebrae = $rigName + "_Spine0" + $currentString + "FKC";
+		}
+		else
+		{
+		   $sVertebrae = $rigName + "_Spine" + $currentString + "FKC";
+		}
+			
+		$SpineFKC_R = `xform -q -ro $sVertebrae`;
+		$SpineFKC_T = `xform -q -t  $sVertebrae`;
+		setAttr {$sVertebrae + ".ry"} ($SpineFKC_R[1] * -1);
+		setAttr {$sVertebrae + ".rz"} ($SpineFKC_R[2] * -1);
+		setAttr {$sVertebrae + ".tx"} ($SpineFKC_T[0] * -1);
+		
+		$CurrentNum++;
+	}
+
+
+	$SpineMidIKC_R = `xform -q -ro {$rigName + "_SpineMidIKC"}`;
+	$SpineMidIKC_T = `xform -q -t {$rigName + "_SpineMidIKC"}`;
+	setAttr {$rigName + "_SpineMidIKC.ry"} ($SpineMidIKC_R[1] * -1);
+	setAttr {$rigName + "_SpineMidIKC.rz"} ($SpineMidIKC_R[2] * -1);
+	setAttr {$rigName + "_SpineMidIKC.tx"} ($SpineMidIKC_T[0] * -1);
+	
+	$SpineTopIKC_R = `xform -q -ro {$rigName + "_SpineTopIKC"}`;
+	$SpineTopIKC_T = `xform -q -t {$rigName + "_SpineTopIKC"}`;
+	setAttr {$rigName + "_SpineTopIKC.ry"} ($SpineTopIKC_R[1] * -1);
+	setAttr {$rigName + "_SpineTopIKC.rz"} ($SpineTopIKC_R[2] * -1);
+	setAttr {$rigName + "_SpineTopIKC.tx"} ($SpineTopIKC_T[0] * -1);
+
+	select ($rigName + "_Spine??CurveC");
+	$SpineCurveC = `ls -sl`;
+	$SpineCurveNum = `size $SpineCurveC`;
+	string $SpineCurves = "Spine";
+	int $currentNum = 1;
+	while ($currentNum <= $SpineCurveNum)
+	{
+		string $currentString = $currentNum;
+		if ($currentNum < 10)
+		{
+			$SpineCurves = $rigName + "_Spine0" + $currentString + "CurveC";
+		}
+		else
+		{
+			$SpineCurves = $rigName + "_Spine" + $currentString + "CurveC";
+		}
+		$SpineCurveC_R = `xform -q -ro $SpineCurves`;
+		$SpineCurveC_T = `xform -q -t  $SpineCurves`;
+		setAttr {$SpineCurves + ".ry"} ($SpineCurveC_R[1] * -1);
+		setAttr {$SpineCurves + ".rz"} ($SpineCurveC_R[2] * -1);
+		setAttr {$SpineCurves + ".tx"} ($SpineCurveC_T[0] * -1);
+		$currentNum = $currentNum + 1;
+	}
+	
+	//NECK
+	select ($rigName + "_Neck??FKC");
+	$NeckFKC = `ls -sl`;
+	int $NeckNum = `size $NeckFKC`;
+	int $CurrentNum = 1;
+	string $sVertebrae = "_Neck";
+	while ($CurrentNum <= $NeckNum)
+	{
+		string $currentString = $CurrentNum;
+		if ($CurrentNum < 10)
+		{
+		   $sVertebrae = $rigName + "_Neck0" + $currentString + "FKC";
+		}
+		else
+		{
+		   $sVertebrae = $rigName + "_Neck" + $currentString + "FKC";
+		}
+			
+		$NeckFKC_R = `xform -q -ro $sVertebrae`;
+		$NeckFKC_T = `xform -q -t  $sVertebrae`;
+		setAttr {$sVertebrae + ".ry"} ($NeckFKC_R[1] * -1);
+		setAttr {$sVertebrae + ".rz"} ($NeckFKC_R[2] * -1);
+		setAttr {$sVertebrae + ".tx"} ($NeckFKC_T[0] * -1);
+		
+		$CurrentNum = $CurrentNum + 1;
+	}
+
+
+	$NeckMidIKC_R = `xform -q -ro {$rigName + "_NeckMidIKC"}`;
+	$NeckMidIKC_T = `xform -q -t {$rigName + "_NeckMidIKC"}`;
+	setAttr {$rigName + "_NeckMidIKC.ry"} ($NeckMidIKC_R[1] * -1);
+	setAttr {$rigName + "_NeckMidIKC.rz"} ($NeckMidIKC_R[2] * -1);
+	setAttr {$rigName + "_NeckMidIKC.tx"} ($NeckMidIKC_T[0] * -1);
+	
+	//$NeckTopIKC_R = `xform -q -ro {$rigName + "_NeckTopIKC"}`;
+	//$NeckTopIKC_T = `xform -q -t {$rigName + "_NeckTopIKC"}`;
+	//setAttr {$rigName + "_NeckTopIKC.ry"} ($NeckTopIKC_R[1] * -1);
+	//setAttr {$rigName + "_NeckTopIKC.rz"} ($NeckTopIKC_R[2] * -1);
+	//setAttr {$rigName + "_NeckTopIKC.tx"} ($NeckTopIKC_T[0] * -1);
+
+	select {$rigName + "_Neck??CurveC"};
+	$NeckCurveC = `ls -sl`;
+	$NeckCurveNum = `size $NeckCurveC`;
+	string $NeckCurves = "Neck";
+	int $currentNum = 1;
+	while ($currentNum <= $NeckCurveNum)
+	{
+		string $currentString = $currentNum;
+		if ($currentNum < 10)
+		{
+			$NeckCurves = $rigName + "_Neck0" + $currentString + "CurveC";
+		}
+		else
+		{
+			$NeckCurves = $rigName + "_Neck" + $currentString + "CurveC";
+		}
+		$NeckCurveC_R = `xform -q -ro $NeckCurves`;
+		$NeckCurveC_T = `xform -q -t  $NeckCurves`;
+		setAttr {$NeckCurves + ".ry"} ($NeckCurveC_R[1] * -1);
+		setAttr {$NeckCurves + ".rz"} ($NeckCurveC_R[2] * -1);
+		setAttr {$NeckCurves + ".tx"} ($NeckCurveC_T[0] * -1);
+		$currentNum = $currentNum + 1;
+	}	
+	
+	
+	if (`objExists ($rigName + "_JawC")`)
+	{
+		$JawC_R = `xform -q -ro {$rigName + "_JawC"}`;
+		$JawC_T = `xform -q -t {$rigName + "_JawC"}`;
+		setAttr {$rigName + "_JawC.ry"} ($JawC_R[1] * -1);
+		setAttr {$rigName + "_JawC.rz"} ($JawC_R[2] * -1);
+		setAttr {$rigName + "_JawC.tx"} ($JawC_T[0] * -1);
+	}
+	
+	$HeadC_R = `xform -q -ro {$rigName + "_HeadC"}`;
+	$HeadC_T = `xform -q -t {$rigName + "_HeadC"}`;
+	setAttr {$rigName + "_HeadC.ry"} ($HeadC_R[1] * -1);
+	setAttr {$rigName + "_HeadC.rz"} ($HeadC_R[2] * -1);
+	setAttr {$rigName + "_HeadC.tx"} ($HeadC_T[0] * -1);
+	
+
+	if (`objExists ($rigName + "_EyeAimC")`)
+	{
+		$EyeAimC_T = `xform -q -t {$rigName + "_EyeAimC"}`;
+		setAttr {$rigName + "_EyeAimC.tx"} ($EyeAimC_T[0] * -1);
+	}
+
+	//EYES	
+	if (`objExists ($rigName + "_lEyeAimC")`)
+	{
+		$lEyeAimC_T = `xform -q -t {$rigName + "_lEyeAimC"}`;
+		$rEyeAimC_T = `xform -q -t {$rigName + "_rEyeAimC"}`;
+		setAttr ({$rigName + "_rEyeAimC.translate"}, ($lEyeAimC_T[0] * -1), $lEyeAimC_T[1], $lEyeAimC_T[2]);
+		setAttr ({$rigName + "_lEyeAimC.translate"}, ($rEyeAimC_T[0] * -1), $rEyeAimC_T[1], $rEyeAimC_T[2]);
+	
+		if (`objExists ($rigName + "_geoSkinG")`)
+		{
+			$lEyeTopOC = `getAttr {$rigName + "_lEyeAimC.TopOpenClose"}`;
+			$lEyeBtmOC = `getAttr {$rigName + "_lEyeAimC.BtmOpenClose"}`;
+			$lEyeTopExp = `getAttr {$rigName + "_lEyeAimC.TopExpress"}`;
+			$lEyeBtmExp = `getAttr {$rigName + "_lEyeAimC.BtmExpress"}`;
+			$lEyeFollow = `getAttr {$rigName + "_lEyeAimC.LidsFollow"}`;
+    		
+			$rEyeTopOC = `getAttr {$rigName + "_rEyeAimC.TopOpenClose"}`;
+			$rEyeBtmOC = `getAttr {$rigName + "_rEyeAimC.BtmOpenClose"}`;
+			$rEyeTopExp = `getAttr {$rigName + "_rEyeAimC.TopExpress"}`;
+			$rEyeBtmExp = `getAttr {$rigName + "_rEyeAimC.BtmExpress"}`;
+			$rEyeFollow = `getAttr {$rigName + "_rEyeAimC.LidsFollow"}`;
+    		
+			setAttr {$rigName + "_rEyeAimC.TopOpenClose"} $lEyeTopOC;
+			setAttr {$rigName + "_rEyeAimC.BtmOpenClose"} $lEyeBtmOC;
+			setAttr {$rigName + "_rEyeAimC.TopExpress"} $lEyeTopExp;
+			setAttr {$rigName + "_rEyeAimC.BtmExpress"} $lEyeBtmExp;
+			setAttr {$rigName + "_rEyeAimC.LidsFollow"} $lEyeFollow;
+			
+			setAttr {$rigName + "_lEyeAimC.TopOpenClose"} $rEyeTopOC;
+			setAttr {$rigName + "_lEyeAimC.BtmOpenClose"} $rEyeBtmOC;
+			setAttr {$rigName + "_lEyeAimC.TopExpress"} $rEyeTopExp;
+			setAttr {$rigName + "_lEyeAimC.BtmExpress"} $rEyeBtmExp;
+			setAttr {$rigName + "_lEyeAimC.LidsFollow"} $rEyeFollow;
+		}
+	}
+	
+	//ARMS////////////////////////////////////////////////////////////////////////
+	$lClavicleC_R = `xform -q -ro {$rigName + "_lClavicleC"}`;
+	$rClavicleC_R = `xform -q -ro {$rigName + "_rClavicleC"}`;
+	setAttr ({$rigName + "_lClavicleC.rotate"}, $rClavicleC_R[0], $rClavicleC_R[1], $rClavicleC_R[2]);
+	setAttr ({$rigName + "_rClavicleC.rotate"}, $lClavicleC_R[0], $lClavicleC_R[1], $lClavicleC_R[2]);
+	$translateLock = `getAttr -lock  ($rigName + "_lClavicleC.tx")`;
+	if ($translateLock == 0)
+	{
+		$rClavicleC_T = `xform -q -t ($rigName + "_rClavicleC")`;
+		$lClavicleC_T = `xform -q -t ($rigName + "_lClavicleC")`;
+		setAttr ({$rigName + "_lClavicleC.translate"}, ($rClavicleC_T[0] * -1), ($rClavicleC_T[1] * -1), ($rClavicleC_T[2] * -1));
+		setAttr ({$rigName + "_rClavicleC.translate"}, ($lClavicleC_T[0] * -1), ($lClavicleC_T[1] * -1), ($lClavicleC_T[2] * -1));
+	}	
+	//FK SHOULDERS
+	$lShoulderFKC_R = `xform -q -ro {$rigName + "_lShoulderFKC"}`;
+	$rShoulderFKC_R = `xform -q -ro {$rigName + "_rShoulderFKC"}`;
+	$lShoulderFKC_SX = `getAttr {$rigName + "_lShoulderFKC.sx"}`;	
+	$rShoulderFKC_SX = `getAttr {$rigName + "_rShoulderFKC.sx"}`;	
+	$lShoulderFKC_Orient = `getAttr {$rigName + "_lShoulderFKC.ShoulderOrient"}`;	
+	$rShoulderFKC_Orient = `getAttr {$rigName + "_rShoulderFKC.ShoulderOrient"}`;	
+	setAttr ({$rigName + "_lShoulderFKC.rotate"}, $rShoulderFKC_R[0], $rShoulderFKC_R[1], $rShoulderFKC_R[2]);
+	setAttr {$rigName + "_lShoulderFKC.sx"} $rShoulderFKC_SX;
+	setAttr {$rigName + "_lShoulderFKC.ShoulderOrient"} $rShoulderFKC_Orient;
+
+	setAttr ({$rigName + "_rShoulderFKC.rotate"}, $lShoulderFKC_R[0], $lShoulderFKC_R[1], $lShoulderFKC_R[2]);	
+	setAttr {$rigName + "_rShoulderFKC.sx"} $lShoulderFKC_SX;
+	setAttr {$rigName + "_rShoulderFKC.ShoulderOrient"} $lShoulderFKC_Orient;
+	
+	if (`objExists ($rigName + "_rShoulderFKC.ClavicleInfluence")`)
+	{
+		$lShoulderFKC_ClavInf = `getAttr {$rigName + "_lShoulderFKC.ClavicleInfluence"}`;	
+		$rShoulderFKC_ClavInf = `getAttr {$rigName + "_rShoulderFKC.ClavicleInfluence"}`;	
+		setAttr {$rigName + "_rShoulderFKC.ClavicleInfluence"} $lShoulderFKC_ClavInf;
+		setAttr {$rigName + "_lShoulderFKC.ClavicleInfluence"} $rShoulderFKC_ClavInf;
+	}
+	
+	//FK ELBOWS
+	$lElbowFKC_R = `getAttr {$rigName + "_lElbowFKC.ry"}`;
+	$rElbowFKC_R = `getAttr {$rigName + "_rElbowFKC.ry"}`;
+	setAttr {$rigName + "_lElbowFKC.ry"} $rElbowFKC_R;
+	setAttr {$rigName + "_rElbowFKC.ry"} $lElbowFKC_R;
+	//FK WRISTS
+	$lWristFKC_R = `xform -q -ro {$rigName + "_lWristFKC"}`;
+	$rWristFKC_R = `xform -q -ro {$rigName + "_rWristFKC"}`;
+	$lWristFKC_SX = `getAttr {$rigName + "_lWristFKC.sx"}`;	
+	$rWristFKC_SX = `getAttr {$rigName + "_rWristFKC.sx"}`;	
+	setAttr ({$rigName + "_lWristFKC.rotate"}, $rWristFKC_R[0], $rWristFKC_R[1], $rWristFKC_R[2]);
+	setAttr {$rigName + "_lWristFKC.sx"} $rWristFKC_SX;
+	setAttr ({$rigName + "_rWristFKC.rotate"}, $lWristFKC_R[0], $lWristFKC_R[1], $lWristFKC_R[2]);	
+	setAttr {$rigName + "_rWristFKC.sx"} $lWristFKC_SX;
+	
+	//IK ELBOWS
+	$lElbowIKC_T = `xform -q -t {$rigName + "_lElbowIKC"}`;
+	$rElbowIKC_T = `xform -q -t {$rigName + "_rElbowIKC"}`;	
+	setAttr ({$rigName + "_rElbowIKC.translate"}, ($lElbowIKC_T[0] * -1), $lElbowIKC_T[1], $lElbowIKC_T[2]);
+	setAttr ({$rigName + "_lElbowIKC.translate"}, ($rElbowIKC_T[0] * -1), $rElbowIKC_T[1], $rElbowIKC_T[2]);
+
+	//IK WRISTS
+	$lWristIKC_R = `xform -q -ro {$rigName + "_lWristIKC"}`;
+	$lWristIKC_T = `xform -q -t {$rigName + "_lWristIKC"}`;
+	$lWristIKC_SX = `getAttr {$rigName + "_lWristIKC.sx"}`;
+	$lWristIKC_Stretch = `getAttr {$rigName + "_lWristIKC.Stretch"}`;	
+	$lWristIKC_ElbowLock = `getAttr {$rigName + "_lWristIKC.ElbowLock"}`;
+	$lWristIKC_Hips = `getAttr {$rigName + "_lWristIKC.Hips"}`;	
+	$lWristIKC_Chest = `getAttr {$rigName + "_lWristIKC.Chest"}`;	
+	$lWristIKC_Head = `getAttr {$rigName + "_lWristIKC.Head"}`;
+	
+	$rWristIKC_R = `xform -q -ro {$rigName + "_rWristIKC"}`;
+	$rWristIKC_T = `xform -q -t {$rigName + "_rWristIKC"}`;
+	$rWristIKC_SX = `getAttr {$rigName + "_rWristIKC.sx"}`;
+	$rWristIKC_Stretch = `getAttr {$rigName + "_rWristIKC.Stretch"}`;	
+	$rWristIKC_ElbowLock = `getAttr {$rigName + "_rWristIKC.ElbowLock"}`;
+	$rWristIKC_Hips = `getAttr {$rigName + "_rWristIKC.Hips"}`;	
+	$rWristIKC_Chest = `getAttr {$rigName + "_rWristIKC.Chest"}`;	
+	$rWristIKC_Head = `getAttr {$rigName + "_rWristIKC.Head"}`;
+	
+	setAttr ({$rigName + "_rWristIKC.translate"}, ($lWristIKC_T[0] * -1), ($lWristIKC_T[1] * 1), ($lWristIKC_T[2] * 1));
+	setAttr ({$rigName + "_rWristIKC.rotate"}, ($lWristIKC_R[0] * 1), ($lWristIKC_R[1] * -1), ($lWristIKC_R[2] * -1));	
+	setAttr {$rigName + "_rWristIKC.sx"} $lWristIKC_SX;
+	setAttr {$rigName + "_rWristIKC.Stretch"} $lWristIKC_Stretch;
+	setAttr {$rigName + "_rWristIKC.ElbowLock"} $lWristIKC_ElbowLock;
+	setAttr {$rigName + "_rWristIKC.Hips"} $lWristIKC_Hips;
+	setAttr {$rigName + "_rWristIKC.Chest"} $lWristIKC_Chest;
+	setAttr {$rigName + "_rWristIKC.Head"} $lWristIKC_Head;
+	
+	setAttr ({$rigName + "_lWristIKC.translate"}, ($rWristIKC_T[0] * -1), ($rWristIKC_T[1] * 1), ($rWristIKC_T[2] * 1));
+	setAttr ({$rigName + "_lWristIKC.rotate"}, ($rWristIKC_R[0] * 1), ($rWristIKC_R[1] * -1), ($rWristIKC_R[2] * -1));	
+	setAttr {$rigName + "_lWristIKC.sx"} $rWristIKC_SX;
+	setAttr {$rigName + "_lWristIKC.Stretch"} $rWristIKC_Stretch;
+	setAttr {$rigName + "_lWristIKC.ElbowLock"} $rWristIKC_ElbowLock;
+	setAttr {$rigName + "_lWristIKC.Hips"} $rWristIKC_Hips;
+	setAttr {$rigName + "_lWristIKC.Chest"} $rWristIKC_Chest;
+	setAttr {$rigName + "_lWristIKC.Head"} $rWristIKC_Head;
+	//PALM
+	$lPalmC_R = `xform -q -ro {$rigName + "_lPalmC"}`;
+	$rPalmC_R = `xform -q -ro {$rigName + "_rPalmC"}`;
+	setAttr ({$rigName + "_lPalmC.rotate"}, $rPalmC_R[0], $rPalmC_R[1], $rPalmC_R[2]);
+	setAttr ({$rigName + "_rPalmC.rotate"}, $lPalmC_R[0], $lPalmC_R[1], $lPalmC_R[2]);
+		
+	
+	//ARM SWITCH
+	$lArmSwitch = `getAttr {$rigName + "_lArmSwitchC.SwitchIkFk"}`;
+	$rArmSwitch = `getAttr {$rigName + "_rArmSwitchC.SwitchIkFk"}`;
+	$lArmVolume = `getAttr {$rigName + "_lArmSwitchC.AutoVolume"}`;
+	$rArmVolume = `getAttr {$rigName + "_rArmSwitchC.AutoVolume"}`;	
+	setAttr {$rigName + "_lArmSwitchC.SwitchIkFk"} $rArmSwitch;
+	setAttr {$rigName + "_rArmSwitchC.SwitchIkFk"} $lArmSwitch;
+	setAttr {$rigName + "_lArmSwitchC.AutoVolume"} $rArmSwitch;
+	setAttr {$rigName + "_rArmSwitchC.AutoVolume"} $lArmVolume;
+	
+	//LEGS////////////////////////////////////////////////////////////////////////
+	//FK HIPS
+	$lHipFKC_R = `xform -q -ro {$rigName + "_lHipFKC"}`;
+	$rHipFKC_R = `xform -q -ro {$rigName + "_rHipFKC"}`;
+	$lHipFKC_SX = `getAttr {$rigName + "_lHipFKC.sx"}`;	
+	$rHipFKC_SX = `getAttr {$rigName + "_rHipFKC.sx"}`;	
+	$lHipFKC_Orient = `getAttr {$rigName + "_lHipFKC.HipOrient"}`;	
+	$rHipFKC_Orient = `getAttr {$rigName + "_rHipFKC.HipOrient"}`;	
+	setAttr ({$rigName + "_lHipFKC.rotate"}, $rHipFKC_R[0], $rHipFKC_R[1], $rHipFKC_R[2]);
+	setAttr {$rigName + "_lHipFKC.sx"} $rHipFKC_SX;
+	setAttr {$rigName + "_lHipFKC.HipOrient"} $rHipFKC_Orient;
+
+	setAttr ({$rigName + "_rHipFKC.rotate"}, $lHipFKC_R[0], $lHipFKC_R[1], $lHipFKC_R[2]);	
+	setAttr {$rigName + "_rHipFKC.sx"} $lHipFKC_SX;
+	setAttr {$rigName + "_rHipFKC.HipOrient"} $lHipFKC_Orient;
+	//FK KNEES
+	$lKneeFKC_R = `getAttr {$rigName + "_lKneeFKC.rz"}`;
+	$rKneeFKC_R = `getAttr {$rigName + "_rKneeFKC.rz"}`;
+	setAttr {$rigName + "_lKneeFKC.rz"} $rKneeFKC_R;
+	setAttr {$rigName + "_rKneeFKC.rz"} $lKneeFKC_R;
+	//FK ANKLES
+	$lAnkleFKC_R = `xform -q -ro {$rigName + "_lAnkleFKC"}`;
+	$rAnkleFKC_R = `xform -q -ro {$rigName + "_rAnkleFKC"}`;
+	setAttr ({$rigName + "_lAnkleFKC.rotate"}, $rAnkleFKC_R[0], $rAnkleFKC_R[1], $rAnkleFKC_R[2]);
+	setAttr ({$rigName + "_rAnkleFKC.rotate"}, $lAnkleFKC_R[0], $lAnkleFKC_R[1], $lAnkleFKC_R[2]);	
+	//FK BALLS
+	$lBallFKC_R = `xform -q -ro {$rigName + "_lBallFKC"}`;
+	$rBallFKC_R = `xform -q -ro {$rigName + "_rBallFKC"}`;
+	setAttr ({$rigName + "_lBallFKC.rotate"}, $rBallFKC_R[0], $rBallFKC_R[1], $rBallFKC_R[2]);
+	setAttr ({$rigName + "_rBallFKC.rotate"}, $lBallFKC_R[0], $lBallFKC_R[1], $lBallFKC_R[2]);
+	
+	//IK KNEES
+	$lKneeIKC_T = `xform -q -t {$rigName + "_lKneeIKC"}`;
+	$rKneeIKC_T = `xform -q -t {$rigName + "_rKneeIKC"}`;
+	setAttr ({$rigName + "_rKneeIKC.translate"}, ($lKneeIKC_T[0] * -1), $lKneeIKC_T[1], $lKneeIKC_T[2]);
+	setAttr ({$rigName + "_lKneeIKC.translate"}, ($rKneeIKC_T[0] * -1), $rKneeIKC_T[1], $rKneeIKC_T[2]);
+
+	//IK FEET
+	$lFootIKC_R = `xform -q -ro {$rigName + "_lFootIKC"}`;
+	$lFootIKC_T = `xform -q -t {$rigName + "_lFootIKC"}`;
+	$lFootIKC_Stretch = `getAttr {$rigName + "_lFootIKC.Stretch"}`;	
+	$lFootIKC_KneeLock = `getAttr {$rigName + "_lFootIKC.KneeLock"}`;
+	$lFootIKC_footTilt = `getAttr {$rigName + "_lFootIKC.footTilt"}`;	
+	$lFootIKC_heelBall = `getAttr {$rigName + "_lFootIKC.heelBall"}`;	
+	$lFootIKC_toeUpDn = `getAttr {$rigName + "_lFootIKC.toeUpDn"}`;	
+	$lFootIKC_ballSwivel = `getAttr {$rigName + "_lFootIKC.ballSwivel"}`;
+	
+	$rFootIKC_R = `xform -q -ro {$rigName + "_rFootIKC"}`;
+	$rFootIKC_T = `xform -q -t {$rigName + "_rFootIKC"}`;
+	$rFootIKC_Stretch = `getAttr {$rigName + "_rFootIKC.Stretch"}`;	
+	$rFootIKC_KneeLock = `getAttr {$rigName + "_rFootIKC.KneeLock"}`;
+	$rFootIKC_footTilt = `getAttr {$rigName + "_rFootIKC.footTilt"}`;	
+	$rFootIKC_heelBall = `getAttr {$rigName + "_rFootIKC.heelBall"}`;
+	$rFootIKC_toeUpDn = `getAttr {$rigName + "_rFootIKC.toeUpDn"}`;		
+	$rFootIKC_ballSwivel = `getAttr {$rigName + "_rFootIKC.ballSwivel"}`;
+	
+	setAttr {$rigName + "_rFootIKC.tx"} ($lFootIKC_T[0] * -1);
+	setAttr {$rigName + "_rFootIKC.ty"} ($lFootIKC_T[1] * 1);
+	setAttr {$rigName + "_rFootIKC.tz"} ($lFootIKC_T[2] * 1);
+	setAttr {$rigName + "_rFootIKC.rx"} ($lFootIKC_R[0] * 1);
+	setAttr {$rigName + "_rFootIKC.ry"} ($lFootIKC_R[1] * -1);
+	setAttr {$rigName + "_rFootIKC.rz"} ($lFootIKC_R[2] * -1);	
+	setAttr {$rigName + "_rFootIKC.Stretch"} $lFootIKC_Stretch;
+	setAttr {$rigName + "_rFootIKC.KneeLock"} $lFootIKC_KneeLock;
+	setAttr {$rigName + "_rFootIKC.footTilt"} $lFootIKC_footTilt;
+	setAttr {$rigName + "_rFootIKC.heelBall"} $lFootIKC_heelBall;
+	setAttr {$rigName + "_rFootIKC.toeUpDn"} $lFootIKC_toeUpDn;
+	setAttr {$rigName + "_rFootIKC.ballSwivel"} $lFootIKC_ballSwivel;
+	
+	setAttr {$rigName + "_lFootIKC.tx"} ($rFootIKC_T[0] * -1);
+	setAttr {$rigName + "_lFootIKC.ty"} ($rFootIKC_T[1] * 1);
+	setAttr {$rigName + "_lFootIKC.tz"} ($rFootIKC_T[2] * 1);
+	setAttr {$rigName + "_lFootIKC.rx"} ($rFootIKC_R[0] * 1);
+	setAttr {$rigName + "_lFootIKC.ry"} ($rFootIKC_R[1] * -1);
+	setAttr {$rigName + "_lFootIKC.rz"} ($rFootIKC_R[2] * -1);	
+	setAttr {$rigName + "_lFootIKC.Stretch"} $rFootIKC_Stretch;
+	setAttr {$rigName + "_lFootIKC.KneeLock"} $rFootIKC_KneeLock;
+	setAttr {$rigName + "_lFootIKC.footTilt"} $rFootIKC_footTilt;
+	setAttr {$rigName + "_lFootIKC.heelBall"} $rFootIKC_heelBall;
+	setAttr {$rigName + "_lFootIKC.toeUpDn"} $rFootIKC_toeUpDn;
+	setAttr {$rigName + "_lFootIKC.ballSwivel"} $rFootIKC_ballSwivel;
+	//IK TOE
+	$lToeIKC_R = `xform -q -ro {$rigName + "_lToeIKC"}`;
+	$rToeIKC_R = `xform -q -ro {$rigName + "_rToeIKC"}`;
+	setAttr ({$rigName + "_lToeIKC.rotate"}, $rToeIKC_R[0], $rToeIKC_R[1], $rToeIKC_R[2]);
+	setAttr ({$rigName + "_rToeIKC.rotate"}, $lToeIKC_R[0], $lToeIKC_R[1], $lToeIKC_R[2]);
+	
+	//LEG SWITCH
+	$lLegSwitch = `getAttr {$rigName + "_lLegSwitchC.SwitchIkFk"}`;
+	$rLegSwitch = `getAttr {$rigName + "_rLegSwitchC.SwitchIkFk"}`;
+	$lLegVolume = `getAttr {$rigName + "_lLegSwitchC.AutoVolume"}`;
+	$rLegVolume = `getAttr {$rigName + "_rLegSwitchC.AutoVolume"}`;
+	setAttr {$rigName + "_lLegSwitchC.SwitchIkFk"} $rLegSwitch;
+	setAttr {$rigName + "_rLegSwitchC.SwitchIkFk"} $lLegSwitch;
+	setAttr {$rigName + "_lLegSwitchC.AutoVolume"} $rLegSwitch;
+	setAttr {$rigName + "_rLegSwitchC.AutoVolume"} $lLegVolume;
+	
+	if (`objExists ($rigName + "_lElbowCurveC")`)
+		{
+			select $rigName;
+			RRAnim_MirrorToonArms;
+		}
+	if (`objExists ($rigName + "_lKneeCurveC")`)
+		{
+			select $rigName;
+			RRAnim_MirrorToonLegs;
+		}
+		
+	RRAnim_MirrorFingers($rigName);
+}
+
+
+global proc RRAnim_MirrorCheck()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigConnection")`)
+		{
+			$rigConnections = `listConnections ($rig[0] + ".RRARigConnection")`;
+			$rigName = $rigConnections[0];
+			RRAnim_Mirror($rigName);
+		}
+		else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+	{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+
+select $rig;	
+}
+
+global proc RRAnim_MatchIKtoFKCheck()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigConnection")`)
+		{
+			$rigConnections = `listConnections ($rig[0] + ".RRARigConnection")`;
+			$rigName = $rigConnections[0];
+			RRAnim_MatchIKtoFK($rigName);
+		}
+		else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+	{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+
+select $rig;
+}
+
+//IKFK MATCHING////////////////////////////////////////////////////////////////////
+global proc RRAnim_MatchIKtoFK(string $rigName)
+{
+	$lArmMatch = `checkBox -q -v RRAnim_LeftArmMatch`;
+	if ($lArmMatch == 1)
+	{
+		$lWristIKtoFKLctr_T = `xform -q -t {$rigName + "_lWristIKtoFKLctr"}`;
+		$lWristIKtoFKLctr_R = `xform -q -ro {$rigName + "_lWristIKtoFKLctr"}`;
+		$lWristFKC_S = `getAttr {$rigName + "_lWristFKC.sx"}`;
+	
+		setAttr {$rigName + "_lWristIKC.translateX"} $lWristIKtoFKLctr_T[0];
+		setAttr {$rigName + "_lWristIKC.translateY"} $lWristIKtoFKLctr_T[1];
+		setAttr {$rigName + "_lWristIKC.translateZ"} $lWristIKtoFKLctr_T[2];
+		setAttr {$rigName + "_lWristIKC.rotateX"} $lWristIKtoFKLctr_R[0];
+		setAttr {$rigName + "_lWristIKC.rotateY"} $lWristIKtoFKLctr_R[1];
+		setAttr {$rigName + "_lWristIKC.rotateZ"} $lWristIKtoFKLctr_R[2];
+		setAttr {$rigName + "_lWristIKC.sx"} $lWristFKC_S;
+		
+		$lElbowIKtoFKAimLctr_T = `xform -q -t {$rigName + "_lElbowIKtoFKAimLctr"}`;
+		setAttr {$rigName + "_lElbowIKC.translateX"} $lElbowIKtoFKAimLctr_T[0];
+		setAttr {$rigName + "_lElbowIKC.translateY"} $lElbowIKtoFKAimLctr_T[1];
+		setAttr {$rigName + "_lElbowIKC.translateZ"} $lElbowIKtoFKAimLctr_T[2];
+		
+		setAttr {$rigName + "_lArmSwitchC.SwitchIkFk"} 0;
+		
+		setAttr {$rigName + "_lWristIKC.ElbowLock"} 0;
+		$lShoulderFK_S = `getAttr {$rigName + "_lShoulderFKC.sx"}`;
+		$lShoulder_S_MD = `getAttr {$rigName + "_lShoulderScale_MD.input1X"}`;
+		setAttr {$rigName + "_lWristIKC.ArmScale"} ($lShoulderFK_S/$lShoulder_S_MD);
+	}
+	
+	$rArmMatch = `checkBox -q -v RRAnim_RightArmMatch`;
+	if ($rArmMatch == 1)
+	{
+		$rWristIKtoFKLctr_T = `xform -q -t {$rigName + "_rWristIKtoFKLctr"}`;
+		$rWristIKtoFKLctr_R = `xform -q -ro {$rigName + "_rWristIKtoFKLctr"}`;
+		$rWristFKGRot = `xform -q -ro {$rigName + "_rWristFKCG"}`;
+		$rWristFKC_S = `getAttr {$rigName + "_rWristFKC.sx"}`;
+		
+		setAttr {$rigName + "_rWristIKC.translateX"} $rWristIKtoFKLctr_T[0];
+		setAttr {$rigName + "_rWristIKC.translateY"} $rWristIKtoFKLctr_T[1];
+		setAttr {$rigName + "_rWristIKC.translateZ"} $rWristIKtoFKLctr_T[2];
+		setAttr {$rigName + "_rWristIKC.rotateX"} $rWristIKtoFKLctr_R[0];
+		setAttr {$rigName + "_rWristIKC.rotateY"} $rWristIKtoFKLctr_R[1];
+		setAttr {$rigName + "_rWristIKC.rotateZ"} $rWristIKtoFKLctr_R[2];
+		setAttr {$rigName + "_rWristIKC.sx"} $rWristFKC_S;
+	
+		$rElbowIKtoFKAimLctr_T = `xform -q -t {$rigName + "_rElbowIKtoFKAimLctr"}`;
+		setAttr {$rigName + "_rElbowIKC.translateX"} $rElbowIKtoFKAimLctr_T[0];
+		setAttr {$rigName + "_rElbowIKC.translateY"} $rElbowIKtoFKAimLctr_T[1];
+		setAttr {$rigName + "_rElbowIKC.translateZ"} $rElbowIKtoFKAimLctr_T[2];
+	
+		setAttr {$rigName + "_rArmSwitchC.SwitchIkFk"} 0;
+	
+		setAttr {$rigName + "_rWristIKC.ElbowLock"} 0;
+		$rShoulderFK_S = `getAttr {$rigName + "_rShoulderFKC.sx"}`;
+		$rShoulder_S_MD = `getAttr {$rigName + "_rShoulderScale_MD.input1X"}`;
+		setAttr {$rigName + "_rWristIKC.ArmScale"} ($rShoulderFK_S/$rShoulder_S_MD);
+	}
+	
+	$lLegMatch = `checkBox -q -v RRAnim_LeftLegMatch`;
+	if ($lLegMatch == 1)
+	{
+		$lAnkleIKtoFKLctr_T = `xform -q -t {$rigName + "_lAnkleIKtoFKLctr"}`;
+		$lAnkleIKtoFKLctr_R = `xform -q -ro {$rigName + "_lAnkleIKtoFKLctr"}`;
+		$lAnkleFKCG_R = `xform -q -ro {$rigName + "_lAnkleFKCG"}`;
+		setAttr {$rigName + "_lFootIKC.translateX"} $lAnkleIKtoFKLctr_T[0];
+		setAttr {$rigName + "_lFootIKC.translateY"} $lAnkleIKtoFKLctr_T[1];
+		setAttr {$rigName + "_lFootIKC.translateZ"} $lAnkleIKtoFKLctr_T[2];
+		setAttr {$rigName + "_lFootIKC.rotateX"} $lAnkleIKtoFKLctr_R[0];
+		setAttr {$rigName + "_lFootIKC.rotateY"} $lAnkleIKtoFKLctr_R[1];
+		setAttr {$rigName + "_lFootIKC.rotateZ"} $lAnkleIKtoFKLctr_R[2];
+	
+		$lKneeIKtoFKAimLctr_T = `xform -q -t {$rigName + "_lKneeIKtoFKAimLctr"}`;
+		setAttr {$rigName + "_lKneeIKC.translateX"} $lKneeIKtoFKAimLctr_T[0];
+		setAttr {$rigName + "_lKneeIKC.translateY"} $lKneeIKtoFKAimLctr_T[1];
+		setAttr {$rigName + "_lKneeIKC.translateZ"} $lKneeIKtoFKAimLctr_T[2];
+	
+		setAttr {$rigName + "_lLegSwitchC.SwitchIkFk"} 0;
+	
+		setAttr {$rigName + "_lFootIKC.KneeLock"} 0;
+		$lHipFK_S = `getAttr {$rigName + "_lHipFKC.sx"}`;
+		$lHip_S_MD = `getAttr {$rigName + "_lHipScale_MD.input1X"}`;
+		setAttr {$rigName + "_lFootIKC.LegScale"} ($lHipFK_S/$lHip_S_MD);
+	}
+	
+	$rLegMatch = `checkBox -q -v RRAnim_RightLegMatch`;
+	if ($rLegMatch == 1)
+	{
+		$rAnkleIKtoFKLctr_T = `xform -q -t {$rigName + "_rAnkleIKtoFKLctr"}`;
+		$rAnkleIKtoFKLctr_R = `xform -q -ro {$rigName + "_rAnkleIKtoFKLctr"}`;
+		$rAnkleFKCG_R = `xform -q -ro {$rigName + "_rAnkleFKCG"}`;
+		setAttr {$rigName + "_rFootIKC.translateX"} $rAnkleIKtoFKLctr_T[0];
+		setAttr {$rigName + "_rFootIKC.translateY"} $rAnkleIKtoFKLctr_T[1];
+		setAttr {$rigName + "_rFootIKC.translateZ"} $rAnkleIKtoFKLctr_T[2];
+		setAttr {$rigName + "_rFootIKC.rotateX"} $rAnkleIKtoFKLctr_R[0];
+		setAttr {$rigName + "_rFootIKC.rotateY"} $rAnkleIKtoFKLctr_R[1];
+		setAttr {$rigName + "_rFootIKC.rotateZ"} $rAnkleIKtoFKLctr_R[2];
+	
+		$rKneeIKtoFKAimLctr_T = `xform -q -t {$rigName + "_rKneeIKtoFKAimLctr"}`;
+		setAttr {$rigName + "_rKneeIKC.translateX"} $rKneeIKtoFKAimLctr_T[0];
+		setAttr {$rigName + "_rKneeIKC.translateY"} $rKneeIKtoFKAimLctr_T[1];
+		setAttr {$rigName + "_rKneeIKC.translateZ"} $rKneeIKtoFKAimLctr_T[2];
+	
+		setAttr {$rigName + "_rLegSwitchC.SwitchIkFk"} 0;
+	
+		setAttr {$rigName + "_rFootIKC.KneeLock"} 0;
+		$rHipFK_S = `getAttr {$rigName + "_rHipFKC.sx"}`;
+		$rHip_S_MD = `getAttr {$rigName + "_rHipScale_MD.input1X"}`;
+		setAttr {$rigName + "_rFootIKC.LegScale"} ($rHipFK_S/$rHip_S_MD);
+	}
+}
+
+global proc RRAnim_MatchFKtoIKCheck()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigConnection")`)
+		{
+			$rigConnections = `listConnections ($rig[0] + ".RRARigConnection")`;
+			$rigName = $rigConnections[0];
+			RRAnim_MatchFKtoIK($rigName);
+		}
+		else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+	{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+
+select $rig;
+}
+//FKIK MATCHING////////////////////////////////////////////////////////////////////
+global proc RRAnim_MatchFKtoIK(string $rigName)
+{
+	$lArmMatch = `checkBox -q -v RRAnim_LeftArmMatch`;
+	if ($lArmMatch == 1)
+	{
+		$lShoulderFKtoIKOrientLctr_R = `xform -q -ro {$rigName + "_lShoulderFKtoIKOrientLctr"}`;
+		setAttr {$rigName + "_lShoulderFKC.rotateX"} $lShoulderFKtoIKOrientLctr_R[0];
+		setAttr {$rigName + "_lShoulderFKC.rotateY"} $lShoulderFKtoIKOrientLctr_R[1];
+		setAttr {$rigName + "_lShoulderFKC.rotateZ"} $lShoulderFKtoIKOrientLctr_R[2];
+		
+		$lElbowIK_R = `getAttr {$rigName + "_lElbowJIK.ry"}`;
+		setAttr {$rigName + "_lElbowFKC.rotateY"} ($lElbowIK_R * 1);
+		
+		$lWristFKtoIKLctr_R = `xform -q -ro {$rigName + "_lWristFKtoIKLctr"}`;
+		setAttr {$rigName + "_lWristFKC.rotateX"} $lWristFKtoIKLctr_R[0];
+		setAttr {$rigName + "_lWristFKC.rotateY"} $lWristFKtoIKLctr_R[1];
+		setAttr {$rigName + "_lWristFKC.rotateZ"} $lWristFKtoIKLctr_R[2];	
+		$lWristIKC_S = `getAttr {$rigName + "_lWristIKC.sx"}`;
+		setAttr {$rigName + "_lWristFKC.sx"} $lWristIKC_S;	
+
+		setAttr {$rigName + "_lArmSwitchC.SwitchIkFk"} 1;
+		
+		$lShoulderIKScale = `getAttr {$rigName + "_lShoulderJIK.sx"}`;
+		setAttr {$rigName + "_lShoulderFKC.sx"} $lShoulderIKScale;
+	}
+	
+	$rArmMatch = `checkBox -q -v RRAnim_RightArmMatch`;
+	if ($rArmMatch == 1)
+	{
+		$rShoulderFKtoIKOrientLctr_R = `xform -q -ro {$rigName + "_rShoulderFKtoIKOrientLctr"}`;
+		setAttr {$rigName + "_rShoulderFKC.rotateX"} $rShoulderFKtoIKOrientLctr_R[0];
+		setAttr {$rigName + "_rShoulderFKC.rotateY"} $rShoulderFKtoIKOrientLctr_R[1];
+		setAttr {$rigName + "_rShoulderFKC.rotateZ"} $rShoulderFKtoIKOrientLctr_R[2];
+		
+		$rElbowIK_R = `getAttr {$rigName + "_rElbowJIK.ry"}`;
+		setAttr {$rigName + "_rElbowFKC.rotateY"} ($rElbowIK_R * 1);
+		
+		$rWristFKtoIKLctr_R = `xform -q -ro {$rigName + "_rWristFKtoIKLctr"}`;
+		setAttr {$rigName + "_rWristFKC.rotateX"} $rWristFKtoIKLctr_R[0];
+		setAttr {$rigName + "_rWristFKC.rotateY"} $rWristFKtoIKLctr_R[1];
+		setAttr {$rigName + "_rWristFKC.rotateZ"} $rWristFKtoIKLctr_R[2];	
+		$rWristIKC_S = `getAttr {$rigName + "_rWristIKC.sx"}`;
+		setAttr {$rigName + "_rWristFKC.sx"} $rWristIKC_S;
+
+		setAttr {$rigName + "_rArmSwitchC.SwitchIkFk"} 1;
+
+		$rShoulderIKScale = `getAttr {$rigName + "_rShoulderJIK.sx"}`;
+		setAttr {$rigName + "_rShoulderFKC.sx"} $rShoulderIKScale;
+	}
+
+
+	$lLegMatch = `checkBox -q -v RRAnim_LeftLegMatch`;
+	if ($lLegMatch == 1)
+	{
+		$lHipFKtoIKOrientLctr = `xform -q -ro {$rigName + "_lHipFKtoIKOrientLctr"}`;
+		setAttr {$rigName + "_lHipFKC.rotateX"} $lHipFKtoIKOrientLctr[0];
+		setAttr {$rigName + "_lHipFKC.rotateY"} $lHipFKtoIKOrientLctr[1];
+		setAttr {$rigName + "_lHipFKC.rotateZ"} $lHipFKtoIKOrientLctr[2];
+		
+		$lKneeIK_R = `getAttr {$rigName + "_lKneeJIK.rz"}`;
+		setAttr {$rigName + "_lKneeFKC.rotateZ"} ($lKneeIK_R * 1);
+		
+		$lAnkleFKtoIKLctr_R = `xform -q -ro {$rigName + "_lAnkleFKtoIKLctr"}`;
+		setAttr {$rigName + "_lAnkleFKC.rotateX"} ($lAnkleFKtoIKLctr_R[1] * -1);
+		setAttr {$rigName + "_lAnkleFKC.rotateY"} ($lAnkleFKtoIKLctr_R[2] * 1);
+		setAttr {$rigName + "_lAnkleFKC.rotateZ"} ($lAnkleFKtoIKLctr_R[0] * -1);
+
+		setAttr {$rigName + "_lLegSwitchC.SwitchIkFk"} 1;
+
+		$lHipIKScale = `getAttr {$rigName + "_lHipJIK.sx"}`;
+		setAttr {$rigName + "_lHipFKC.sx"} $lHipIKScale;
+	}
+	
+	$rLegMatch = `checkBox -q -v RRAnim_RightLegMatch`;
+	if ($rLegMatch == 1)
+	{
+		$rHipFKtoIKOrientLctr = `xform -q -ro {$rigName + "_rHipFKtoIKOrientLctr"}`;
+		setAttr {$rigName + "_rHipFKC.rotateX"} $rHipFKtoIKOrientLctr[0];
+		setAttr {$rigName + "_rHipFKC.rotateY"} $rHipFKtoIKOrientLctr[1];
+		setAttr {$rigName + "_rHipFKC.rotateZ"} $rHipFKtoIKOrientLctr[2];
+		
+		$rKneeIK_R = `getAttr {$rigName + "_rKneeJIK.rz"}`;
+		setAttr {$rigName + "_rKneeFKC.rotateZ"} ($rKneeIK_R * 1);
+		
+		$rAnkleFKtoIKLctr_R = `xform -q -ro {$rigName + "_rAnkleFKtoIKLctr"}`;
+		setAttr {$rigName + "_rAnkleFKC.rotateX"} ($rAnkleFKtoIKLctr_R[1] * -1);
+		setAttr {$rigName + "_rAnkleFKC.rotateY"} ($rAnkleFKtoIKLctr_R[2] * 1);
+		setAttr {$rigName + "_rAnkleFKC.rotateZ"} ($rAnkleFKtoIKLctr_R[0] * -1);
+
+		setAttr {$rigName + "_rLegSwitchC.SwitchIkFk"} 1;
+
+		$rHipIKScale = `getAttr {$rigName + "_rHipJIK.sx"}`;
+		setAttr {$rigName + "_rHipFKC.sx"} $rHipIKScale;
+	}
+}
+
+global proc RRAnim_SelectAllControlsCheck()
+{
+	string $rig[] = `ls -sl`;
+	int $rigSize = `size $rig`;
+	if ($rigSize > 0)
+	{
+		if (`objExists ($rig[0] + ".RRARigConnection")`)
+		{
+			$rigConnections = `listConnections ($rig[0] + ".RRARigConnection")`;
+			$rigName = $rigConnections[0];
+			RRAnim_SelectAllControls($rigName);
+		}
+		else
+		{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+	}
+	else
+	{warning "YOU MUST SELECT A CONTROLLER OF THE CHARACTER YOU WISH TO MIRROR";}
+}
+
+global proc RRAnim_SelectAllControls(string $rigName)
+{
+	select ($rigName + "_ROOTC") ($rigName + "_MainHipC") ($rigName + "_Spine??FKC") ($rigName + "_SpineMidIKC")
+	($rigName + "_SpineTopIKC") ($rigName + "_Neck??FKC") ($rigName + "_NeckMidIKC");
+	if (`objExists ($rigName + "_EyeAimC")`)
+	{
+		select -add {$rigName + "_EyeAimC"};
+	}
+	if (`objExists ($rigName + "_lEyeAimC")`)
+	{
+		select -add {$rigName + "_lEyeAimC"};
+	}
+	if (`objExists ($rigName + "_rEyeAimC")`)
+	{
+		select -add {$rigName + "_rEyeAimC"};
+	}
+	if (`objExists ($rigName + "_JawC")`)
+	{
+		select -add {$rigName + "_JawC"};
+	}
+	select -add ($rigName + "_HeadC")
+	($rigName + "_lLegSwitchC") ($rigName + "_lKneeIKC") ($rigName + "_lBallFKC")
+	($rigName + "_lAnkleFKC") ($rigName + "_lKneeFKC") ($rigName + "_lHipFKC") ($rigName + "_lElbowIKC")
+	($rigName + "_lElbowFKC") ($rigName + "_lShoulderFKC") ($rigName + "_lClavicleC") ($rigName + "_lToeIKC")
+	($rigName + "_rLegSwitchC") ($rigName + "_rKneeIKC") ($rigName + "_rBallFKC") ($rigName + "_rAnkleFKC")
+	($rigName + "_rKneeFKC") ($rigName + "_rHipFKC") ($rigName + "_rElbowIKC") ($rigName + "_rElbowFKC")
+	($rigName + "_rShoulderFKC") ($rigName + "_rClavicleC") ($rigName + "_rToeIKC")
+	($rigName + "_lPalmC") ($rigName + "_rPalmC") ($rigName + "_lWristIKC") ($rigName + "_lWristFKC")
+	($rigName + "_rWristIKC") ($rigName + "_rWristFKC") ($rigName + "_rArmSwitchC") ($rigName + "_lArmSwitchC")
+	($rigName + "_rFootIKC") ($rigName + "_MainC") ($rigName + "_lFootIKC")
+	($rigName + "_*Finger*J*C");
+	
+	if (`objExists ($rigName + "_lThumbJ1C")`)
+	{
+		select -add {$rigName + "_*ThumbJ*C"};
+	}
+	
+	if (`objExists ($rigName + "_lToe01J1C")`)
+	{
+		select -add {$rigName + "_*Toe*J*C"};
+	}
+	
+	if (`objExists ($rigName + "_lUpperArmCurveC")`)
+	{
+		select -add {$rigName + "_*ArmCurveC"} {$rigName + "_*ArmCurve*C"} {$rigName + "_*ElbowCurveC"};
+	}
+	
+	if (`objExists ($rigName + "_lUpperLegCurveC")`)
+	{
+		select -add {$rigName + "_*LegCurveC"} {$rigName + "_*LegCurve*C"} {$rigName + "_*KneeCurveC"};
+	}
+}
+
+
+//UI
+global proc RRAnim_CreateUI()
+{
+	$versionNum = `getApplicationVersionAsFloat`;	
+
+	global string $rigName;
+	string $form = `formLayout`;
+	columnLayout RRAnim_MainColumnLayout;
+	
+	//FINGER SELECTIONS
+	frameLayout -collapsable true -label "Select Fingers & Toes"
+		-width 204;
+	
+		rowColumnLayout -nc 2;
+			button -label "Controls Up/Dn"
+			-w 101
+			-command "RRAnim_ControlsUpDn";
+			button -label "Controls Across"
+			-w 98
+			-command "RRAnim_ControlsAcross";
+			
+			setParent RRAnim_MainColumnLayout;
+
+			
+	//MIRROR POSE
+	if ($versionNum < 2011)
+	{
+	frameLayout -collapsable true -label "Pose"
+		-width 204
+		RRAnim_PoseLayout;
+	
+		rowColumnLayout -nc 2;
+			button -label "Right to Left"
+			-command "RRAnim_RightToLeftControlsCheck";
+			button -label "Left to Right"
+			-command "RRAnim_LeftToRightControlsCheck";
+			
+			button -label "Reset Transforms"
+			-command "RRAnim_ResetTransformsCheck";
+			button -label "Reset Extras"
+			-command "RRAnim_ResetExtrasCheck";
+			
+			button -label "Mirror"
+			-command "RRAnim_MirrorCheck";
+
+			setParent RRAnim_MainColumnLayout;
+	}
+	else
+	{
+	frameLayout -collapsable true -label "Pose"
+		-width 204
+		RRAnim_PoseLayout;
+	
+		rowColumnLayout -nc 2;
+			button -label "Right to Left"
+			-w 100
+			-command "RRAnim_RightToLeftControlsCheck";
+			button -label "Left to Right"
+			-w 100
+			-command "RRAnim_LeftToRightControlsCheck";
+			setParent RRAnim_PoseLayout;
+			
+			columnLayout;
+			button -label "Mirror"
+			-w 200
+			-command "RRAnim_MirrorCheck";
+			setParent RRAnim_PoseLayout;
+			
+			rowColumnLayout -nc 2;
+			button -label "Reset Transforms"
+			-w 110
+			-command "RRAnim_ResetTransformsCheck";
+			button -label "Reset Extras"
+			-w 90
+			-command "RRAnim_ResetExtrasCheck";
+			
+			setParent RRAnim_MainColumnLayout;
+	}
+	
+			
+	//MATCH IK TO FK/FK TO IK
+	//4 CHECK BOXES AND 2 BUTTONS AT THE BOTTOM FOR "FK TO IK" AND "IK TO FK"
+		frameLayout -collapsable true -label "IK/FK Match"
+			-width 204
+			RRAnim_IKFKSwitchLayout;
+	
+		rowColumnLayout -nc 2 -cw 1 110 -cw 2 100;
+		$RRAnim_LeftArmMatch = `checkBox
+			-label "Left Arm"
+			-value 0
+			RRAnim_LeftArmMatch`;
+	
+		$RRAnim_RightArmMatch = `checkBox
+			-label "Right Arm"
+			-value 0
+			RRAnim_RightArmMatch`;
+		
+		$RRAnim_LeftLegMatch = `checkBox
+			-label "Left Leg"
+			-value 0
+			RRAnim_LeftLegMatch`;
+	
+		$RRAnim_RightLegMatch = `checkBox
+			-label "Right Leg"
+			-value 0
+			RRAnim_RightLegMatch`;
+			
+			setParent RRAnim_MainColumnLayout;
+			
+			rowColumnLayout -nc 2;
+			button -label "IK to FK"
+			-w 100
+			-command "RRAnim_MatchIKtoFKCheck"
+			RRAnim_MatchIKtoFKCheck;		
+			
+			button -label "FK to IK"
+			-w 100
+			-command "RRAnim_MatchFKtoIKCheck"
+			RRAnim_MatchFKtoIKCheck;
+			
+			setParent RRAnim_MainColumnLayout;
+	
+	//SELECT ALL CONTROLS
+	//CHECK BUTTONS FOR ARMS/LEGS *WISHLIST*
+		frameLayout -collapsable true -label "Select Controls"
+			-width 204
+			RRAnim_SelectAllLayout;
+		
+			button -label "Select All"
+			-command "RRAnim_SelectAllControlsCheck"
+			RRAnim_SelectAllControlsCheck;
+			
+			setParent RRAnim_MainColumnLayout;
+}
+
+//PROCEDURE FOR WINDOW
+global proc RapidRig_Anim_V2()                                        
+{
+		if (`window -exists RRAnim_UI`) 
+		{
+			deleteUI RRAnim_UI; 
+		}
+	string $RRAnim_UI = `window
+		-title "Rapid Rig: Anim 2"
+		-wh 204 180
+		-rtf on
+		-mnb false
+		-mxb false
+		-s 1
+		RRAnim_UI`;
+	
+	RRAnim_CreateUI();
+	
+	showWindow $RRAnim_UI;
+	window -e -w 204 -h 180 $RRAnim_UI;
+}
+
+RapidRig_Anim_V2;
